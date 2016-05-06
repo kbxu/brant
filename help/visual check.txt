@@ -1,0 +1,9 @@
+Help information for Visual Check:
+
+name position: subject identifier for input data
+input filetype: files in the filetype will be searched in input directories.
+4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+input dirs: directories can be input either using a .txt file or spm select window.
+
+end
+     

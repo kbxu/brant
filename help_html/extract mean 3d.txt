@@ -1,0 +1,19 @@
+Extract Mean 3D
+	================================
+	brain mask: mask of whole brain.
+	roi file: extract mean intensity in the roi tagged by numbers.
+	roi info: labels of tagged ROIs. (optional)
+	name position: subject identifier for input data
+	input filetype: files in the filetype will be searched in input directories.
+	4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+	input dirs: directories can be input either using a .txt file or spm select window. 
+	subj info: subjects information in an excel file, including subject ids, group, regressors (optional), etc.
+	group(s) (optional): extract mean and do correlation for each group separated by â€?,â€? or â€?;â€?, e.g. SZ;NC.
+	filename remove: inputs for the current program are normally results from calculations and a prefix/suffix will be added to the filename, sush as ReHo_subj1.nii. Input â€˜ReHo_â€? here will remove the prefix and make input file match the information in the table.
+	filter: exclude unwanted subjects in the table, a column with title â€˜Filterâ€? is expected in the excel file.
+	score correlation: if specified, a correlation will be do between scores and mean intensity. More than one scores can be separated by â€?,â€? or â€?;â€?.
+	discard subjects without info: when checked, if subjectsâ€? information are not found in the table, a warning message will be shown; when unchecked, an error message will be shown.
+	output prefix (optional): prefix for output file.
+	output path: an output directory for saving results.
+	
+	

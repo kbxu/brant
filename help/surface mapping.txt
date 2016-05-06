@@ -1,0 +1,16 @@
+Help information for Surface Mapping:
+
+alpha: degree of transparency
+show colorbar: display colorbar
+colortype: different colormaps
+display: mode of display
+material: material of surface
+lighting: type of light
+shading: type of shader
+surface: surface file
+brain vol: volume to map to the surface
+threshold: use matlab syntax to generate a mask for input volume.
+spin&save: spin around a certain degree and save screenshots.
+output path: an output directory for saving results.
+
+end

@@ -1,0 +1,20 @@
+Help information for Realign:
+
+Estimate: Estimate parameters for realignment.
+    quality: Highest quality (1) gives most precise results, whereas lower qualities gives faster realignment.
+    sep: The separation (in mm) between the points sampled in the reference image. Smaller sampling distances gives more accurate results, but will be slower.
+    fwhm: Full width at half maximum of the Gauss smoothing kernel (mm).
+    rtm: 1 indicates images are registered to the mean image, while 0 indicates images are registered to the first image in each subject’s folder.
+    wrap: 3 dimensions of wrapping, e.g. [1 1 1] for wrapping in X, Y and Z direction, [0 0 0] for no wrapping.
+    interp: Indexes of interpolation methods. (1 for Trilinear; 2-7 for 2nd-7th Degree B-Spline).
+    
+Write:
+    which: The first parameter allows 0, 1 and 2 as input (0: create only a mean resliced image; 1: don’t reslice the first image. 2: reslice all the image). The second parameter indicates whether to output a resliced mean image (0 for false and nonzero for true).
+    interp: Interpolation methods for write option. (0 for Nearest Neighbor; 1 for Trilinear; 2-7 for 2nd-7th Degree B-Spline; Inf for Fourier Interpolation).
+    mask: Mask output images (true/false). If any image has a zero value at a voxel, then all images will have zero (or NaNs if allowed) values at that voxel.
+    wrap: 3 dimensions of wrapping, e.g. [1 1 1] for wrapping in X, Y and Z direction, [0 0 0] for no wrapping.
+    prefix: Output images will have a prefix of 'r' by default.
+    
+Reference: spm manual.
+
+end

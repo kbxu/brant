@@ -1,0 +1,17 @@
+Help information for IBMA:
+
+data: input data can be either matrices or volumes
+brain mask: mask for the data. (optional for matrix input)
+name position: subject identifier for input data
+input filetype: files in the filetype will be searched in input directories.
+input dirs: directories can be input either using a .txt file or spm select window.
+center info: number of subjects for different centers
+P threshold: threshold of p value for multiple comparison correction.
+FDR: a parsimonious FDR correction.
+FDR2: a loose FDR correction.
+Bonferroni: bonferroni correction.
+subj info: subjects information in an excel file, including subject ids, group, regressors (optional), etc.
+output path: an output directory for saving results.
+
+end
+     

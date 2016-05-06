@@ -1,0 +1,27 @@
+Help information for Normalize:
+
+Subject info:
+    source: Filetype of images for normalization are stored. Default is the mean*.nii generated from realign. Users can also change it to T1/T2 structural image of each subject stored in each subject's folder. If Coregister is checked, remember to add prefix of Coregister to the source filetype and change to template to the same modality of source.
+    wtsrc: Weighting image of the source file.
+
+Estimate: 
+    template: A standard template image which the source image will be registered to.
+    weight: weighting image of the template.
+    smosrc: Smoothing to be applied to the copy of the source image. (Source image and the template should have the same smoothness)
+    smoref: Smoothing to be applied to the copy of the source image. (The default templates of spm already have been smoothed by 8mm)
+    regtype: mni (affine registration into MNI space), subj (Registering to an image that has an almost same size of the source image.) and none (No registration)
+    cutoff: Cutoff of DCT bases.
+    nits: Number of nonlinear wrapping iterations.
+    reg: The amount of regularization for the nonlinear part of the spatial normalization.
+
+Write:
+    preserve: 0 (The warped images preserve the intensities of the original images) and 1 (Spatially normalised images are "modulated" in order to preserve the total amount of signal in the images.)
+    bb: Bounding box of the volume.
+    vox: The voxel sizes of the normalized images.
+    interp: Interpolation methods for write option. (0 for Nearest Neighbor; 1 for Trilinear; 2-7 for 2nd-7th Degree B-Spline; Inf for Fourier Interpolation).
+    wrap: 3 dimensions of wrapping, e.g. [1 1 1] for wrapping in X, Y and Z direction, [0 0 0] for no wrapping.
+    prefix: Output images will have a prefix of 'w' by default.
+
+Reference: spm manual.
+
+end

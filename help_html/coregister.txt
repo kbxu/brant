@@ -1,0 +1,21 @@
+Coregister
+	================================
+	Subject info:
+	    reference: Filetype of reference image stored in each subject's folder to register.
+	    source: Filetype of image to match the reference image stored in each subject's folder.
+	
+	Estimate: 
+	    object fun: Methods to maximise or minimise objective function.
+	    sep: The average distance between sampled points (in mm).
+	    tol: The accuacy for each paramters.
+	    fwhm: Kernel of gaussian smooth to apply to the 256*256 joint histogram.
+	    
+	Write:
+	    interp: Interpolation methods for write option. (0 for Nearest Neighbor; 1 for Trilinear; 2-7 for 2nd-7th Degree B-Spline; Inf for Fourier Interpolation).
+	    wrap: 3 dimensions of wrapping, e.g. [1 1 1] for wrapping in X, Y and Z direction, [0 0 0] for no wrapping.
+	    mask: Mask images.
+	    prefix: Output source images will have a prefix of 'r' by default.
+	
+	Reference: spm manual.
+	
+	

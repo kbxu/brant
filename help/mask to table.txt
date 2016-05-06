@@ -1,0 +1,14 @@
+Help information for Mask to Table:
+
+intensity threshold: threshold of intensity.
+cluster size: threshold of cluster size.
+template: mask labeled by numbers.
+info: two columns of information for each labeled cluster in a *.txt file. Such as provide a name for the clusters as: 
+e.g. 
+1 SFG
+2 MFG
+3 IFG
+output path: an output directory for saving results.
+
+end
+     

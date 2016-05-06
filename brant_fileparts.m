@@ -1,0 +1,8 @@
+function [pth,nam,ext] = brant_fileparts(fname)
+
+[pth,nam,ext] = fileparts(fname);
+
+if strcmp(ext,'.gz')
+    nam = nam(1:end-4);
+    ext = '.nii.gz';
+end

@@ -1,0 +1,22 @@
+Help information for ROI Calculation:
+
+roi file: ROIs in one nifti file
+roi info: labels of tagged ROIs in an .txt file. (optional)
+E.g. 
+1 SFG
+2 MFG
+3 IFG
+brain mask: mask for the data
+name position: subject identifier for input data
+input filetype: files in the filetype will be searched in input directories.
+4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+input dirs: directories can be input either using a .txt file or spm select window.
+extract mean: extract mean time series for each ROI
+roi to roi correlation: calculate correlation between pairs of ROI
+roi to whole brain correlation: calculate correlation between each ROI’s mean time series and voxels in the mask.
+Pearson’s correlation: correlation type
+Partial correlation: when calculating correlation, between one roi mean time series and voxels/other time series, the rest of roi mean time serieses will be regressed out from the calculation.
+output path: an output directory for saving results.
+
+end
+     

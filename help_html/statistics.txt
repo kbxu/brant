@@ -1,0 +1,23 @@
+Statistics
+	================================
+	data: input data can be either matrices or volumes
+	FC file: file generated from roi-roi correlation, one '.mat' file contains a 3D correlation matrix. The third dimension is subjects.
+	brain mask: mask for the data
+	name position: subject identifier for input data
+	input filetype: files in the filetype will be searched in input directories.
+	4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+	input dirs: directories can be input either using a .txt file or spm select window.
+	stat type: one sample t-test and two-sample t-test.
+	group(s): groups separated by ',' or ';' for one and two-sample t-test, two groups must be fill when selecting two-sample t-test.
+	P threshold: threshold of p value for multiple comparison correction.
+	FDR: a parsimonious FDR correction.
+	FDR2: a loose FDR correction.
+	Bonferroni: bonferroni correction.
+	subj info: subjects information in an excel file, including subject ids, group, regressors (optional), etc.
+	filename remove: inputs for the current program are normally results from calculations and a prefix/suffix will be added to the filename, such as ReHo_subj1.nii. Input 'ReHo_' here will remove the prefix and make input file match the information in the table.
+	filter: exclude unwanted subjects in the table, a column with title 'Filter' is expected in the excel file.
+	discard subjects without info: when checked, if subjects' information are not found in the table, a warning message will be shown; when unchecked, an error message will be shown.
+	output prefix (optional): prefix for output file.
+	output path: an output directory for saving results.
+	
+	

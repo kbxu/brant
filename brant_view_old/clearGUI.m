@@ -1,0 +1,20 @@
+function clearGUI(handles)
+set(handles.name, 'String', '-None-');
+set(handles.value_min, 'String', '');
+set(handles.value_max, 'String', '');
+data_type_handle = findobj(gcbf,'Tag','data_type');
+set(data_type_handle, 'Value', 1);
+threshold_checkbox_handle = findobj(gcbf,'Tag','threshold_checkbox');
+set(threshold_checkbox_handle, 'Value', 0);
+set(handles.threshold_edit, 'String', ''); 
+color_pop_handle = findobj(gcbf,'Tag','color_pop');
+set(color_pop_handle, 'Value', 1);
+set(color_pop_handle, 'String', '-select color-');
+smooth_button_handle = findobj(gcbf,'Tag','smooth_button');
+set(smooth_button_handle, 'visible', 'off');
+set(handles.axes5, 'visible', 'off');
+cla(handles.axes5);
+set(handles.axes7, 'visible', 'off');
+cla(handles.axes7);
+set(handles.axes8, 'visible', 'off');
+cla(handles.axes8);

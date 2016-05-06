@@ -1,0 +1,21 @@
+1，网络文件 --- Network
+.net
+.mat
+.vgr (不大起作用)
+
+2，分类文件 ---- Partition
+.clu，按[节点编号	所述类标号]的样式排列
+
+3，排序文件 ---- Permutation
+.per，按[节点编号 	排序后节点所在位置编号]样式排列
+
+4，类文件 ------- Cluster
+.cls
+
+5，层次文件 ---- Hierarchy
+.hie
+
+6，向量文件 ---- Vector
+.ver
+
+注：所有打开文件都可以保存在一个文件内，即.paj文件

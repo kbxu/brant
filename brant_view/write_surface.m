@@ -1,5 +1,4 @@
 function write_surface(surf_name, faces, vertices_coord)
-% error function, don't use it for now
 
 num_vertices = size(vertices_coord, 1);
 num_faces = size(faces, 1);

@@ -1,4 +1,4 @@
-function edge_ind = draw_line_new(edge_info, node_info, node_ind, node_coord)
+function edge_ind = brant_draw_line_new(edge_info, node_info, node_ind, node_coord)
 
 edge_part = edge_info.edge(node_ind, node_ind);
 node_coord_part = node_coord(node_ind, :);

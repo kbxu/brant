@@ -1,6 +1,6 @@
-function draw_brain(faces, vertices, surf_alpha, node_info, edge_info, view_ang, node_ind)
+function brant_draw_brain(faces, vertices, surf_alpha, node_info, edge_info, view_ang, node_ind)
 
-draw_surf(faces, vertices, surf_alpha);
+brant_draw_surf(faces, vertices, surf_alpha);
 view(view_ang);
 hold('on');
 
@@ -16,11 +16,11 @@ if ~isempty(node_info)
             node_ind = size_raw >= edge_info.wei_thr & node_ind;
         end
     end
-    [h_node, h_text] = draw_node_new(node_ind, node_info.coords, node_info);
+    [h_node, h_text] = brant_draw_node_new(node_ind, node_info.coords, node_info);
 end
 
 if ~isempty(edge_info.edge) && edge_info.edge_disp == 1
-    edge_ind = draw_line_new(edge_info, node_info, node_ind, node_info.coords);
+    edge_ind = brant_draw_line_new(edge_info, node_info, node_ind, node_info.coords);
 
     if edge_info.hide_node == 1
         node_ind_show = sum(abs(triu(edge_ind, 1)) + abs(triu(edge_ind, 1))') > 0;

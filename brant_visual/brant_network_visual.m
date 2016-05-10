@@ -222,7 +222,7 @@ if strcmpi(mode_display, 'halves:left and right') == 0
                     view_angle = [180, 0];
             end
     end
-    draw_brain(faces_tmp, vertices_tmp, surf_alhpa, node_info, edge_info, view_angle, node_ind)
+    brant_draw_brain(faces_tmp, vertices_tmp, surf_alhpa, node_info, edge_info, view_angle, node_ind)
 else
     set(hpt, 'Enable', 'off')
     set(hpt1, 'Enable', 'off')
@@ -230,24 +230,24 @@ else
     h_sub1 = subplot(2, 2, 1, 'Parent', h_figure);
     sub1_pos = get(h_sub1, 'Position');
     set(h_sub1, 'Position', [sub1_pos(1)+0.03, sub1_pos(2)-0.062, sub1_pos(3), sub1_pos(4)])
-    draw_brain(faces_left, vertices_left, surf_alhpa, node_info, edge_info, [-90, 0], node_ind_left)
+    brant_draw_brain(faces_left, vertices_left, surf_alhpa, node_info, edge_info, [-90, 0], node_ind_left)
     % right hemisphere lateral surface
     h_sub2 = subplot(2, 2, 2, 'Parent', h_figure);
     sub2_pos = get(h_sub2, 'Position');
     set(h_sub2, 'Position', [sub2_pos(1)-0.07, sub2_pos(2)-0.062, sub2_pos(3), sub2_pos(4)])
-    draw_brain(faces_right, vertices_right, surf_alhpa, node_info, edge_info, [90, 0], node_ind_right);
+    brant_draw_brain(faces_right, vertices_right, surf_alhpa, node_info, edge_info, [90, 0], node_ind_right);
     
     % left hemisphere medial surface
     h_sub3 = subplot(2, 2, 3, 'Parent', h_figure);
     sub3_pos = get(h_sub3, 'Position');
     set(h_sub3, 'Position', [sub3_pos(1)+0.03, sub3_pos(2)+0.062, sub3_pos(3), sub3_pos(4)])
-    draw_brain(faces_left, vertices_left, surf_alhpa, node_info, edge_info, [90, 0], node_ind_left)
+    brant_draw_brain(faces_left, vertices_left, surf_alhpa, node_info, edge_info, [90, 0], node_ind_left)
     
     % right hemisphere medial surface
     h_sub4 = subplot(2, 2, 4, 'Parent', h_figure);
     sub4_pos = get(h_sub4, 'Position');
     set(h_sub4, 'Position', [sub4_pos(1)-0.07, sub4_pos(2)+0.062, sub4_pos(3), sub4_pos(4)])
-    draw_brain(faces_right, vertices_right, surf_alhpa, node_info, edge_info, [-90, 0], node_ind_right)
+    brant_draw_brain(faces_right, vertices_right, surf_alhpa, node_info, edge_info, [-90, 0], node_ind_right)
     hold on
     h_axes = axes('Position', [0.05 0.05 0.9 0.8]);
 

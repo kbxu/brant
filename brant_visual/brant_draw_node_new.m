@@ -1,4 +1,4 @@
-function [h_node, h_text] = draw_node_new(node_ind, node_coords, node_info)
+function [h_node, h_text] = brant_draw_node_new(node_ind, node_coords, node_info)
 
 node_color = node_info.color(node_ind, :);
 r = node_info.size(node_ind);

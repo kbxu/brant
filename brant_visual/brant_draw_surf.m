@@ -1,4 +1,4 @@
-function Brain = draw_surf(face, vert, brain_alpha)
+function Brain = brant_draw_surf(face, vert, brain_alpha)
 
 brain = patch('Faces', face, 'Vertices', vert, 'Edgecolor', 'none');
 whitebg(gcf, [1 1 1]);

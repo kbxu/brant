@@ -30,7 +30,8 @@ hfig_inputdlg = figure(...
     'Resize',           'off',...	
     'MenuBar',          'none',...    
     'Visible',          'on',...
-    'CloseRequestFcn',  @close_fig);
+    'CloseRequestFcn',  @close_fig,...
+    'DeleteFcn',        @close_fig);
 
 h_sub = cell(length(prompt), 1);
 for m = length(prompt):-1:1
@@ -67,12 +68,11 @@ end
 function close_fig(obj, evd) %#ok<INUSD>
 userdata = get(obj,'Tag');
 func_type = userdata(5:end);
-prompt = brant_postprocess_funcions(func_type);
+window_names = brant_postprocess_funcions(func_type);
 
-for m = 1:length(prompt)
-    h_tmp = findobj(0, 'Tag', prompt{m});
-    if ~isempty(h_tmp)
-        delete(h_tmp);
-    end
-end
+h_all_fig = findobj(0, 'Type', 'fig');
+nm_all_fig = arrayfun(@(x) get(x, 'Name'), h_all_fig, 'UniformOutput', false);
+
+h_brant_ind = cellfun(@(x) any(strcmpi(x, window_names)), nm_all_fig);
+delete(h_all_fig(h_brant_ind));
 delete(obj);

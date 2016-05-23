@@ -112,9 +112,9 @@ brant_pps.denoise.subj.reslice_mask_ind = 1;
 
 brant_pps.denoise.detrend_mask.tissue_trends_ind = 1;
 brant_pps.denoise.detrend_mask.detrend = 1;
-brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'fmaskEPI_V2mm.nii');
-brant_pps.denoise.detrend_mask.wm = fullfile(brant_path, 'template', 'mask_WM.nii');
-brant_pps.denoise.detrend_mask.csf = fullfile(brant_path, 'template', 'mask_CSF.nii');
+brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'fmaskEPI_V2mm.nii.gz');
+brant_pps.denoise.detrend_mask.wm = fullfile(brant_path, 'template', 'mask_WM.nii.gz');
+brant_pps.denoise.detrend_mask.csf = fullfile(brant_path, 'template', 'mask_CSF.nii.gz');
 brant_pps.denoise.detrend_mask.user_mask = '';
 brant_pps.denoise.detrend_mask.tissue_deriv = 1;
 

@@ -1,6 +1,6 @@
 function st_prefix = brant_run_slicetiming(st_infos, data_files, is4d_ind, par)
 
-if sum(size(st_infos.slice_order) > 1) > 2
+if sum(size(st_infos.slice_order) > 1) > 1
     error('The input format of slice order is wrong, please check your input parameters.');
 end
 

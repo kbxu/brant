@@ -13,7 +13,11 @@ end
 % current_img = strcat(nifti_list{1}, curr_tp_str);
 % current_label = strcat(subj_ids{1}, curr_tp_str);
 
-all_tps = cellfun(@get_nii_frame, nifti_list);
+if jobman.input_nifti.is4d == 1
+    all_tps = cellfun(@get_nii_frame, nifti_list);
+else
+    all_tps = cellfun(@(x) get_nii_frame(x{1}), nifti_list);
+end
 curr_tps = all_tps(1);
 
 current_img = strcat(nifti_list{num_chk}, ',0001');

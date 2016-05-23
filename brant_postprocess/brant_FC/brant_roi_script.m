@@ -36,7 +36,8 @@ if isempty(jobman.input_nifti.dirs{1})
     error(sprintf('\tPlease input data directories!\n'));
 end
 
-if any([roi2roi_ind, roi2wb_ind, ~roi_wise_ind])
+% if roi_wise_ind == 0
+if any([roi2roi_ind, roi2wb_ind])
     if partial_ind == 1
         corr_type = 'partial_correlation';
         corrfun = @partialcorr;
@@ -49,6 +50,7 @@ if any([roi2roi_ind, roi2wb_ind, ~roi_wise_ind])
 else
     error('Error input!');
 end
+% end
 
 if roi_wise_ind == 1
     if isempty(jobman.rois{1})
@@ -154,12 +156,22 @@ for mm = 1:numel(split_prefix)
     num_subj = numel(nifti_list);
     
     % test for voxel size 20160425
-    if jobman.input_nifti.is4d == 1;
-        sample_hdr = load_nii_hdr(nifti_list{1});
+    if strcmpi(jobman.input_nifti.filetype(end-2:end), '.gz')
+        if jobman.input_nifti.is4d == 1;
+            sample_hdr = load_nii(nifti_list{1});
+        else
+            sample_hdr = load_nii(nifti_list{1}{1});
+        end
+        brant_spm_check_orientations([mask_nii.hdr, sample_hdr.hdr]);
     else
-        sample_hdr = load_nii_hdr(nifti_list{1}{1});
+        if jobman.input_nifti.is4d == 1;
+            sample_hdr = load_nii_hdr(nifti_list{1});
+        else
+            sample_hdr = load_nii_hdr(nifti_list{1}{1});
+        end
+        brant_spm_check_orientations([mask_nii.hdr, sample_hdr]);
     end
-    brant_spm_check_orientations([mask_nii.hdr, sample_hdr]);
+    
     
     
     if roi_wise_ind == 1
@@ -200,11 +212,10 @@ for mm = 1:numel(split_prefix)
             %             corr_z_tot = zeros([num_subj, num_corr], 'double');
             %             corr_p_tot = ones([num_subj, num_corr]);
             
-            out_roi2roi = fullfile(out_dir_tmp, ['roi2roi_', corr_type]);
-            out_mat = fullfile(out_roi2roi, ['corr_mats_', corr_type]);
-            if exist(out_mat, 'dir') ~= 7
-                mkdir(out_mat);
-            end
+%             out_roi2roi = fullfile(out_dir_tmp, ['roi2roi_', corr_type]);
+%             out_mat = fullfile(out_roi2roi, ['corr_mats_', corr_type]);
+            out_mat = fullfile(out_dir_tmp, ['roi2roi_', corr_type]);
+            if exist(out_mat, 'dir') ~= 7, mkdir(out_mat); end
         end
         
     else
@@ -212,11 +223,10 @@ for mm = 1:numel(split_prefix)
         %         corr_z_tot = zeros([num_roi, num_roi, num_subj], 'single');
         %         corr_z_tot = zeros([num_subj, num_roi * (num_roi - 1) / 2], 'single');
         
-        out_vox2vox = fullfile(out_dir_tmp, ['vox2vox_', corr_type]);
-        out_mat = fullfile(out_vox2vox, ['corr_mats_', corr_type]);
-        if exist(out_mat, 'dir') ~= 7
-            mkdir(out_mat);
-        end
+%         out_vox2vox = fullfile(out_dir_tmp, ['vox2vox_', corr_type]);
+%         out_mat = fullfile(out_vox2vox, ['corr_mats_', corr_type]);
+        out_mat = fullfile(out_dir_tmp, ['vox2vox_', corr_type]);
+        if exist(out_mat, 'dir') ~= 7, mkdir(out_mat); end
     end
     
     for m = 1:num_subj
@@ -308,14 +318,6 @@ for mm = 1:numel(split_prefix)
         fprintf('\n');
         clear('data_2d_mat');
     end
-    
-    %     if roi_wise_ind == 1
-    %         if roi2roi_ind == 1
-    %             save(fullfile(out_roi2roi, 'roi2roi_tot.mat'), 'corr_r_tot', 'corr_z_tot', 'num_roi', 'corr_p_tot', 'rois_str', 'rois_tag', 'subj_ids', 'corr_type', '-v7.3');
-    %             clear('corr_r_tot', 'corr_z_tot', 'corr_p_tot');
-    %         end
-    %     end
-    
 end
 
 fprintf('\tFinished!\n');

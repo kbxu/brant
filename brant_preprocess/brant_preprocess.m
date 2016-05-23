@@ -447,7 +447,7 @@ create_ui(disp_selected_chb, 'checkbox', h.fig_CheckBoard, figColor, 1);
 ini_panelOpt = {'', [20, 435 + 25, 300, 51],   'prep_panel'};
 h_panel_ini = create_ui(ini_panelOpt, 'panel', h.fig_Preprocess, uipColor);
 
-input_btnOpt = {'Output to wk dir'    ,	[10, 28, 134, 18],	'output_sel_chb',    @output_select_cb;...
+input_btnOpt = {'Output to wk dir'      ,	[10, 28, 134, 18],	'output_sel_chb',    @output_select_cb;...
                 'Check Board'           ,	[150, 28, 90, 18],	'chbd_chb',     {@chbd_cb, h.fig_Preprocess};...
                 'Sync'                  ,	[10, 5, 50, 18],	'sync_chb',     @sys_chb;...
                 'Parallel Workers'      ,	[150, 5, 100, 18],	'parallel_chb', @par_chb};
@@ -506,6 +506,12 @@ fn_tmp = cellfun(@(x) x(1:end-4), prep_chbOpt(:,3), 'UniformOutput', false);
 select_inds = cellfun(@(x) brant_pps.ind.(x), fn_tmp);
 create_ui(prep_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, select_inds);
 
+
+sel_spm12_ind = strcmp(spm('ver'), 'SPM12') == 1;
+norm_spm12_chbOpt = {'spm12', [100, 120, 100, 20], 'norm_spm12_chb', @pre_chb_cb};
+h_spm12 = create_ui(norm_spm12_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, 0);
+if sel_spm12_ind == 1, spm_norm_ena = 'on'; else spm_norm_ena = 'off'; end;
+set(h_spm12{1}, 'Enable', spm_norm_ena);
 
 h_chbd = findobj(h.fig_Preprocess, 'Tag', 'chbd_chb');
 set(allchild(h.fig_Preprocess), 'Units', 'pixels'); % axes and uipanel

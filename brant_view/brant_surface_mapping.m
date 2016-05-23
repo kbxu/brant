@@ -208,8 +208,24 @@ if ~isempty(s_mat)
     trans_mat(:, 4) = s_mat(:, 4) - diag(s_mat);
     vox_ind_tmp = [trans_mat; 0, 0, 0, 1] \ [vertices_coord, ones(num_coords, 1)]';
 
+    % find out vertices from surface exeeding bounding box of the current
+    % volume
+    size_vol = size(volume_3d);
+    
     vox_ind = int16(vox_ind_tmp(1:3, :))';
-    color_tmp = arrayfun(@(x) volume_3d(vox_ind(x, 1), vox_ind(x, 2), vox_ind(x, 3)), 1:size(vox_ind, 1));
+    bad_ind = false;
+    for m = 1:3
+        bad_ind = bad_ind | (vox_ind(:, m) < 1 | vox_ind(:, m) > size_vol(m));
+    end
+    if any(bad_ind)
+        vox_ind_tmp2 = vox_ind(~bad_ind, 1:3);
+        color_tmp_1 = arrayfun(@(x) volume_3d(vox_ind_tmp2(x, 1), vox_ind_tmp2(x, 2), vox_ind_tmp2(x, 3)), 1:size(vox_ind_tmp2, 1));
+        color_tmp = zeros(size(vox_ind, 1), 1);
+        color_tmp(~bad_ind) = color_tmp_1;
+    else
+        color_tmp = arrayfun(@(x) volume_3d(vox_ind(x, 1), vox_ind(x, 2), vox_ind(x, 3)), 1:size(vox_ind, 1));
+    end
+    
     
     uniq_vol = setdiff(unique(volume_3d(:)), 0);
     num_color_vert = numel(uniq_vol);

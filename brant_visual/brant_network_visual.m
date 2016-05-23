@@ -185,8 +185,6 @@ else
     node_ind_right = [];
 end
 
-
-
 if strcmpi(mode_display, 'halves:left and right') == 0
     mode_brain = regexpi(mode_display, ':', 'split');
     switch mode_brain{1}

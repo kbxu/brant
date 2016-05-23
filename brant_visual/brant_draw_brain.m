@@ -10,7 +10,10 @@ if ~isempty(node_info)
         thres_str = strrep(edge_info.thres, 'edge', 'edge_part');
         edge_ind = eval(thres_str);
         size_raw = sum(abs(edge_part .* edge_ind), 2);
-        node_info.size = (size_raw / max(size_raw)) * 8;
+        size_raw_scale_tmp = ((size_raw(size_raw ~= 0) - 1) / max(size_raw)) * 7 + 1;
+        size_raw_scale = size_raw;
+        size_raw_scale(size_raw ~= 0) = size_raw_scale_tmp;
+        node_info.size = size_raw_scale;
         
         if edge_info.wei_thr > 0
             node_ind = size_raw >= edge_info.wei_thr & node_ind;
@@ -24,13 +27,12 @@ if ~isempty(edge_info.edge) && edge_info.edge_disp == 1
 
     if edge_info.hide_node == 1
         node_ind_show = sum(abs(triu(edge_ind, 1)) + abs(triu(edge_ind, 1))') > 0;
-    %     edge_ind = edge_ind - diag(diag(edge_ind));
-    %     node_ind_show = sum(abs(edge_ind)) > 0;
         cellfun(@delete, h_node(node_ind_show == 0));
         if ~isempty(h_text)
             cellfun(@delete, h_text(node_ind_show == 0));
         end
     end
+    
 % edge_draw_tmp = edge_ind .* edge_info.edge;
 % node_ind_up = triu(edge_ind, 1);
 % [node_x_ind, node_y_ind] = find(node_ind_up);

@@ -11,32 +11,32 @@ end
 tbl_title = tbl(1, :);
 tbl_data = tbl(2:end, :);
 
-[tbl_fns, fns_good] = chk_tbl_cols(tbl_data, tbl_title, {'name'}, 'str');
+[tbl_fns, fns_good] = brant_chk_tbl_cols(tbl_data, tbl_title, {'name'}, 'str');
 if numel(unique(tbl_fns)) ~= numel(tbl_fns)
     error('Duplicated subject names are found!');
 end
 tbl_good = fns_good;
 
-[tbl_use, use_good] = chk_tbl_cols(tbl_data, tbl_title, {'use'}, 'logic');
+[tbl_use, use_good] = brant_chk_tbl_cols(tbl_data, tbl_title, {'use'}, 'logic');
 if ~isempty(tbl_use)
     tbl_good = tbl_good & use_good;
 end
 
-[tbl_grp, grp_good] = chk_tbl_cols(tbl_data, tbl_title, {'group'}, 'str');
+[tbl_grp, grp_good] = brant_chk_tbl_cols(tbl_data, tbl_title, {'group'}, 'str');
 tbl_good = tbl_good & grp_good;
 
 if ~isempty(fil_est)
-    [tbl_fil, fil_good] = chk_tbl_cols(tbl_data, tbl_title, {'filter'}, 'str');
+    [tbl_fil, fil_good] = brant_chk_tbl_cols(tbl_data, tbl_title, {'filter'}, 'str');
     tbl_good = tbl_good & fil_good;
 end
 
 if ~isempty(reg_est)
-    [tbl_reg, reg_good] = chk_tbl_cols(tbl_data, tbl_title, reg_est, 'number');
+    [tbl_reg, reg_good] = brant_chk_tbl_cols(tbl_data, tbl_title, reg_est, 'number');
     tbl_good = tbl_good & reg_good;
 end
 
 if ~isempty(score_est)
-    tbl_corr = chk_tbl_cols(tbl_data, tbl_title, score_est, 'number');
+    tbl_corr = brant_chk_tbl_cols(tbl_data, tbl_title, score_est, 'number');
 %     tbl_good = tbl_good & corr_good;
 end
 
@@ -109,44 +109,4 @@ corr_good_subj = [];
 if ~isempty(score_est),
     tbl_corr_good = tbl_corr(tbl_good_merge, :);
     corr_good_subj = tbl_corr_good(subj_ind_tbl, :);
-end
-
-
-function [col_data, col_data_good] = chk_tbl_cols(tbl_data, tbl_title, col_strs, col_type)
-
-col_ind_tmp = cellfun(@(x) strcmpi(tbl_title, x), col_strs, 'UniformOutput', false);
-col_num = cellfun(@sum, col_ind_tmp);
-
-if strcmpi(col_type, 'logic')
-    if any(col_num ~= 1)
-        col_data = [];
-        col_data_good = [];
-        return;
-    else
-        fprintf('\tA title of "use" is detected!\n\tApplying to filter...\n');
-    end
-else
-    if any(col_num ~= 1)
-        error('None or more than one column of %s has been found!', col_strs{col_num ~= 1});
-    end
-end
-
-col_ind = cellfun(@find, col_ind_tmp);
-col_data_tmp = tbl_data(:, col_ind);
-
-switch(col_type)
-    case 'str'
-        num_ind = cellfun(@isnumeric, col_data_tmp);
-        col_data = col_data_tmp;
-        if any(num_ind)
-            col_data(num_ind) = cellfun(@num2str, col_data_tmp(num_ind), 'UniformOutput', false);
-        end
-        col_data_good = sum(cellfun(@isempty, col_data), 2) == 0;
-    case 'number'
-        col_data = cellfun(@(x) double(x), col_data_tmp);
-        col_data_good = sum(~isfinite(col_data), 2) == 0;
-    case 'logic'
-        col_data = cell2mat(col_data_tmp);
-        col_data_good = col_data == 1;
-    otherwise
 end

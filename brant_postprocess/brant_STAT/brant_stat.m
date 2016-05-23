@@ -44,14 +44,18 @@ end
 
 discard_bad_ind = jobman.discard_bad_subj;
 regressors_tbl = jobman.regressors_tbl{1};
+stat_type = jobman.stat_type;
 
 test_ind.one_samp_ind = 0;
 test_ind.two_samp_ind = 0;
-switch(jobman.stat_type)
+test_ind.paired_t_ind = 0;
+switch(stat_type)
     case 'two sample t-test'
         test_ind.two_samp_ind = 1;
     case 'one sample t-test'
         test_ind.one_samp_ind = 1;
+    case 'paired t-test'
+        test_ind.paired_t_ind = 1;
     otherwise
         error('ooooo');
 end
@@ -121,7 +125,12 @@ switch(out_info.data_type)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
         
-        [data_infos, subj_ind, fil_inds, reg_good_subj, corr_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+        if strcmpi(stat_type, 'paired t-test') == 1
+            [data_infos, subj_ind, fil_inds] = parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
+            reg_good_subj = '';
+        else
+            [data_infos, subj_ind, fil_inds, reg_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+        end
         
         fprintf('\n\tLoading correlation matrix...\n');
         
@@ -132,9 +141,20 @@ switch(out_info.data_type)
         if for_old_ver == 1
             num_rois = size(corr_mat(1).corr_z, 1);
             corr_ind = triu(true(num_rois), 1);
-            data_2d_mat = cat(3, corr_mat.corr_z);
-            data_2d_mat = shiftdim(data_2d_mat, 2);
-            data_2d_mat = data_2d_mat(:, corr_ind);
+            
+            if strcmpi(stat_type, 'paired t-test') == 1
+                data_2d_mat = cell(1, size(corr_mat, 2));
+                for m = 1:size(corr_mat, 2)
+                    data_2d_mat{m} = cat(3, corr_mat(:, m).corr_z);
+                    data_2d_mat{m} = shiftdim(data_2d_mat{m}, 2);
+                    data_2d_mat{m} = data_2d_mat{m}(:, corr_ind);
+                end
+            else
+                data_2d_mat = cat(3, corr_mat.corr_z);
+                data_2d_mat = shiftdim(data_2d_mat, 2);
+                data_2d_mat = data_2d_mat(:, corr_ind);
+                data_2d_mat = double(data_2d_mat);
+            end
             
             corr_tmp = load(mat_list_good{1}, 'rois_str', 'rois_tag');
             out_info.rois_str = corr_tmp.rois_str;
@@ -154,9 +174,10 @@ switch(out_info.data_type)
             out_info.corr_ind = triu(true(num_rois), 1);
             out_info.num_rois = num_rois;
             clear('corr_mat', 'corr_tmp');
+            
+            data_2d_mat = double(data_2d_mat);
         end
         
-        data_2d_mat = double(data_2d_mat);
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
               test_ind, out_info);
           
@@ -175,7 +196,7 @@ switch(out_info.data_type)
         for m = 1:numel(fn_rmv)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
-        [data_infos, subj_ind, fil_inds, reg_good_subj, corr_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+        [data_infos, subj_ind, fil_inds, reg_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         fprintf('\tIn total %d blocks, %d correlations/block...\n', tot_pieces, mat_sample.num_roi);
         
         out_info_file = fullfile(out_info.outdir, 'output_fns.mat');

@@ -102,13 +102,39 @@ switch(lw_uiname)
             obj_strs{2} = {''}; % self
         end
     case 'dicom convert'
-        h_fmri = findobj(hfig_inputdlg, 'string', 'fmri');
-        val_fmri = get(h_fmri, 'Value');
-        if val_fmri == 1
+%         h_cvt = findobj(hfig_inputdlg, 'string', 'convert dicom files');
+%         val_cvt = get(h_cvt, 'Value');
+        h_del = findobj(hfig_inputdlg, 'string', 'delete first * timepoints');
+        val_del = get(h_del, 'Value');
+        
+        if val_del == 1
             obj_strs{1} = {''}; % dual
-            obj_strs{2} = {'cvt4d', 'timepoint', 'del'}; % self
+            obj_strs{2} = {'filetype', 'del:'}; % self
         else
-            obj_strs{1} = {'cvt4d', 'timepoint', 'del'}; % dual
+            obj_strs{1} = {'filetype', 'del:'}; % dual
+            obj_strs{2} = {''}; % self
+        end
+%         if val_cvt == 1 && val_del == 1
+%             obj_strs{1} = {''}; % dual
+%             obj_strs{2} = {'cvt4d', 'input_dcm', 'par_workers', 'filetype', 'del:'}; % self
+%         elseif val_cvt == 1 && val_del == 0
+%             obj_strs{1} = {'filetype', 'del:'}; % dual
+%             obj_strs{2} = {'cvt4d', 'input_dcm', 'par_workers'}; % self
+%         elseif val_cvt == 0 && val_del == 1
+%             obj_strs{1} = {'cvt4d', 'input_dcm', 'par_workers'}; % dual
+%             obj_strs{2} = {'filetype', 'del:'}; % self
+%         else
+%             obj_strs{1} = {'cvt4d', 'input_dcm', 'par_workers', 'filetype', 'del:'}; % dual
+%             obj_strs{2} = {''}; % self
+%         end
+    case 'del timepoints'
+        h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
+        val_out = get(h_out, 'Value');
+        if val_out == 1
+            obj_strs{1} = {''}; % dual
+            obj_strs{2} = {'out_dir'}; % self
+        else
+            obj_strs{1} = {'out_dir'}; % dual
             obj_strs{2} = {''}; % self
         end
     case 'statistics'
@@ -191,7 +217,7 @@ end
 
 obj_ind_all = obj_ind{1} | obj_ind{2};
 
-enb_uis = {'roi calculation', 'roi mapping'};
+enb_uis = {'roi calculation', 'roi mapping', 'dicom convert', 'del timepoints'};
 
 if any(strcmpi(lw_uiname, enb_uis))
     % disable ui elements
@@ -1630,37 +1656,32 @@ for m = 1:size(prompt, 1)
     end
 end
 
-% function help_cb(obj, evd)
-% % fprintf('ooooooooooooooooooooooooooooo\n');
-% 
-% 
-% function save_cb(obj, evd)
-% h_parent = get(obj, 'Parent');
-% jobman = get(h_parent, 'Userdata');
-% dlg_title = get(h_parent, 'Name');
-% 
-% jobman.dlg_title = dlg_title;
-% fn = lower(regexprep(dlg_title, '\W+', '_'));
-% uisave('jobman', ['brant_', fn, '.mat']);
-
 function run_cb(obj, evd)
 h_parent = get(obj, 'Parent');
 jobman = get(h_parent, 'Userdata');
 dlg_title = get(h_parent, 'Name');
 
 if isfield(jobman, 'out_dir')
-    if isempty(jobman.out_dir)
-        error('Please input a directory for output!');
-    end
-
-    if exist(jobman.out_dir{1}, 'dir') ~= 7
-        mkdir(jobman.out_dir{1});
-    end
     
-%     time_now = ceil(clock);
-%     dlg_str_log = regexprep(dlg_title, '\W+', '_');
-%     fn = fullfile(jobman.out_dir{1}, ['brant_log_', dlg_str_log, sprintf('_%d', time_now), '.txt']);
-%     diary(fn);
+    if ~isfield(jobman, 'out_ind')
+        if isempty(jobman.out_dir)
+            error('Please input a directory for output!');
+        end
+
+        if exist(jobman.out_dir{1}, 'dir') ~= 7
+            mkdir(jobman.out_dir{1});
+        end
+    else
+        if jobman.out_ind == 1
+            if isempty(jobman.out_dir)
+                error('Please input a directory for output!');
+            end
+
+            if exist(jobman.out_dir{1}, 'dir') ~= 7
+                mkdir(jobman.out_dir{1});
+            end
+        end
+    end
 end
 
 try
@@ -1704,6 +1725,8 @@ try
         case 'network statistics'
             brant_stat(jobman);
         case 'dicom convert'
+            brant_dicom2nii(jobman);
+        case 'del timepoints'
             brant_dicom2nii(jobman);
         case 'statistics'
             brant_stat(jobman);

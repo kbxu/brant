@@ -15,13 +15,13 @@ function run_data = brant_prep_run(h_main_data, pre_processes)
 % % reserved
 % run_data.pref.parallel = 'off';
 % run_data.pref.sync = 1;
-% run_data.pref.order = {'slicetiming', 'realign', 'normalize', 'denoise', 'filter', 'smooth'};
+% run_data.pref.order = {'slicetiming', 'realign', 'normalise', 'denoise', 'filter', 'smooth'};
 % run_data.pref.dirs_in_text = 0;
 % 
 % % index
 % run_data.ind.slicetiming = 0;
 % run_data.ind.realign = 0;
-% run_data.ind.normalize = 0;
+% run_data.ind.normalise = 0;
 % run_data.ind.denoise = 0;
 % run_data.ind.filter = 0;
 % run_data.ind.smooth = 0;
@@ -60,7 +60,7 @@ for m = 1:numel(pre_processes)
 %             run_data.realign.roptions.mask = '1';
 %             run_data.realign.roptions.prefix = 'r';
 
-        case 'normalize'
+        case 'normalise'
             
             sub_fns = {'subj', 'eoptions', 'roptions'};
             num_fns = {'', {'smosrc', 'smoref', 'cutoff', 'nits', 'reg'}, {'preserve', 'bb', 'vox', 'interp', 'wrap'}};
@@ -68,21 +68,21 @@ for m = 1:numel(pre_processes)
             file_fns = {{'source', 'wtsrc'}, {'template'}, ''};
 %             file_fns = {{'template', 'weight'}, ''};
 %             % estimate
-%             run_data.normalize.eoptions.template = fullfile(fileparts(which('spm')),'templates/EPI.nii');
-%             run_data.normalize.eoptions.weight = '';   % template weighting image
-%             run_data.normalize.eoptions.smosrc = '8';    % source image smoothing
-%             run_data.normalize.eoptions.smoref = '0';    % template image smoothing
-%             run_data.normalize.eoptions.regtype = 'mni';
-%             run_data.normalize.eoptions.cutoff = '25';
-%             run_data.normalize.eoptions.nits = '30';
-%             run_data.normalize.eoptions.reg = '1';
+%             run_data.normalise.eoptions.template = fullfile(fileparts(which('spm')),'templates/EPI.nii');
+%             run_data.normalise.eoptions.weight = '';   % template weighting image
+%             run_data.normalise.eoptions.smosrc = '8';    % source image smoothing
+%             run_data.normalise.eoptions.smoref = '0';    % template image smoothing
+%             run_data.normalise.eoptions.regtype = 'mni';
+%             run_data.normalise.eoptions.cutoff = '25';
+%             run_data.normalise.eoptions.nits = '30';
+%             run_data.normalise.eoptions.reg = '1';
 %             % write
-%             run_data.normalize.roptions.preserve = '0';
-%             run_data.normalize.roptions.bb = '-90 -126 -72;90 90 108';
-%             run_data.normalize.roptions.vox = '2 2 2';
-%             run_data.normalize.roptions.interp = '5';
-%             run_data.normalize.roptions.wrap = '0 0 0';
-%             run_data.normalize.roptions.prefix = 'w';
+%             run_data.normalise.roptions.preserve = '0';
+%             run_data.normalise.roptions.bb = '-90 -126 -72;90 90 108';
+%             run_data.normalise.roptions.vox = '2 2 2';
+%             run_data.normalise.roptions.interp = '5';
+%             run_data.normalise.roptions.wrap = '0 0 0';
+%             run_data.normalise.roptions.prefix = 'w';
 
         case 'denoise'
             

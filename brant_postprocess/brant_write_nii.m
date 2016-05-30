@@ -8,7 +8,7 @@ function brant_write_nii(result_3d, mask_ind, mask_hdr, subj_id, calc_type, outd
 % outdir: directory to restore output file
 % nor_m: index of output normalizd by divided by mean
 % nor_z: index of output normalizd by substracted by mean and divided by standard error
-% out_nor: directories to restore normalized output file
+% out_nor: directories to restore normalised output file
 
 size_mask = mask_hdr.dime.dim(2:4);
 

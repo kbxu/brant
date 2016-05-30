@@ -41,7 +41,7 @@ if any(process_ind)
         end
         
         try
-            data_input_tmp.filetype = jobman.normalize.subj.filetype_src; % 'mean*.nii';
+            data_input_tmp.filetype = jobman.normalise.subj.filetype_src; % 'mean*.nii';
             [nifti_list_mean, subj_ids_tmp] = brant_get_subjs(data_input_tmp);
         catch
             nifti_list_mean = '';
@@ -72,7 +72,7 @@ if any(process_ind)
             end
             
             % »’∫Û‘Ÿ∂œ
-            if any(strcmpi(processes_curr, 'normalize'))
+            if any(strcmpi(processes_curr, 'normalise'))
                 if all(cellfun(@exist, nifti_list_mean))
                     cellfun(@copyfile, nifti_list_mean, output_dirs);
                 end

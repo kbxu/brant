@@ -38,9 +38,9 @@ for mm = 1:numel(split_prefix)
     if (var_ind == 1) && (exist(out_raw_var, 'dir') ~= 7), mkdir(out_raw_var); end
     
     if nor_ind == 1
-        out_nor_z_am = fullfile(out_dir_tmp, 'AM_Normalized_z');
-        out_nor_z_std = fullfile(outdir, 'STD_Normalized_z');
-        out_nor_z_var = fullfile(out_dir_tmp, 'VAR_Normalized_z');
+        out_nor_z_am = fullfile(out_dir_tmp, 'AM_Normalised_z');
+        out_nor_z_std = fullfile(outdir, 'STD_Normalised_z');
+        out_nor_z_var = fullfile(out_dir_tmp, 'VAR_Normalised_z');
         
         if (am_ind == 1) && (exist(out_nor_z_am, 'dir') ~= 7), mkdir(out_nor_z_am); end
         if (std_ind == 1) && (exist(out_nor_z_std, 'dir') ~= 7), mkdir(out_nor_z_std); end

@@ -17,8 +17,8 @@ if exist(outdir_falff, 'dir') ~= 7, mkdir(outdir_falff); end
 
 nor_m_ind = 0;
 if nor_m_ind == 1
-    out_nor_ALFF_m = fullfile(outdir, 'ALFF_Normalized_m');
-    out_nor_fALFF_m = fullfile(outdir, 'fALFF_Normalized_m');
+    out_nor_ALFF_m = fullfile(outdir, 'ALFF_Normalised_m');
+    out_nor_fALFF_m = fullfile(outdir, 'fALFF_Normalised_m');
     if exist(out_nor_ALFF_m, 'dir') ~= 7, mkdir(out_nor_ALFF_m); end
     if exist(out_nor_fALFF_m, 'dir') ~= 7, mkdir(out_nor_fALFF_m); end
 else
@@ -27,8 +27,8 @@ else
 end
 
 if nor_z_ind == 1
-    out_nor_ALFF_z = fullfile(outdir, 'ALFF_Normalized_z');
-    out_nor_fALFF_z = fullfile(outdir, 'fALFF_Normalized_z');
+    out_nor_ALFF_z = fullfile(outdir, 'ALFF_Normalised_z');
+    out_nor_fALFF_z = fullfile(outdir, 'fALFF_Normalised_z');
     if exist(out_nor_ALFF_z, 'dir') ~= 7, mkdir(out_nor_ALFF_z); end
     if exist(out_nor_fALFF_z, 'dir') ~= 7, mkdir(out_nor_fALFF_z); end
 else

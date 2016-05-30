@@ -204,27 +204,12 @@ for mm = 1:numel(split_prefix)
         end
         
         if roi2roi_ind == 1
-            %             corr_r_tot = zeros([num_roi, num_roi, num_subj], 'double');
-            %             corr_z_tot = zeros([num_roi, num_roi, num_subj], 'double');
-            %             corr_p_tot = ones([num_roi, num_roi, num_subj]);
-            
-            %             corr_r_tot = zeros([num_subj, num_corr], 'double');
-            %             corr_z_tot = zeros([num_subj, num_corr], 'double');
-            %             corr_p_tot = ones([num_subj, num_corr]);
-            
-%             out_roi2roi = fullfile(out_dir_tmp, ['roi2roi_', corr_type]);
-%             out_mat = fullfile(out_roi2roi, ['corr_mats_', corr_type]);
             out_mat = fullfile(out_dir_tmp, ['roi2roi_', corr_type]);
             if exist(out_mat, 'dir') ~= 7, mkdir(out_mat); end
         end
         
     else
         % voxel wise correlation
-        %         corr_z_tot = zeros([num_roi, num_roi, num_subj], 'single');
-        %         corr_z_tot = zeros([num_subj, num_roi * (num_roi - 1) / 2], 'single');
-        
-%         out_vox2vox = fullfile(out_dir_tmp, ['vox2vox_', corr_type]);
-%         out_mat = fullfile(out_vox2vox, ['corr_mats_', corr_type]);
         out_mat = fullfile(out_dir_tmp, ['vox2vox_', corr_type]);
         if exist(out_mat, 'dir') ~= 7, mkdir(out_mat); end
     end

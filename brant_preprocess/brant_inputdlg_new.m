@@ -395,7 +395,7 @@ data_fig = get(h_prep_main, 'Userdata');
 outAns = data_fig.(dlg_title);
 
 switch(dlg_title)
-    case {'normalize', 'coregister', 'denoise', 'realign'}
+    case {'normalise', 'normalise12', 'coregister', 'denoise', 'realign'}
         sub_fields_1 = fieldnames(defAns);
         for m = 1:numel(sub_fields_1)
             h_panel = findobj(h_input, 'Tag', sub_fields_1{m}, 'Type', 'uipanel');
@@ -560,8 +560,11 @@ switch(dlg_title)
     case 'coregister'
         pop_str = {'mi','nmi','ecc','ncc'};
         pop_pos = find(strcmp(pop_str, val));
-    case 'normalize'
+    case 'normalise'
         pop_str = {'mni','imni','rigid','subj','eastern','none'};
+        pop_pos = find(strcmp(pop_str, val)); % find(cellfun(@(x) strcmp(x, val), pop_str));
+    case 'normalise12'
+        pop_str = {'mni', 'subj', 'eastern', 'none', ''};
         pop_pos = find(strcmp(pop_str, val)); % find(cellfun(@(x) strcmp(x, val), pop_str));
     case {'denoise', 'filter'}
         pop_str = {'group tsnr', 'none'};

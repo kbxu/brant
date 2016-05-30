@@ -30,7 +30,7 @@ for mm = 1:numel(split_prefix)
     if exist(out_raw, 'dir') ~= 7, mkdir(out_raw); end
 
     if jobman.nor == 1
-        out_nor_m = fullfile(out_dir_tmp, 'ReHo_Normalized_m');
+        out_nor_m = fullfile(out_dir_tmp, 'ReHo_Normalised_m');
         if exist(out_nor_m, 'dir') ~= 7, mkdir(out_nor_m); end
     else
         out_nor_m = '';

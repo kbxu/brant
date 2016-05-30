@@ -20,8 +20,8 @@ out_Sigma_raw = fullfile(outdir, 'fGn_Sigma_raw');
 mkdir(out_Hurst_raw);
 mkdir(out_Sigma_raw);
 if jobman.nor == 1
-    out_hurst_m = fullfile(outdir, 'Hurst_Normalized_m');
-    out_sigma_m = fullfile(outdir, 'Sigma_Normalized_m');
+    out_hurst_m = fullfile(outdir, 'Hurst_Normalised_m');
+    out_sigma_m = fullfile(outdir, 'Sigma_Normalised_m');
     mkdir(out_hurst_m);
     mkdir(out_sigma_m);
 end

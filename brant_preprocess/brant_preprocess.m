@@ -33,7 +33,7 @@ switch upper(varargin{1})
         end
 
 %     case 'RST_BTN',
-%         processes = {'slicetiming', 'realign', 'normalize', 'denoise', 'filter', 'smooth'};
+%         processes = {'slicetiming', 'realign', 'normalise', 'denoise', 'filter', 'smooth'};
 %         for n = 1:length(processes)
 %             set(findobj(0,'Tag',[processes{n},'_chb']),'Value',0);
 %         end
@@ -217,6 +217,54 @@ else
     end
 end
 
+function spm12_norm_chb_cb(obj, evd)
+
+h_fig = gcf;
+obj_val = get(obj, 'Value');
+fig_opts = get(h_fig, 'Userdata');
+
+if fig_opts.pref.norm12_ind == 1
+    win_str = 'normalise12';
+else
+    win_str = 'normalise';
+end
+
+h_win = findobj(0, 'Name', win_str);
+if ~isempty(h_win)
+    figure(h_win);
+    set(obj, 'Value', fig_opts.pref.norm12_ind);
+    return;
+end
+    
+if obj_val == 1
+    h_opt = findobj(h_fig, 'Tag', 'normalise_input');
+    set(h_opt, 'Tag', 'normalise12_input');
+    h_opt_chb = findobj(h_fig, 'Tag', 'normalise_chb');
+    set(h_opt_chb, 'Tag', 'normalise12_chb');
+    norm_ind = cellfun(@(x) strcmp(x, 'normalise'), fig_opts.pref.order);
+    fig_opts.pref.order{norm_ind} = 'normalise12';
+    
+    if get(h_opt_chb, 'Value') == 1
+        fig_opts.ind.normalise = 0;
+        fig_opts.ind.normalise12 = 1;
+    end
+else
+    h_opt = findobj(h_fig, 'Tag', 'normalise12_input');
+    set(h_opt, 'Tag', 'normalise_input');
+    h_opt_chb = findobj(h_fig, 'Tag', 'normalise12_chb');
+    set(h_opt_chb, 'Tag', 'normalise_chb');
+    norm_ind = cellfun(@(x) strcmp(x, 'normalise12'), fig_opts.pref.order);
+    fig_opts.pref.order{norm_ind} = 'normalise';
+    
+    if get(h_opt_chb, 'Value') == 1
+        fig_opts.ind.normalise = 1;
+        fig_opts.ind.normalise12 = 0;
+    end
+end
+
+set(h_fig, 'Userdata', fig_opts);
+brant_update_pre_disp;
+
 function pre_chb_cb(obj, evd)
 
 h_fig = gcf;
@@ -224,7 +272,14 @@ obj_tag = get(obj, 'Tag');
 obj_val = get(obj, 'Value');
 fig_opts = get(h_fig, 'Userdata');
 
-fig_opts.ind.(obj_tag(1:end-4)) = obj_val;
+str = obj_tag(1:end-4);
+if (strcmp(str, 'normalise') || strcmp(str, 'normalise12')) && obj_val == 0
+    fig_opts.ind.normalise = 0;
+    fig_opts.ind.normalise12 = 0;
+else
+    fig_opts.ind.(obj_tag(1:end-4)) = obj_val;
+end
+
 set(h_fig, 'Userdata', fig_opts);
 brant_update_pre_disp;
 
@@ -487,7 +542,7 @@ prep_btnOpt = {...
     '> >',      [220, 270, 60, 20],     'slicetiming_input';...
     '> >',      [220, 220, 60, 20],     'realign_input';...
     '> >',      [220, 170, 60, 20],    'coregister_input';...
-    '> >',      [220, 120, 60, 20],     'normalize_input';...
+    '> >',      [220, 120, 60, 20],     'normalise_input';...
     '> >',      [220, 70, 60, 20],     'denoise_input';...
     '> >',      [220, 20, 60, 20],      'smooth_input'};
 prep_btnOpt = [prep_btnOpt, repmat({@input_cb}, size(prep_btnOpt, 1), 1)];
@@ -498,7 +553,7 @@ prep_chbOpt = {...
     'Slice timing',     [10, 270, 100, 20],     'slicetiming_chb';...
     'Realign',          [10, 220, 100, 20],     'realign_chb';...
     'Coregister (Optional)',       [10, 170, 100, 20],     'coregister_chb';...
-    'Normalize',        [10, 120, 100, 20],     'normalize_chb';...
+    'Normalise',        [10, 120, 100, 20],     'normalise_chb';...
     'Denoise',          [10, 70, 100, 20],     'denoise_chb';...
     'Smooth',           [10, 20, 100, 20],      'smooth_chb'};
 prep_chbOpt = [prep_chbOpt, repmat({@pre_chb_cb}, size(prep_chbOpt, 1), 1)];
@@ -508,8 +563,8 @@ create_ui(prep_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, select_inds);
 
 
 sel_spm12_ind = strcmp(spm('ver'), 'SPM12') == 1;
-norm_spm12_chbOpt = {'spm12', [100, 120, 100, 20], 'norm_spm12_chb', @pre_chb_cb};
-h_spm12 = create_ui(norm_spm12_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, 0);
+norm_spm12_chbOpt = {'spm12', [100, 120, 100, 20], 'norm_spm12_chb', @spm12_norm_chb_cb};
+h_spm12 = create_ui(norm_spm12_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, brant_pps.pref.norm12_ind);
 if sel_spm12_ind == 1, spm_norm_ena = 'on'; else spm_norm_ena = 'off'; end;
 set(h_spm12{1}, 'Enable', spm_norm_ena);
 

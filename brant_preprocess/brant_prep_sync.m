@@ -5,11 +5,11 @@ switch(prep_type)
     case 'slicetiming'
         brant_preps.denoise.filter.tr = brant_preps.slicetiming.tr;
     case 'coregister'
-        brant_preps.normalize.subj.filetype_src = [brant_preps.coregister.roptions.prefix, brant_preps.coregister.subj.filetype_src];
+        brant_preps.normalise.subj.filetype_src = [brant_preps.coregister.roptions.prefix, brant_preps.coregister.subj.filetype_src];
     case 'denoise'
-%         brant_preps.normalize.roptions.vox = brant_preps.denoise.subj.voxelsize;
-    case 'normalize'
-%         brant_preps.denoise.subj.voxelsize = brant_preps.normalize.roptions.vox;
+%         brant_preps.normalise.roptions.vox = brant_preps.denoise.subj.voxelsize;
+    case 'normalise'
+%         brant_preps.denoise.subj.voxelsize = brant_preps.normalise.roptions.vox;
         
 %         vox_size = brant_preps.denoise.subj.voxelsize;
 %         if all(vox_size == vox_size(1))
@@ -38,9 +38,9 @@ switch(prep_type)
 %             end
 %         end
     case 'initial'
-        fprintf('Parameters were set to reference values in\nslicetiming (TR), normalize (voxel size), denoise(timepoints, wholebrain mask)');
+        fprintf('Parameters were set to reference values in\nslicetiming (TR), normalise (voxel size), denoise(timepoints, wholebrain mask)');
         brant_preps.denoise.filter.tr = brant_preps.slicetiming.tr;
-%         brant_preps.denoise.subj.voxelsize = brant_preps.normalize.roptions.vox;
+%         brant_preps.denoise.subj.voxelsize = brant_preps.normalise.roptions.vox;
 end
 
 data_fig = brant_preps;

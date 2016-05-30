@@ -5,7 +5,7 @@ file_dirs = brant_get_dirs_from_data(data_files, is4d_ind);
 file_ref = brant_get_subjs2(file_dirs, 1, coreg_infos.subj.filetype_ref);
 file_src = brant_get_subjs2(file_dirs, 1, coreg_infos.subj.filetype_src);
 
-fprintf('\n*\tDoing normalize*\n');
+fprintf('\n*\tDoing normalise*\n');
 if par == 0
     for m = 1:numel(file_src)
         loop_coregister(file_src{m}, file_ref{m}, coreg_infos, file_dirs{m});

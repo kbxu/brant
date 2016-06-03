@@ -10,12 +10,6 @@ function brant_roi_script(jobman)
 % jobman_str: could be either 'roi2roi' or 'roi2wb'. In script, can be both --> {'roi2roi', 'roi2wb'}
 % updated by kb at 2015-03-16
 
-
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
-brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
-
-
 roi_wise_ind = jobman.roi_wise;
 rois = jobman.rois;
 mask_fn = jobman.mask{1};
@@ -28,8 +22,19 @@ pearson_ind = jobman.pearsoncorr;
 roi_info_fn = jobman.roi_info{1};
 vs_thres = jobman.roi_thres; % threshold of voxel size
 
+brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n')
 
+if isempty(jobman.mask)
+    error(sprintf('\tA whole brain mask is expected!\n'));
+end
 
+if isempty(jobman.out_dir)
+    error(sprintf('\tPlease specify an output directories!\n'));
+end
+
+if isempty(jobman.input_nifti.dirs{1})
+    error(sprintf('\tPlease input data directories!\n'));
+end
 
 % if roi_wise_ind == 0
 if any([roi2roi_ind, roi2wb_ind])
@@ -48,7 +53,9 @@ end
 % end
 
 if roi_wise_ind == 1
-    brant_check_empty(jobman.rois{1}, '\tPlease input one roi file!\n');
+    if isempty(jobman.rois{1})
+        error(sprintf('\tPlease input one roi file!\n')); %#ok<*SPERR>
+    end
     
     if all([ext_mean_ind, roi2roi_ind, roi2wb_ind] == 0)
         error('No calculations.')

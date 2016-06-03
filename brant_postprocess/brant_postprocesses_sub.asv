@@ -1641,24 +1641,78 @@ for m = 1:size(prompt, 1)
     end
 end
 
+function [split_prefix, split_strs] = extract_input_info(jobman)
+
+ind_type = {'matrix', 'volume'};
+ind_type_info = {'input_matrix', 'input_nifti'};
+
+ind = isfield(jobman, ind_type);
+if any(ind)
+    [split_prefix, split_strs] = brant_parse_filetype(jobman.(ind_type_info{ind}).filetype);
+    
+    for m = 1:numel(split_prefix)
+        jobman_tmp = jobman;
+        jobman_tmp.input_nifti.filetype = split_prefix{m};
+        [nifti_list, subj_ids] = brant_get_subjs(jobman_tmp.(ind_type_info{ind}));
+        
+        
+        
+    end
+    
+    
+    
+    
+else
+    split_prefix = cell(1);
+    split_strs = cell(1);
+    return;
+end
+
+if (ind(2)) % input for volume
+    
+end
+
+
+
+
 function run_cb(obj, evd)
 h_parent = get(obj, 'Parent');
 jobman = get(h_parent, 'Userdata');
 dlg_title = get(h_parent, 'Name');
 
 if isfield(jobman, 'out_dir')
+    
     if ~isfield(jobman, 'out_ind')
-        if isempty(jobman.out_dir), error('Please input a directory for output!'); end
-        if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
+        if isempty(jobman.out_dir)
+            error('Please input a directory for output!');
+        end
+
+        if exist(jobman.out_dir{1}, 'dir') ~= 7
+            mkdir(jobman.out_dir{1});
+        end
     else
         if jobman.out_ind == 1
-            if isempty(jobman.out_dir), error('Please input a directory for output!'); end
-            if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
+            if isempty(jobman.out_dir)
+                error('Please input a directory for output!');
+            end
+
+            if exist(jobman.out_dir{1}, 'dir') ~= 7
+                mkdir(jobman.out_dir{1});
+            end
         end
     end
 end
 
 try
+%     put it here
+    jobman_raw = jobman;
+    
+    extract_input_info(jobman);
+
+
+
+
+
     switch(lower(dlg_title))
         case 'draw roi'
             brant_draw_rois(jobman);

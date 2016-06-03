@@ -537,8 +537,7 @@ create_ui(sys_btnOpt, 'pushbutton', h.fig_Preprocess, btn_bkgColor);
 prep_panelOpt = {'', [20, 55, 300, 300],   'prep_panel_chbd'};
 h_panel_prep = create_ui(prep_panelOpt, 'panel', h.fig_Preprocess, uipColor);
 
-% use normalise in SPM12
-sel_spm12_ind = strcmp(spm('ver'), 'SPM12') == 1;
+
 
 % Create uis for preprocesses
 prep_btnOpt = {...
@@ -548,9 +547,9 @@ prep_btnOpt = {...
     '> >',      [220, 120, 60, 20],     'normalise_input';...
     '> >',      [220, 70, 60, 20],     'denoise_input';...
     '> >',      [220, 20, 60, 20],      'smooth_input'};
-if sel_spm12_ind == 1
-    prep_btnOpt{4, 3} = 'normalise12_input';
-end
+% if sel_spm12_ind == 1
+%     prep_btnOpt{4, 3} = 'normalise12_input';
+% end
 prep_btnOpt = [prep_btnOpt, repmat({@input_cb}, size(prep_btnOpt, 1), 1)];
 create_ui(prep_btnOpt, 'pushbutton', h_panel_prep{1}, btn_bkgColor);
 
@@ -564,21 +563,23 @@ prep_chbOpt = {...
     'Normalise',        [10, 120, 100, 20],     'normalise_chb';...
     'Denoise',          [10, 70, 100, 20],     'denoise_chb';...
     'Smooth',           [10, 20, 100, 20],      'smooth_chb'};
-if sel_spm12_ind == 1
-    prep_chbOpt{4, 3} = 'normalise12_chb';
-end
+% if sel_spm12_ind == 1
+%     prep_chbOpt{4, 3} = 'normalise12_chb';
+% end
 prep_chbOpt = [prep_chbOpt, repmat({@pre_chb_cb}, size(prep_chbOpt, 1), 1)];
 fn_tmp = cellfun(@(x) x(1:end-4), prep_chbOpt(:,3), 'UniformOutput', false);
 select_inds = cellfun(@(x) brant_pps.ind.(x), fn_tmp);
 create_ui(prep_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, select_inds);
 
 
-% sel_spm12_ind = strcmp(spm('ver'), 'SPM12') == 1;
+sel_spm12_ind = strcmp(spm('ver'), 'SPM12') == 1;
 norm_spm12_chbOpt = {'spm12', [100, 120, 100, 20], 'norm_spm12_chb', @spm12_norm_chb_cb};
 h_spm12 = create_ui(norm_spm12_chbOpt, 'checkbox', h_panel_prep{1}, uipColor, brant_pps.pref.norm12_ind);
 if sel_spm12_ind == 1, spm_norm_ena = 'on'; else spm_norm_ena = 'off'; end;
 set(h_spm12{1}, 'Enable', spm_norm_ena);
-% spm12_norm_chb_cb(h_spm12, '');
+figure(h.fig_Preprocess);
+spm12_norm_chb_cb(h_spm12{1}, '');
+
 
 h_chbd = findobj(h.fig_Preprocess, 'Tag', 'chbd_chb');
 set(allchild(h.fig_Preprocess), 'Units', 'pixels'); % axes and uipanel

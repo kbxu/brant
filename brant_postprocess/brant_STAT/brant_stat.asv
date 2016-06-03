@@ -137,8 +137,10 @@ switch(out_info.data_type)
         mat_list_good = mat_list(subj_ind);
         corr_mat = cellfun(@load, mat_list_good, 'UniformOutput', false);
         
+        
+        
+        
         if jobman.sym_ind == 1
-            % symmetric matrix, use only half value
             num_rois = size(corr_mat{1}, 1);
             corr_ind = triu(true(num_rois), 1);
             if strcmpi(stat_type, 'paired t-test') == 1
@@ -152,9 +154,7 @@ switch(out_info.data_type)
                 data_2d_mat = double(data_2d_mat(:, corr_ind));
             end
             out_info.mat_size = [num_rois, num_rois];
-            out_info.corr_ind = corr_ind;
         else
-            % arbitary matrix, use all value
             if strcmpi(stat_type, 'paired t-test') == 1
                 data_2d_mat = cell(1, numel(corr_mat));
                 for m = 1:size(corr_mat, 2)
@@ -166,12 +166,13 @@ switch(out_info.data_type)
                 data_2d_mat = reshape(data_2d_mat, size(data_2d_mat, 1), []);
             end
             out_info.mat_size = size(corr_mat{1});
-            out_info.corr_ind = true(out_info.mat_size);
         end
-        clear('corr_mat');
         
         out_info.sym_ind = jobman.sym_ind;
+        
         out_info.num_rois = num_rois;
+        out_info.corr_ind = triu(true(num_rois), 1);
+        
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
               test_ind, out_info);
           
@@ -213,12 +214,11 @@ switch(out_info.data_type)
 
             corr_tmp = load(mat_list_good{1}, 'num_roi', 'rois_str', 'rois_tag');
             num_rois = corr_tmp.num_roi;
-%             out_info.rois_str = corr_tmp.rois_str;
-%             out_info.rois_tag = corr_tmp.rois_tag;
+            out_info.rois_str = corr_tmp.rois_str;
+            out_info.rois_tag = corr_tmp.rois_tag;
 
 %             out_info.corr_ind = corr_ind;
-            out_info.mat_size = [num_rois, num_rois];
-            out_info.sym_ind = 1;
+            out_info.num_rois = num_rois;
             clear('corr_mat', 'corr_tmp');
 
             data_2d_mat = double(data_2d_mat);

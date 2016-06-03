@@ -169,6 +169,6 @@ brant_pps.denoise.filter.upper_cutoff = 0.08;
 
 % smooth
 brant_pps.smooth.fwhm  = [6 6 6];
-brant_pps.smooth.prefix  = 's';
+brant_pps.smooth.prefix  = 's6';
 brant_pps.smooth.dtype = 0;
 brant_pps.smooth.im = 1;

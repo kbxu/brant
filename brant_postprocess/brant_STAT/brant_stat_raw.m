@@ -95,7 +95,7 @@ if one_samp_ind == 1
                 save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
                                  test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.p_thr, p_vec_R);
             case 'stat matrix'
-                save_results_mat(out_info.outdir, out_info.out_prefix, out_info.num_rois, out_info.rois_str, out_info.rois_tag, stat_val, out_info.corr_ind,...
+                save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                  test_fn, out_info.multi_use, out_info.p_thr, p_vec_R, group_est_one{m}, df_stu, subjs);
              case 'stat matrix - voxel to voxel'
                 out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
@@ -335,7 +335,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                     save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
                                      test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.p_thr, p_vec_R);
                 case 'stat matrix'
-                    save_results_mat(out_info.outdir, out_info.out_prefix, out_info.num_rois, out_info.rois_str, out_info.rois_tag, stat_val, out_info.corr_ind,...
+                    save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                      test_fn, out_info.multi_use, out_info.p_thr, p_vec_R, group_est, df_stu, subjs);
                 case 'stat matrix - voxel to voxel'
                     out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
@@ -409,16 +409,18 @@ if ~isempty(multi_use)
     end
 end
 
-function save_results_mat(outdir, out_prefix, num_rois, rois_str, rois_tag, stat_val, corr_ind, test_fn, multi_use, p_thr, p_vec_R, group_est, df, subjs) %#ok<INUSD,INUSL>
+function save_results_mat(outdir, out_prefix, mat_size, sym_ind, rois_tag, stat_val, corr_ind, test_fn, multi_use, p_thr, p_vec_R, group_est, df, subjs) %#ok<INUSD,INUSL>
 
 contrs = {'gt', 'st', 'diff'};
 contrs_tail = {'right', 'left', 'both'};
 
 % num_rois = numel(rois_str);
-t_rst = zeros([num_rois, num_rois], 'double');
+t_rst = zeros(mat_size, 'double');
 t_rst_vec = stat_val;
 t_rst(corr_ind) = t_rst_vec;
-t_rst = t_rst + t_rst';
+if sym_ind == 1
+    t_rst = t_rst + t_rst';
+end
 
 p_rst_unc = cell(numel(contrs), 1);
 h_rst_unc = cell(numel(contrs), 1);
@@ -435,38 +437,18 @@ for n_contr = 1:numel(contrs)
         case 'diff'
             p_vec = 2 * min([p_vec_R; p_vec_L]);
         otherwise
-            error('dooooooooonnnnnnnnnnnnnnttttttttttt know!');
+            error('unknown input!');
     end
 
-    p_rst_unc{n_contr} = zeros([num_rois, num_rois], 'double');
+    p_rst_unc{n_contr} = zeros(mat_size, 'double');
     p_rst_unc{n_contr}(corr_ind) = p_vec;
-    p_rst_unc{n_contr} = p_rst_unc{n_contr} + p_rst_unc{n_contr}'; %#ok<*NASGU>
+    if sym_ind == 1
+        p_rst_unc{n_contr} = p_rst_unc{n_contr} + p_rst_unc{n_contr}'; %#ok<*NASGU>
+    end
 
     h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < p_thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
     tail_rst{n_contr} = contrs_tail{n_contr};
 end
-
-
-% mean_grp1 = zeros([num_rois, num_rois], 'double');
-% mean_grp2 = zeros([num_rois, num_rois], 'double');
-% std_grp1 = zeros([num_rois, num_rois], 'double');
-% std_grp2 = zeros([num_rois, num_rois], 'double');
-% 
-% mean_grp1(corr_ind) = stat_info_tmp.mean_grp_1_vec;
-% mean_grp2(corr_ind) = stat_info_tmp.mean_grp_2_vec;
-% std_grp1(corr_ind) = stat_info_tmp.std_grp_1_vec;
-% std_grp2(corr_ind) = stat_info_tmp.std_grp_2_vec;
-% 
-% stat_info.mean_grp1 = mean_grp1 + mean_grp1';
-% stat_info.mean_grp2 = mean_grp2 + mean_grp2';
-% stat_info.std_grp1 = std_grp1 + std_grp1';
-% stat_info.std_grp2 = std_grp2 + std_grp2';
-% 
-% stat_info.n_subj1 = stat_info_tmp.num_subj_grp1;
-% stat_info.n_subj2 = stat_info_tmp.num_subj_grp2;
-% 
-% stat_info.se_grp1 = stat_info.std_grp1 ./ sqrt(stat_info.n_subj1);
-% stat_info.se_grp2 = stat_info.std_grp2 ./ sqrt(stat_info.n_subj2);
 
 out_fn_unc = fullfile(outdir, [out_prefix, sprintf('%s.mat', test_fn)]);
 save(out_fn_unc, 'group_est', 'tail_rst', 'p_rst_unc', 'h_rst_unc', 't_rst', 'df', 'subjs', 'rois_str', 'rois_tag', '-v7.3');
@@ -483,9 +465,11 @@ if ~isempty(multi_use)
         t_mat_thres_tmp = brant_multi_thres_t(p_vec_L, p_vec_R, p_thr, multi_use{n}, t_rst_vec);
 
         if ~isempty(t_mat_thres_tmp)
-            t_mat_thres_mat = zeros([num_rois, num_rois], 'double');
+            t_mat_thres_mat = zeros(mat_size, 'double');
             t_mat_thres_mat(corr_ind) = t_mat_thres_tmp;
-            t_mat_thres_mat = t_mat_thres_mat + t_mat_thres_mat';
+            if sym_ind == 1
+                t_mat_thres_mat = t_mat_thres_mat + t_mat_thres_mat';
+            end
 
             h_rst.(multi_use{n}) = t_mat_thres_mat;
             h_rst.(multi_use{n})(t_mat_thres_mat > 0) = 1;

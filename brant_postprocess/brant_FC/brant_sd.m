@@ -1,4 +1,5 @@
 function brant_sd(jobman)
+% short-distant degree
 
 bn_path = fullfile(fileparts(which('brant')), 'brant_postprocess', 'brant_FC');
 

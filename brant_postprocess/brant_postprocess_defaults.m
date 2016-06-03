@@ -1,6 +1,7 @@
 function [process_pars, ui_strucs] = brant_postprocess_defaults(process_str)
 
 brant_path = fileparts(which('brant'));
+def_wb_mask = fullfile(brant_path, 'template', 'fmaskEPI_V2mm.nii');
 
 % string, ui_type, structure field.
 switch(lower(process_str))
@@ -93,7 +94,7 @@ switch(lower(process_str))
             {{'edit', 'str_dir'},     'out dir',     {'out_dir'},      ''}];
         
     case 'tsnr'
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             ''};
         
         [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_nifti', 'disp_dirs_nii');
@@ -150,7 +151,7 @@ switch(lower(process_str))
             {'edit', 'str_dir'},     'out dir',     {'out_dir'},      ''}];
         
     case 'extract time series'
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.no_nan = 1;
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             '';...
             };
@@ -163,7 +164,7 @@ switch(lower(process_str))
         process_pars.matrix = 1;
         process_pars.volume = 0;
         process_pars.corr_mat = '';
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.rois = {''};
         process_pars.roi_info = {''};
         process_pars.discard_bad_subj = 1;
@@ -208,7 +209,7 @@ switch(lower(process_str))
         process_pars.matrix = 0;
         process_pars.volume = 1;
         process_pars.corr_mat = '';
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.rois = {''};
         process_pars.roi_info = {''};
         process_pars.subj_prefix = '';
@@ -236,7 +237,7 @@ switch(lower(process_str))
         process_pars.roi2wb = 1;
         process_pars.partialcorr = 0;
         process_pars.pearsoncorr = 1;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.rois = {''};
         process_pars.roi_info = {''};
         process_pars.roi_thres = 0;
@@ -263,7 +264,7 @@ switch(lower(process_str))
     case 'fcd'
         process_pars.cpu = 1;
         process_pars.gpu = 0;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.out_dir = '';
         ui_strucs = {{'radio', 'hor_txt'},   'compute',               {{'cpu', 'gpu'}},                          '';...
             {'edit', 'str_mask'},       'mask',   {'mask'},             '';...
@@ -276,7 +277,7 @@ switch(lower(process_str))
         process_pars.par_workers = 0;
         process_pars.thres_corr_bin = 1;
         process_pars.threshold_corr = 0.3:0.01:0.6;
-        process_pars.matrix_type = 'raw value (corr_z)' ;
+        process_pars.matrix_type = 'raw value' ;
         process_pars.thres_spar_bin = 1;
         process_pars.threshold_spar = 0.05:0.01:0.2;
         process_pars.mst = 1;
@@ -287,10 +288,10 @@ switch(lower(process_str))
         {'edit', 'num_short_right'},      'parallel workers',       {'par_workers'},              '';...
         };
     
-        [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_3d_matrix');
+        [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_2d_txt');
         ui_strucs = [ui_strucs;...
             {...
-            {'popupmenu_right', 'disp_view_opts'},      'matrix type',    {{{'matrix_type'};'raw value (corr_z)';'raw value (corr_r)';'absolute value (corr_z)';'absolute value (corr_r)'}},              '';...
+            {'popupmenu_right', 'disp_view_opts'},      'matrix type',    {{{'matrix_type'};'raw value';'absolute value'}},              '';...
             {'chb', 'num_bin'},       'thresholds of correlation coefficient',         {'thres_corr_bin'},             '';...
             {'edit', 'num_short_right'},      'correlation thres',       {'threshold_corr'},              '';...
             {'chb', 'num_bin'},       'thresholds of sparsity',         {'thres_spar_bin'},             '';...
@@ -314,7 +315,7 @@ switch(lower(process_str))
         ...process_pars.net_mat = '';
         process_pars.out_dir = '';
         
-        [process_pars, ui_strucs] = sub_uis_func(process_pars, [], 'input_matrix', 'disp_3d_matrix');
+        [process_pars, ui_strucs] = sub_uis_func(process_pars, [], 'input_matrix', 'disp_2d_mat');
         
         ui_strucs = [ui_strucs;...
             {...
@@ -331,7 +332,7 @@ switch(lower(process_str))
         
     case 'am'
         process_pars.timepoint = 0;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.nor = 1;
         
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             '';...
@@ -357,7 +358,7 @@ switch(lower(process_str))
         
     case 'fgn'
         process_pars.timepoint = 0;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.nor = 1;
         
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             '';...
@@ -375,7 +376,7 @@ switch(lower(process_str))
     case 'reho'
         process_pars.timepoint = 0;
         process_pars.neighbour_num = 26;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.nor = 1;
         
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             '';...
@@ -397,7 +398,7 @@ switch(lower(process_str))
         process_pars.lower_thr = 0.01;
         process_pars.higher_thr = 0.08;
         process_pars.nor = 1;
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         
         ui_strucs = {{'edit', 'str_mask'},       'mask',         {'mask'},             '';...
             };
@@ -424,7 +425,7 @@ switch(lower(process_str))
         process_pars.fdr2 = 1;
         process_pars.bonf = 1;
         
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.discard_bad_subj = 1;
         process_pars.regr_strs = '';
         process_pars.grp_filter = '';
@@ -434,14 +435,15 @@ switch(lower(process_str))
         process_pars.matrix = 1;
         process_pars.volume = 0;
         process_pars.mat_vox2vox = 0;
-            
+        process_pars.sym_ind = 1;
+        
     ui_strucs = {...
         {'radio', 'hor_txt'},   'data',               {{'matrix', 'volume'}},                          '';...
         {'seperator', 'str'}, '====== input for matrix or volume ======', '', '';...
         {'chb', 'num_bin'},          'data from voxel to voxel corr',   {'mat_vox2vox'},                          '';...
-        ...{'edit', 'str_mat'},       'FC file (*.mat)',   {'corr_mat'},                 '';...
+        {'chb', 'num_bin'},          'symmetric matrix',   {'sym_ind'},                          '';...
         };
-    [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_3d_matrix');
+    [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_2d_txt');
     
     ui_strucs = [ui_strucs;...
         {{'edit', 'str_mask'},       'mask',         {'mask'},             '';}...
@@ -473,7 +475,7 @@ switch(lower(process_str))
         process_pars.friston = 0;
         process_pars.nicolas = 0;
         
-        process_pars.mask = '';
+        process_pars.mask = def_wb_mask;
         process_pars.num_subjs_tbl = '';
         process_pars.p_thr = 0.05;
         process_pars.fdr = 0;
@@ -490,7 +492,7 @@ switch(lower(process_str))
         
         [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_nifti', 'disp_3d_nifti');
         %         process_pars.input_nifti.filetype = '*.nii/mat';
-        [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_3d_matrix');
+        [process_pars, ui_strucs] = sub_uis_func(process_pars, ui_strucs, 'input_matrix', 'disp_2d_mat');
         
         process_pars.input_matrix.filetype = 'ttest2*.mat';
         
@@ -571,13 +573,10 @@ switch(lower(process_str))
         process_pars.disp_surface = 1;
         process_pars.disp_legend = 0;
         process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
-        process_pars.rois = {fullfile(brant_path, 'template', 'spm12_masks', 'GM_brain.nii')};
+        process_pars.rois = {fullfile(brant_path, 'template', 'spm12_masks', 'labels_Neuromorphometrics.nii')};
         process_pars.roi_vec = [23,30,31,32];
         process_pars.roi_info = {fullfile(brant_path, 'template', 'spm12_masks', 'labels_Neuromorphometrics.txt')};
         process_pars.mode_display = 'axial down';
-        ...process_pars.spin_angle = '';
-%         process_pars.rand_color = 1;
-%         process_pars.input_color = 0;
         process_pars.random = 1;
         process_pars.input = 0;
         process_pars.color_input = {''};
@@ -681,7 +680,7 @@ switch(ui_type)
         process_pars.(struc_1).is4d = 1;
         
         ui_strucs = [ui_strucs;...
-            {{'edit', 'num_short_right'},       'name position',            {struc_1, 'nm_pos'},               '';...
+            {{'edit', 'num_short_right'},       'id index',            {struc_1, 'nm_pos'},               '';...
             {'edit', 'str_filetype_nifti'},       'filetype',           {struc_1, 'filetype'},             '';...
             {'chb', 'num_bin'},          '4D nifti files (3D if unchecked)',    {struc_1, 'is4d'},                          '';...
             {'edit', 'disp_dirs_nii'},       'input dirs',   {struc_1, 'dirs'},                 '';...
@@ -694,28 +693,34 @@ switch(ui_type)
         process_pars.(struc_1).dirs = {''};
         
         ui_strucs = [ui_strucs;...
-            {{'edit', 'num_short_right'},      'name position',  {struc_1, 'nm_pos'},               '';...
+            {{'edit', 'num_short_right'},      'id index',  {struc_1, 'nm_pos'},               '';...
             {'edit', 'str_filetype_nifti'},    'filetype',           {struc_1, 'filetype'},             '';...
             {'edit', 'disp_dirs_nii'},       'input dirs',   {struc_1, 'dirs'},                 '';...
             }];
-        if strcmpi(ui_type, 'disp_3d_matrix')
-            process_pars.(struc_1).filetype = '*.mat';
-        end
     
-    case {'disp_3d_matrix'}
+    case {'disp_2d_mat'}
         
         process_pars.(struc_1).nm_pos = 0;
-        process_pars.(struc_1).filetype = '*.nii';
+        process_pars.(struc_1).filetype = '*.mat';
         process_pars.(struc_1).dirs = {''};
         
         ui_strucs = [ui_strucs;...
-            {{'edit', 'num_short_right'},      'name position',  {struc_1, 'nm_pos'},               '';...
-            {'edit', 'str_filetype_matrix'},    'filetype',           {struc_1, 'filetype'},             '';...
+            {{'edit', 'num_short_right'},      'id index',  {struc_1, 'nm_pos'},               '';...
+            {'edit', 'str_filetype_mat'},    'filetype',           {struc_1, 'filetype'},             '';...
             {'edit', 'disp_dirs_nii'},       'input dirs',   {struc_1, 'dirs'},                 '';...
             }];
-        if strcmpi(ui_type, 'disp_3d_matrix')
-            process_pars.(struc_1).filetype = '*.mat';
-        end
+	
+	case {'disp_2d_txt'}
+        
+        process_pars.(struc_1).nm_pos = 0;
+        process_pars.(struc_1).filetype = '*.txt';
+        process_pars.(struc_1).dirs = {''};
+        
+        ui_strucs = [ui_strucs;...
+            {{'edit', 'num_short_right'},      'id index',  {struc_1, 'nm_pos'},               '';...
+            {'edit', 'str_filetype_txt'},    'filetype',           {struc_1, 'filetype'},             '';...
+            {'edit', 'disp_dirs_nii'},       'input dirs',   {struc_1, 'dirs'},                 '';...
+            }];
         
     case 'disp_dirs_only' % dicom
         
@@ -723,7 +728,7 @@ switch(ui_type)
         process_pars.(struc_1).dirs = {''};
         
         ui_strucs = [ui_strucs;...
-            {{'edit', 'num_short_right'},       'name position',            {struc_1, 'nm_pos'},               '';...
+            {{'edit', 'num_short_right'},       'id index',            {struc_1, 'nm_pos'},               '';...
             {'edit', 'disp_dirs_nii'},       'input dirs',   {struc_1, 'dirs'},                 '';...
             }];
 end

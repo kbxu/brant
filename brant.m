@@ -1,6 +1,6 @@
 function varargout = brant(Action, varargin)
 % BRANT   BRAinNetome Toolkit
-%   Authors: HU Yong, 2011-02-26
+%   Authors: Kaibin XU, Yafeng ZHAN, Yong HU, Yong LIU
 %   Usages: brant(Action)
 %         Action maybe { ''(empty)| 'Init' | 'Restart'  | 'Resize' |
 %         'Path' | 'Preprocess' | 'Net' | 'Spon' | 'FC' | 'Stat'   | 
@@ -12,8 +12,8 @@ function varargout = brant(Action, varargin)
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 2.82;
-% $Release = 20160505;
+% $Version = 2.85;
+% $Release = 20160531;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles

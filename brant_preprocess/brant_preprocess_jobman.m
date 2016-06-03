@@ -53,13 +53,13 @@ if any(process_ind)
         for m = 1:numel(output_dirs)
             if exist(output_dirs{m}, 'dir') ~= 7
                 mkdir(output_dirs{m});
-                fprintf('Copy file %s to %s.\n', nifti_list_tmp{m}, output_dirs{m});
+                fprintf('Copy %s to %s.\n', nifti_list_tmp{m}, output_dirs{m});
                 copyfile(nifti_list_tmp{m}, output_dirs{m});
             end
         end
         if all(cellfun(@exist, nifti_list_tmp_mat))
             for m = 1:numel(output_dirs)
-                %                 fprintf('Copy file %s to %s.\n', nifti_list_tmp_mat{m}, output_dirs{m});
+                fprintf('Copy %s to %s.\n', nifti_list_tmp_mat{m}, output_dirs{m});
                 copyfile(nifti_list_tmp_mat{m}, output_dirs{m});
             end
         end
@@ -71,9 +71,10 @@ if any(process_ind)
                 end
             end
             
-            % »’∫Û‘Ÿ∂œ
-            if any(strcmpi(processes_curr, 'normalise'))
+            % copy mean*.nii files for normalise
+            if any(strcmpi(processes_curr, 'normalise')) || any(strcmpi(processes_curr, 'normalise12'))
                 if all(cellfun(@exist, nifti_list_mean))
+                    fprintf('Copying source files...\n');
                     cellfun(@copyfile, nifti_list_mean, output_dirs);
                 end
             end

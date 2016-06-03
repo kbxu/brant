@@ -23,14 +23,14 @@ num_workers = jobman.par_workers;
 fprintf('Loading network matrices...\n');
 [mat_list, subj_ids] = brant_get_subjs(jobman.input_matrix);
 
-switch(mat_type)
-    case {'raw value (corr_r)', 'absolute value (corr_r)'}
-        corr_str = 'corr_r';
-    case {'raw value', 'absolute value', 'raw value (corr_z)', 'absolute value (corr_z)'}
-        corr_str = 'corr_z';
-    otherwise
-        error('Unknown matrix type!');
-end
+% switch(mat_type)
+%     case {'raw value (corr_r)', 'absolute value (corr_r)'}
+%         corr_str = 'corr_r';
+%     case {'raw value', 'absolute value', 'raw value (corr_z)', 'absolute value (corr_z)'}
+%         corr_str = 'corr_z';
+%     otherwise
+%         error('Unknown matrix type!');
+% end
 
 num_subj = numel(mat_list);
 if num_workers > 0
@@ -60,22 +60,22 @@ for m = 1:num_subj
     subj_id = subj_ids{m};
     fprintf('Subject %s\n', subj_id);
     
-    corr_mat = load(mat_list{m}, corr_str);
-    num_node = size(corr_mat.(corr_str), 1);
-    bad_ind = ~isfinite(corr_mat.(corr_str));
-    corr_mat.(corr_str)(bad_ind) = 0;
-    corr_mat.(corr_str)(eye(num_node) == 1) = 0;
+    corr_mat = load(mat_list{m});
+    num_node = size(corr_mat, 1);
+    bad_ind = ~isfinite(corr_mat);
+    corr_mat(bad_ind) = 0;
+    corr_mat(eye(num_node) == 1) = 0;
     
-    sym_ind = issymmetric(issymmetric);
+    sym_ind = issymmetric(corr_mat);
     if sym_ind == 0
         error('Matrix is not symmetric!');
     end
     
     switch(mat_type)
-        case {'raw value', 'raw value (corr_r)', 'raw value (corr_z)'}
-            mat_tmp = double(corr_mat.(corr_str));
-        case {'absolute value', 'absolute value (corr_r)', 'absolute value (corr_z)'}
-            mat_tmp = abs(double(corr_mat.(corr_str)));
+        case {'raw value'}
+            mat_tmp = double(corr_mat);
+        case {'absolute value'}
+            mat_tmp = abs(double(corr_mat));
         otherwise
             error('Unknown matrix type!');
     end

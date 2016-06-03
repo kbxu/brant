@@ -259,8 +259,8 @@ if ~isempty(s_mat)
         % continuous values
         c_map_pos = color_fun_pos(color_N);
         c_map_neg = color_fun_neg(color_N);
-        max_abs = max(abs(uniq_vol));
-        norm_int = ceil(abs(color_tmp) / max_abs * color_N);
+        max_abs = single(max(abs(uniq_vol)));
+        norm_int = ceil(abs(single(color_tmp)) / max_abs * color_N);
         
         color_pos = color_tmp > 0;
         color_neg = color_tmp < 0;

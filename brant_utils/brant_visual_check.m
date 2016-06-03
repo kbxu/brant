@@ -9,9 +9,6 @@ num_subj = numel(subj_ids);
 if num_subj < num_chk
     num_chk = num_subj;
 end
-% curr_tp_str = repmat(sprintf(',%.3d', 1), [num_chk, 1]);
-% current_img = strcat(nifti_list{1}, curr_tp_str);
-% current_label = strcat(subj_ids{1}, curr_tp_str);
 
 if jobman.input_nifti.is4d == 1
     all_tps = cellfun(@get_nii_frame, nifti_list);

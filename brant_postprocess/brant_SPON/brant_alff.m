@@ -1,7 +1,7 @@
 function brant_alff(jobman)
 
 
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
@@ -12,7 +12,7 @@ tc_pts = jobman.timepoint;
 nor_z_ind = jobman.nor;
 nor_m_ind = 0;
 outdir = jobman.out_dir{1};
-mask_fn = jobman.mask{1};
+mask_fn = jobman.input_nifti.mask{1};
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 % mask_nii = load_nii(mask_fn);

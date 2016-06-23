@@ -21,4 +21,4 @@ wei_val = arrayfun(@(a, b) fc_weight_val(a, b), x, y);
 srt_fc_strings = fc_strings(srt_ind, :);
 
 A = [{'ROI1', 'ROI2', 'weight'}; [srt_fc_strings, num2cell(srt_wei)]];
-xlswrite(outfn, A);
+brant_write_csv(outfn, A);

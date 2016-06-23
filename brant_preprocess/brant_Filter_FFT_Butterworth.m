@@ -28,7 +28,7 @@ if type == 0
             if mod(k,2) ~= 0
                 TC_extend = [TC_extend; TC];
             else
-                TC_extend = [TC_extend; TC_mirror];
+                TC_extend = [TC_extend; TC_mirror]; %#ok<*AGROW>
             end
         end
         if mod(k,2) == 0

@@ -67,7 +67,7 @@ mask_vals_str = num2cell(mask_vals); % for temp
 
 A = cat(1, {'x', 'y', 'z', 'label', 'vox_num', 'index'}, cat(2, mask_coord_cell, mask_label, mask_size_str, mask_vals_str));
 [pth, fn, ext] = fileparts(mask_in);
-xlswrite(fullfile(outdir, 'brant_roi_info.xls'), A, fn(1:(min(20, numel(fn)))));
+brant_write_csv(fullfile(outdir, 'brant_roi_info.csv'), A);
 
 if is_sep_ind == 1
     nii_labeled = make_nii(labeled_mask, mask_in_nii.hdr.dime.pixdim(2:4), mask_in_nii.hdr.hist.originator(1:3));

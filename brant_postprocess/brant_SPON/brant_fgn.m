@@ -1,9 +1,10 @@
 function brant_fgn(jobman)
 
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
+mask_fn = jobman.input_nifti.mask{1};
 tc_pts = jobman.timepoint;
 [pL, pR, H0, alpha] = brant_truncated_alpha(jobman.timepoints);
 

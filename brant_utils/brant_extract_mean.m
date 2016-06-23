@@ -13,7 +13,7 @@ else
     volume_ind = 1;
     rois = jobman.rois;
     roi_info = jobman.roi_info{1};
-    mask_fn = jobman.mask{1};
+    mask_fn = jobman.input_nifti.mask{1};
 end
 
 if volume_ind == 1
@@ -21,11 +21,14 @@ if volume_ind == 1
     [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
     subj_ids_org = strrep(subj_ids_org_tmp, jobman.subj_prefix, '');
 
-    % mask roi files
-    mask_nii = load_nii(mask_fn);
-    size_mask = mask_nii.hdr.dime.dim(2:4);
-    mask_bin = mask_nii.img > 0.5;
-    mask_ind = find(mask_bin);
+%     % mask roi files
+%     mask_nii = load_nii(mask_fn);
+%     size_mask = mask_nii.hdr.dime.dim(2:4);
+%     mask_bin = mask_nii.img > 0.5;
+%     mask_ind = find(mask_bin);
+    
+    [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir); %#ok<ASGLU>
+    
 elseif matrix_ind == 1
     tmp = load(fc_file, 'subj_ids');
     subj_ids_org = tmp.subj_ids;
@@ -72,13 +75,12 @@ if volume_ind == 1
     ts_rois = cat(2, ts_rois_tmp{:});
     
     tbl = [['Name', rois_str_out']; subj_ids_org, num2cell(ts_rois)];
-    xlswrite(fullfile(outdir, 'brant_mean_value.xlsx'), tbl, 'volume');
+    brant_write_csv(fullfile(outdir, 'brant_mean_value_vol.csv'), tbl);
 else
     fc_strs = arrayfun(@(x) num2str(x, 'fc%05d'), 1:size(data_2d_mat, 2), 'UniformOutput', false);
-    tbl = [['Name', fc_strs]; subj_ids_org, num2cell(single(data_2d_mat))]; %#ok<NASGU>
+    tbl = [['Name', fc_strs]; subj_ids_org, num2cell(single(data_2d_mat))];
     save(fullfile(outdir, 'brant_mean_value.mat'), 'tbl');
-    
-%     xlswrite(fullfile(outdir, 'brant_mean_value.xlsx'), tbl, 'mat');
+    brant_write_csv(fullfile(outdir, 'brant_mean_value_mat.csv'), tbl);
 end
 
 fprintf('\tFinished.\n');

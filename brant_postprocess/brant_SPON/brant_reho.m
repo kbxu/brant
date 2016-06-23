@@ -1,11 +1,11 @@
 function brant_reho(jobman)
 
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 tc_pts = jobman.timepoint;
-mask_fn = jobman.mask{1};
+mask_fn = jobman.input_nifti.mask{1};
 totalvoxel = jobman.neighbour_num + 1;
 outdir = jobman.out_dir{1};
 nor_ind = jobman.nor;
@@ -40,14 +40,16 @@ for mm = 1:numel(split_prefix)
     
     subj_tps = zeros(numel(subj_ids), 1);
     num_subj = numel(subj_ids);
+    
+    ind_out = brant_nbr_vox(mask_ind, totalvoxel, size_mask, n_vox_slice, n_vox_vol);
+    num_mask = numel(mask_ind);
+    
     for m = 1:num_subj
         tic;
 
-        [data_2d_mat, data_tps, nii_hdr] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'cell', subj_ids{m});
-        brant_spm_check_orientations([mask_hdr, nii_hdr]);
-        ind_out = brant_nbr_vox(mask_ind, totalvoxel, size_mask, n_vox_slice, n_vox_vol);
-        num_mask = numel(mask_ind);
-
+        [data_2d_mat, data_tps] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'cell', subj_ids{m});
+%         brant_spm_check_orientations([mask_hdr, nii_hdr]);
+        
         fprintf('\tCalculating ReHo for subject %d/%d %s...\n', m, num_subj, subj_ids{m});
         [TC_total_sorted, TC_total_ind] = cellfun(@sort, data_2d_mat, 'UniformOutput', false);
 
@@ -97,12 +99,13 @@ for mm = 1:numel(split_prefix)
             R_block_tmp = TC_total_ranked(:, ind_good);
             Reho_temp(mask_ind(n)) = calc_reho(R_block_tmp);
         end
-        clear('TC_total_ranked', 'ind_out');
+        clear('TC_total_ranked');
 
         brant_write_nii(Reho_temp, mask_ind, mask_hdr, subj_ids{m}, 'ReHo', outdir_mk{1}, nor_ind, 0, {outdir_mk{2}, ''});
 
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
     end
+    clear('ind_out');
 end
 
 fprintf('\tFinished!\n');

@@ -47,9 +47,10 @@ if mer_ind == 1;
     
 elseif ext_ind == 1
     roi_full = load_untouch_nii(extract_info.rois{1});
-    all_roi_inds = setdiff(roi_full.img(:), 0);
+    all_roi_inds = setdiff(roi_full.img(:), [0, NaN]);
+    all_roi_inds = all_roi_inds(isfinite(all_roi_inds));
     
-    if isa(all_roi_inds, 'float') && numel(all_roi_inds) > 1000
+    if isa(all_roi_inds, 'float') && numel(all_roi_inds) > 2000
         error(sprintf(['Brant support at most 2000 roi indexes!\n',...
                        'Please check the data type of the input file and make sure it''s integer instead of float!\n',...
                        'Float file type may generate unwanted float numbers in the roi!'])); %#ok<SPERR>
@@ -62,7 +63,8 @@ elseif ext_ind == 1
         error('Index %d can not be found in the roi file!\n', except_ind);
     end
     
-    [rois_inds, rois_str, roi_tags] = brant_get_rois(extract_info.rois, [], extract_info.roi_info{1}, 0); %#ok<ASGLU>
+    % uses load_untouch_nii to load roi file
+    [rois_inds, rois_str, roi_tags] = brant_get_rois(extract_info.rois, [], extract_info.roi_info{1}, 0, @load_untouch_nii); %#ok<ASGLU>
     
     roi_ind_bp = arrayfun(@(x) find(x == roi_tags), roi_vec);
     

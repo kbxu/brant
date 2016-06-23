@@ -1,4 +1,4 @@
-function brant_postprocesses_sub(dlg_title, jobman, ui_strucs)
+function brant_postprocesses_sub(dlg_title, jobman, ui_strucs, process_fun)
 
 prompt = ui_strucs;
 figColor = [0.94 0.94 0.94];
@@ -49,19 +49,8 @@ current_pos.y = 50;
 disp_size = [210, 75];
 button_len = 51;
 
-% ui_buttons = {'run',    [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y, button_len, 20],     @run_cb;...
-%               'help',   [current_pos.x + (disp_size(1) - button_len) / 2, current_pos.y, button_len, 20],   @help_cb;...
-%               'cancel', [current_pos.x + (disp_size(1) + button_len) / 2 + 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y, button_len, 20],  @close_window;...
-%               'save',   [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 30, button_len, 20],    @save_cb;...
-%               'reset',  [current_pos.x + (disp_size(1) - button_len) / 2, current_pos.y - 30, button_len, 20],  @reset_cb;...
-%               'load',   [current_pos.x + (disp_size(1) + button_len) / 2 + 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 30, button_len, 20], @load_cb
-%               };
-
 ui_buttons = {...
-%     'run',    [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y, button_len, 20],     @run_cb;...
-%   'help',   [current_pos.x + (disp_size(1) - button_len) / 2, current_pos.y, button_len, 20],   @help_cb;...
-%   'cancel', [current_pos.x + (disp_size(1) + button_len) / 2 + 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y, button_len, 20],  @close_window;...
-  'run',   [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 20, button_len, 20],    @run_cb;...
+  'run',   [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 20, button_len, 20],    {@run_cb, process_fun};...
   'help',  [current_pos.x + (disp_size(1) - button_len) / 2, current_pos.y - 20, button_len, 20],  {@brant_help_cb, hfig_inputdlg, dlg_title};...
   'cancel',   [current_pos.x + (disp_size(1) + button_len) / 2 + 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 20, button_len, 20], @close_window
   };
@@ -126,11 +115,11 @@ switch(lw_uiname)
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if val_mat == 1
-            obj_strs{1} = {'mask', 'input_nifti'}; % dual
+            obj_strs{1} = {'input_nifti'}; % dual
             obj_strs{2} = {'sym_ind', 'mat_vox2vox', 'input_matrix'}; % self
         else
             obj_strs{1} = {'sym_ind', 'mat_vox2vox', 'input_matrix'}; % dual
-            obj_strs{2} = {'mask', 'input_nifti'}; % self
+            obj_strs{2} = {'input_nifti'}; % self
         end
     case 'draw roi'
         h_maual = findobj(hfig_inputdlg, 'string', 'manual');
@@ -156,11 +145,11 @@ switch(lw_uiname)
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if val_mat == 1
-            obj_strs{1} = {'mask', 'num_subjs_tbl', 'input_nifti'}; % dual
+            obj_strs{1} = {'num_subjs_tbl', 'input_nifti'}; % dual
             obj_strs{2} = {'input_matrix'}; % self
         else
             obj_strs{1} = {'input_matrix'}; % dual
-            obj_strs{2} = {'mask', 'num_subjs_tbl', 'input_nifti'}; % self
+            obj_strs{2} = {'num_subjs_tbl', 'input_nifti'}; % self
         end
     case {'extract mean adv', 'extract mean'}
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
@@ -351,15 +340,6 @@ switch(ui_types{1})
                 block_shift = -1 * (text_size(2) + 10 + 1);
                 ui_tags = strcat(tag_str, ':', sub_eles);
                 ui_ctrls = {{'enable_edit', ui_tags{2}}, {ui_fields}};
-                
-            case 'str_nifti_mask_roi'
-                sub_eles = {'checkbox', 'edit', 'pushbutton'};
-                pos_shift = [   0,                  0, text_size;...
-                                text_size(1) + 5,   0, edit_size;...
-                                disp_size(1) - 15,  0, pushbtn_size];
-                block_shift = -1 * (text_size(2) + 10 + 1);
-                ui_tags = strcat(tag_str, ':', sub_eles);
-                ui_ctrls = {{'enable_edit', ui_tags{2}}, {ui_fields}, {'disp_input', ui_tags{2}}};
         end
         
     case {'popupmenu', 'popupmenu_left', 'popupmenu_right'}
@@ -408,7 +388,7 @@ switch(ui_types{1})
                 ui_tags = strcat(tag_str, ':', sub_eles);
                 ui_ctrls = {'', {ui_fields}};
 
-            case {'disp_dirs_nii', 'disp_niftis', 'disp_niftis_Tval', 'disp_niftis_3d'}
+            case {'disp_dirs_nii'}
                 sub_eles = {'text', 'checkbox_0_txt', 'pushbutton', 'disp'};
                 pos_shift = [   0,                  disp_size(2) + 5, text_size(1) + edit_size(1), text_size(2);...
                                 70, disp_size(2) + 5, 120, text_size(2);...
@@ -427,33 +407,6 @@ switch(ui_types{1})
                 ui_tags = strcat(tag_str, ':', sub_eles);
                 ui_ctrls = {'', {'disp_inputs', ui_tags{3}}, {ui_fields}};
                 
-            case {'disp_rois', 'disp_mats_chk'}
-                sub_eles = {'checkbox_1', 'pushbutton', 'disp'};
-                pos_shift = [   0,  disp_size(2) + 5, text_size(1) + edit_size(1), text_size(2);...
-                                disp_size(1) - 15,  disp_size(2) + 5, pushbtn_size;...
-                                0, 0, disp_size];
-                block_shift = -1 * (disp_size(2) + 5 + text_size(2) + 10);
-                ui_tags = strcat(tag_str, ':', sub_eles);
-                ui_ctrls = {{'disp_unknown', ui_tags{3}}, {'multi_single', ui_tags{1}; 'disp_unknown', ui_tags{3}}, {ui_fields}};
-                
-            case {'disp_mats_group_corr', 'disp_mats'}
-                sub_eles = {'text', 'pushbutton', 'disp'};
-                pos_shift = [   0,  disp_size(2) + 5, text_size(1) + edit_size(1), text_size(2);...
-                                disp_size(1) - 15,  disp_size(2) + 5, pushbtn_size;...
-                                0, 0, disp_size];
-                block_shift = -1 * (disp_size(2) + 5 + text_size(2) + 10);
-                ui_tags = strcat(tag_str, ':', sub_eles);
-                ui_ctrls = {'', {'disp_inputs', ui_tags{3}}, {ui_fields}};
-                
-            case {'disp_mat'}
-                sub_eles = {'text', 'pushbutton', 'disp'};
-                pos_shift = [   0,  disp_size(2) + 5, text_size(1) + edit_size(1), text_size(2);...
-                                disp_size(1) - 15,  disp_size(2) + 5, pushbtn_size;...
-                                0, 0, disp_size];
-                block_shift = -1 * (disp_size(2) + 5 + text_size(2) + 10);
-                ui_tags = strcat(tag_str, ':', sub_eles);
-                ui_ctrls = {'', {'disp_input', ui_tags{3}}, {ui_fields}};
-            
             case 'disp_coordinates'
                 sub_eles = {'text', 'pushbutton', 'disp'};
                 pos_shift = [   0,  disp_size(2) / 2 + 5, text_size(1) + edit_size(1), text_size(2);...
@@ -463,7 +416,7 @@ switch(ui_types{1})
                 ui_tags = strcat(tag_str, ':', sub_eles);
                 ui_ctrls = {'', {'disp_input', ui_tags{3}}, {ui_fields}};
                 
-            case {'str_dir', 'str_mask', 'str_nifti', 'str_mat', 'str_surf', 'str_node', 'str_edge', 'str_excel'}
+            case {'str_dir', 'str_nifti', 'str_mat', 'str_surf', 'str_node', 'str_edge', 'str_csv'}
                 sub_eles = {'text', 'edit', 'pushbutton'};
                 pos_shift = [   0,                  0, text_size;...
                                 text_size(1) + 5,0, edit_size;...
@@ -714,7 +667,7 @@ for m = 1:size(prompt, 1)
                 end
 
                 edit_enable = 'on';
-                if any(strcmp(ele_pps{2}, {'str_nifti_mask_roi', 'num_bin_num_edit'})) && isempty(edit_str)
+                if any(strcmp(ele_pps{2}, {'num_bin_num_edit'})) && isempty(edit_str)
                     edit_enable = 'off';
                 end
                 
@@ -953,28 +906,6 @@ switch(mode)
                 end
             end
         end
-    case 'disp_rois'
-        if val == 1
-            h_edit = findobj(h_parent, 'Tag', chb_data{2});
-            edit_field = get(h_edit, 'Userdata');
-            edit_str = get(h_edit, 'String');
-            if numel(edit_str) > 1
-                edit_str = edit_str(1);
-                set(h_edit, 'String', edit_str);
-                set_field_vals(h_parent, jobman, edit_field, edit_str);
-            end
-        end
-    case 'str_nifti_mask_roi'
-        h_edit = findobj(h_parent, 'Tag', chb_data{2});
-        edit_field = get(h_edit, 'Userdata');
-        if val == 0
-            set(h_edit, 'Enable', 'off');
-            set_field_vals(h_parent, jobman, edit_field, '');
-        else
-            set(h_edit, 'Enable', 'on');
-            edit_str = get(h_edit, 'String');
-            set_field_vals(h_parent, jobman, edit_field, edit_str);
-        end
     otherwise
         set_field_vals(h_parent, jobman, chb_data, val);
 end
@@ -1151,9 +1082,7 @@ if isempty(h_parent)
     return;
 end
 
-
 jobman = get(h_parent, 'Userdata');
-
 ui_ctrl = get(obj, 'Userdata');
 
 % disp_unk_ind = cell2mat(cellfun(@(x) strcmp('disp_unknown', x), ui_ctrl, 'UniformOutput', false));
@@ -1162,28 +1091,11 @@ disp_unk_ind = cell2mat(cellfun(@(x) strcmp('multi_single', x), ui_ctrl, 'Unifor
 % disp_contents_ind = cell2mat(cellfun(@(x) strcmp('disp_contents', x), ui_ctrl, 'UniformOutput', false));
 org_mode = mode;
 
-if strcmp('str_nifti_mask_roi', mode) || strcmp('str_mask', mode)
-    mode = 'str_nifti';
-end
-
-if any(strcmp(mode, {'disp_mats_chk', 'disp_rois'}))
-    unk_ind = find(disp_unk_ind(:, 1), 1);
-    h_input_unk = findobj(h_parent, 'Tag', ui_ctrl{unk_ind, 2});
-    val_unk = get(h_input_unk, 'Value');
-    if val_unk == 0
-        mode = 'disp_niftis';
-        disp_inputs_ind = cell2mat(cellfun(@(x) strcmp('disp_unknown', x), ui_ctrl, 'UniformOutput', false));
-    else
-        mode = 'str_nifti';
-        disp_input_ind = cell2mat(cellfun(@(x) strcmp('disp_unknown', x), ui_ctrl, 'UniformOutput', false));
-    end
-else
-    disp_input_ind = cell2mat(cellfun(@(x) strcmp('disp_input', x), ui_ctrl, 'UniformOutput', false));
-    disp_inputs_ind = cell2mat(cellfun(@(x) strcmp('disp_inputs', x), ui_ctrl, 'UniformOutput', false));
-end
-
-if any(cellfun(@(x) strcmp(mode, x), {'str_nifti', 'str_mat', 'str_mask', 'str_dir', 'str_mat', 'str_excel',...
-                                      'disp_coordinates', 'str_surf', 'str_edge', 'str_node', 'disp_mat'}))
+disp_input_ind = cell2mat(cellfun(@(x) strcmp('disp_input', x), ui_ctrl, 'UniformOutput', false));
+disp_inputs_ind = cell2mat(cellfun(@(x) strcmp('disp_inputs', x), ui_ctrl, 'UniformOutput', false));
+    
+if any(cellfun(@(x) strcmp(mode, x), {'str_nifti', 'str_mat', 'str_dir', 'str_mat', 'str_csv',...
+                                      'disp_coordinates', 'str_surf', 'str_edge', 'str_node'}))
     img_ind = find(disp_input_ind(:, 1), 1);
     h_input = findobj(h_parent, 'Tag', ui_ctrl{img_ind, 2});
     field_nms = get(h_input, 'Userdata');
@@ -1199,60 +1111,41 @@ else
     sel_one_file = 0;
 end
 
+table_support = '^.*\.(csv|txt)$';
+nifti_support = '^.*\.(nii|img|nii.gz)$';
+
 switch(mode)
-    
     % single file input below
     case 'str_nifti'
-        if strcmp(org_mode, 'disp_mats_chk') % don't change it
-            [disp_input, sts] = cfg_getfile(1, '^.*\.mat$', '', val);
-        elseif strcmp(org_mode, 'disp_rois')
-            [disp_input, sts] = cfg_getfile(1, '^.*\.(nii|img)$', '', val);
-%         elseif strcmp(org_mode, 'str_mask')
-%             brant_temp_path = fullfile(fileparts(which('brant')), 'template');
-%             [disp_input, sts] = cfg_getfile(1, '^.*\.(nii|img)$', '', val, brant_temp_path);
-        else
-            [disp_input, sts] = cfg_getfile(1, '^.*\.(nii|img)$', '', val);
-        end
-    case 'str_excel'
-        [disp_input, sts] = cfg_getfile([0 1], '^.*\.(csv|xls|xlsx)$', '', val, '');
-    case {'disp_mat', 'str_mat'}
+        [disp_input, sts] = cfg_getfile(1, nifti_support, '', val);
+    case 'str_csv'
+        [disp_input, sts] = cfg_getfile([0 1], table_support, '', val, '');
+    case 'str_mat'
         [disp_input, sts] = cfg_getfile(1, '^.*\.mat$', '', val);
     case 'str_surf'
         surf_pth = fullfile(fileparts(which('brant')), 'brant_surface');
-        [disp_input, sts] = cfg_getfile(1, '^.*\.(txt|nii|img)$', '', val, surf_pth);
+        [disp_input, sts] = cfg_getfile(1, nifti_support, '', val, surf_pth);
     case 'str_edge'
         [disp_input, sts] = cfg_getfile([0, 1], '^.*\.txt$', '', val);
     case 'str_node'
-        [disp_input, sts] = cfg_getfile(1, '^.*\.(csv|xls|xlsx|txt)$', '', val);
+        [disp_input, sts] = cfg_getfile(1, table_support, '', val);
         if sts == 1
             jobman = parse_node_input(h_parent, jobman, disp_input{1});
         end
     case 'disp_coordinates'
-        [disp_input, sts] = cfg_getfile([0 1], '^.*\.(csv|xls|xlsx|txt)$', '', val, '');
-        if sts == 1
-            [pth, nm, ext] = fileparts(disp_input{1}); %#ok<ASGLU>
-            if strcmp(ext, '.txt')
-                coords = load(disp_input{1});
-                if size(coords, 2) ~= 3
-                    error('%s is not a valid coordinate file!', disp_input{1});
-                end
-            end
-        end
+        [disp_input, sts] = cfg_getfile([0 1], table_support, '', val, '');
+%         if sts == 1
+%             [pth, nm, ext] = fileparts(disp_input{1}); %#ok<ASGLU>
+%             if strcmp(ext, '.txt')
+%                 coords = load(disp_input{1});
+%                 if size(coords, 2) ~= 3
+%                     error('%s is not a valid coordinate file!', disp_input{1});
+%                 end
+%             end
+%         end
     case 'str_dir'
         [disp_input, sts] = cfg_getfile(1, 'dir', '', val);
-            
-	% multiple files input below
-    case {'disp_mats', 'disp_niftis_Tval', 'disp_niftis_3d', 'disp_niftis', 'disp_mats_group_corr'}
-        if strcmp(org_mode, 'disp_mats_chk')
-            [disp_input, sts] = cfg_getfile([1, Inf], '^.*\.mat$', '', val, '', '.*.mat');
-        elseif strcmp(org_mode, 'disp_mats_group_corr') || strcmp(org_mode, 'disp_mats')
-            [disp_input, sts] = cfg_getfile([1, Inf], '^.*\.mat$', '', val);
-        elseif strcmp(org_mode, 'disp_niftis_Tval')
-    %                 [disp_input, sts] = cfg_getfile([1, Inf], '^.*\.(nii|img|hdr|nii.gz)$', '', val);
-            [disp_input, sts] = cfg_getfile([1, Inf], 'dir', '', val, pwd, '^[^.].*$');
-        else
-            [disp_input, sts] = cfg_getfile([1, Inf], '^.*\.(nii|img)$', '', val);
-        end
+   
     case 'disp_dirs_nii'
         ui_tag = get(obj, 'Tag');
         chb_tag = strrep(ui_tag, 'pushbutton', 'checkbox_0_txt');
@@ -1306,7 +1199,6 @@ switch(mode)
 
         set(h_input, 'String', disp_str);
         sts = 0;
-        
 end
 
 if sts == 1
@@ -1343,7 +1235,7 @@ if isfield(jobman.node, 'size')
     set(h_size, 'Value', 0);
     set(h_size_txt, 'enable', 'off');
 else
-    jobman.node_size = str2num(get(h_size_txt, 'String'));
+    jobman.node_size = str2double(get(h_size_txt, 'String'));
     set(h_size, 'Value', 1);
     set(h_size_txt, 'enable', 'on');
 end
@@ -1427,9 +1319,12 @@ jobman = get(h_parent, 'Userdata');
 field_name = get(obj, 'Userdata');
 str = get(obj, 'String');
 
+table_support = '^.*\.(csv|txt)$';
+nifti_support = '^.*\.(nii|img|nii.gz)$';
+
 switch(mode)
     case {'num_short_right', 'num_short_left', 'num_coords', 'num_long', 'num_longest', 'num_bin_num_edit'}
-        num = str2num(str);
+        num = str2double(str);
         if ~isempty(num)
             set_field_vals(h_parent, jobman, field_name, num);
         else
@@ -1445,7 +1340,7 @@ switch(mode)
         set_field_vals(h_parent, jobman, field_name, str);
     case {'str_long_right', 'str_long_left', 'str_short_right', 'str_thr_parse', 'str_short_left'}
         set_field_vals(h_parent, jobman, field_name, str);
-    case {'str_nifti', 'str_mat', 'str_surf', 'str_edge', 'str_mask', 'str_excel'}
+    case {'str_nifti', 'str_mat', 'str_surf', 'str_edge', 'str_csv'}
         if ~iscell(str)
             str = {str};
         end
@@ -1460,15 +1355,13 @@ switch(mode)
         
         set_field_vals(h_parent, jobman, field_name, str);
         
-        
     case 'str_node'
-        
         if ~iscell(str)
             str = {str};
         end
         
         if exist(str{1}, 'file') == 2
-            file_ext = regexpi(str{1}, '.(txt|csv|xls|xlsx)$', 'match');
+            file_ext = regexpi(str{1}, table_support, 'match');
             
             jobman = parse_node_input(h_parent, jobman, str{1});
             
@@ -1480,8 +1373,8 @@ switch(mode)
         end
     case 'str_filetype_nifti'
         
-        valid_nifti_filetype = {'.nii', '.nii.gz', '.img', '.hdr'};
-        nifti_ind = regexpi(str, '.(nii|nii.gz|img|hdr)$', 'match');
+%         valid_nifti_filetype = {'.nii', '.nii.gz', '.img', '.hdr'};
+        nifti_ind = regexpi(str, nifti_support, 'match');
         
         if ~isempty(nifti_ind)
             set_field_vals(h_parent, jobman, field_name, str);
@@ -1495,7 +1388,7 @@ switch(mode)
         
     case 'str_filetype_mat'
         
-        valid_nifti_filetype = {'.mat'};
+%         valid_nifti_filetype = {'.mat'};
         matrix_ind = regexpi(str, '.(mat)$', 'match');
         
         if ~isempty(matrix_ind)
@@ -1509,7 +1402,7 @@ switch(mode)
         end
         
     case 'str_filetype_txt'
-        valid_nifti_filetype = {'.txt'};
+%         valid_nifti_filetype = {'.txt'};
         nifti_ind = regexpi(str, '.(txt)$', 'match');
         if ~isempty(nifti_ind)
             set_field_vals(h_parent, jobman, field_name, str);
@@ -1522,126 +1415,7 @@ switch(mode)
         end
 end
 
-% function fnd_files = rec_search_files(file_path, filetype_tmp, rec, f_merge)
-% 
-% if rec == 1
-%     paths_gen = textscan(genpath(file_path), '%s', 'delimiter', ';');
-% else
-%     paths_gen{1}{1} = file_path;
-% end
-% 
-% files_tmp = cell(numel(paths_gen{1}), 1);
-% for m = 1:numel(paths_gen{1})
-%     fn_tmp = dir(fullfile(paths_gen{1}{m}, filetype_tmp));
-%     if numel(fn_tmp) ~= 0
-%         files_tmp{m} = arrayfun(@(x) fullfile(paths_gen{1}{m}, x.name), fn_tmp, 'UniformOutput', false);
-%     end
-% end
-% img_ind = cellfun(@(x) ~isempty(x), files_tmp);
-% 
-% if sum(img_ind) > 0
-%     
-%     files_tmp = files_tmp(img_ind);
-%     
-%     if f_merge == 1
-%         
-%         files_num = sum(cellfun(@(x) numel(x), files_tmp));
-% 
-%         fnd_files = cell(files_num, 1);
-%         cnt = 1;
-%         for m = 1:numel(files_tmp)
-%             for n = 1:numel(files_tmp{m})
-%                 fnd_files{cnt}{1} = files_tmp{m}{n};
-%                 cnt = cnt + 1;
-%             end
-%         end
-%     else
-%         fnd_files = files_tmp;
-%     end
-% else
-%     fnd_files = '';
-% end
-                    
-function load_cb(obj, evd)
-
-[filename, pathname] = uigetfile({'*.mat', 'mat file'});
-
-if filename ~= 0
-    jobman_load = load(fullfile(pathname, filename));
-    dlg_title = get(obj, 'Tag');
-    if strcmpi(jobman_load.jobman.dlg_title, dlg_title)
-        new_jobman = rmfield(jobman_load.jobman, {'dlg_title', 'subj_infos'});   
-
-        h_parent = get(obj, 'Parent');
-        h_reset = findobj(h_parent, 'String', 'reset');
-        jobman_raw = get(h_reset, 'Userdata');
-        set(h_reset, 'Userdata', new_jobman);
-        reset_cb(h_reset, '');
-        set(h_reset, 'Userdata', jobman_raw);
-    else
-        errordlg('Loaded .mat file doesn''t match with current operations!')
-        return;
-    end
-end
-
-
-function reset_cb(obj, evd)
-h_parent = get(obj, 'Parent');
-dlg_title = get(h_parent, 'Name');
-jobman = get(obj, 'Userdata');
-set(h_parent, 'Userdata', jobman);  % don't put this line in the end
-
-prompt = brant_postprocess_parameters(dlg_title);
-
-for m = 1:size(prompt, 1)
-    if ~isempty(prompt{m, 2})
-        ui_tag = regexp(prompt{m, 2}, '\:', 'split');
-        ui_type = regexp(prompt{m, 1}, '\:', 'split');
-        switch(ui_type{1})
-            case 'radio'
-                radio_tags = regexp(prompt{m, 2}, '\w+', 'match');
-                for n = 1:numel(radio_tags)
-                    h_ui = findobj(h_parent, 'Tag', ui_tag{n}, 'Style', 'radiobutton');
-                    if eval(get(h_ui, 'Userdata')) == 1
-                        radio_cb(h_ui, '', radio_tags, 'reset');
-                        break;
-                    end
-                end
-            case 'edit'
-                if ~isempty(strfind(ui_type{2}, 'disp'))
-                    h_edit = findobj(h_parent, 'Tag', [ui_tag{end}, '_edit'], 'Style', 'edit');
-                    h_disp = findobj(h_parent, 'Tag', [ui_tag{end}, '_disp'], 'Style', 'edit');
-                    val_edit = eval(['jobman.', get(h_edit, 'Userdata'), '.inputfile']);
-                    val_disp = eval(['jobman.', get(h_disp, 'Userdata'), '.subjs']);
-                    set(h_edit, 'String', val_edit);
-                    set(h_disp, 'String', val_disp);
-                else
-                    h_ui = findobj(h_parent, 'Tag', [ui_tag{end}, '_edit'], 'Style', 'edit');
-                    val_tmp = eval(['jobman.', get(h_ui, 'Userdata')]);
-                    if isnumeric(val_tmp)
-                        val_tmp = num2str(val_tmp);
-                    end
-                    set(h_ui, 'String', val_tmp);
-                end
-            case 'chb'
-                h_ui = findobj(h_parent, 'Tag', [ui_tag{end}, '_checkbox'], 'Style', 'checkbox');
-                val_tmp = eval(['jobman.', get(h_ui, 'Userdata')]);
-                set(h_ui, 'Value', val_tmp);
-            case 'pop'
-                h_ui = findobj(h_parent, 'Tag', [ui_tag{end}, '_pop'], 'Style', 'popupmenu');
-                val_tmp = eval(['jobman.', get(h_ui, 'Userdata')]);
-                opts = get(h_ui, 'String');
-                for n = 1:numel(opts)
-                    if strcmp(opts{n}, num2str(val_tmp))
-                        set(h_ui, 'Value', n);
-                        break;
-                    end
-                end
-        end
-    end
-end
-
-function run_cb(obj, evd)
+function run_cb(obj, evd, process_fun)
 h_parent = get(obj, 'Parent');
 jobman = get(h_parent, 'Userdata');
 dlg_title = get(h_parent, 'Name');
@@ -1657,63 +1431,15 @@ if isfield(jobman, 'out_dir')
         end
     end
 end
+% process_fun
+
+func_need_hcon = {'network visualization', 'roi mapping', 'surface mapping'};
 
 try
-    switch(lower(dlg_title))
-        case 'draw roi'
-            brant_draw_rois(jobman);
-        case 'merge/extract rois'
-            brant_mer_ext_rois(jobman);
-        case 'head motion est'
-            brant_hm_est(jobman);
-        case 'tsnr'
-            brant_tsnr(jobman);
-        case 'visual check'
-            brant_visual_check(jobman);
-        case 'extract mean'
-            brant_extract_mean(jobman);
-        case 'extract mean adv'
-            brant_extract_mean_3d(jobman);
-        case 'roi calculation'
-            brant_roi_script(jobman);
-        case 'fcd'
-            brant_fcd(jobman);
-        case 'short distant connections'
-            brant_sd(jobman);
-        case 'reho'
-            brant_reho(jobman);
-        case 'alff/falff'
-            brant_alff(jobman);
-        case 'fgn'
-            brant_fgn(jobman);
-        case 'am'
-            brant_am(jobman);
-        case 'network visualization'
-            brant_network_visual(jobman, h_parent);
-        case 'network calculation'
-            brant_net_calc(jobman);
-        case 'network construct'
-            brant_net_construct(jobman);
-        case 'network calcs'
-            brant_net_measure(jobman);
-        case 'network statistics'
-            brant_stat(jobman);
-        case 'dicom convert'
-            brant_dicom2nii(jobman);
-        case 'del timepoints'
-            brant_dicom2nii(jobman);
-        case 'statistics'
-            brant_stat(jobman);
-        case 'multiple correction'
-            brant_multi_correction(jobman);
-        case 'ibma'
-            brant_ibma(jobman);
-        case 'mask to table'
-            brant_mask2table(jobman);
-        case 'surface mapping'
-            brant_surface_mapping(jobman, h_parent);
-        case 'roi mapping'
-            brant_roi_mapping(jobman, h_parent);
+    if any(strcmpi(dlg_title, func_need_hcon))
+        process_fun(jobman, h_parent);
+    else
+        process_fun(jobman);
     end
 catch err
     rethrow(err);

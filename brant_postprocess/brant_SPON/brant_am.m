@@ -1,11 +1,11 @@
 function brant_am(jobman)
 
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 tc_pts = jobman.timepoint;
-mask_fn = jobman.mask{1};
+mask_fn = jobman.input_nifti.mask{1};
 outdir = jobman.out_dir{1};
 
 am_ind = jobman.am;

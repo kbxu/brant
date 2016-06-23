@@ -3,7 +3,7 @@ Network Visualization
 	surface: surface file
 	alpha: degree of transparency
 	display: mode of display
-	node: node file defined as excel table or txt. When input using txt file, ten columns of input should be in the order of 'x', 'y', 'z', 'size', 'module', 'r', 'g', 'b', 'label', when using xls/xlsx file, a office-like software is required for the operation system, ten columns could be in any order but with the first row descriping which column it is (The first column can be written as x, y);
+	node: node file defined as excel table or txt. When input using txt file, ten columns of input should be in the order of 'x', 'y', 'z', 'size', 'module', 'r', 'g', 'b', 'label', when using csv file, a office-like software is required for the operation system, ten columns could be in any order but with the first row descriping which column it is (The first column can be written as x, y);
 	show node labels: check to show labels defined in input node file.
 	same size: use same size for all node, uncheck to use user defined size in input node file.
 	user defined node color: use color defined in input node file.

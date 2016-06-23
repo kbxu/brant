@@ -77,7 +77,7 @@ if exist(out_info.outdir, 'dir') ~= 7
 end
 
 if isempty(regressors_tbl)
-    error('A discription table file (*.csv, *.xls) is expected!')    
+    error('A discription csv file is expected!');
 end
 
 filter_est = parse_strs(grp_filter, 'filter', 0);
@@ -90,13 +90,10 @@ switch(out_info.data_type)
     case 'stat volume'
         jobman.input_nifti.single_3d = 1;
 
-        mask_fn = jobman.mask{1};
-        mask_nii = load_nii(mask_fn);
-        size_mask = mask_nii.hdr.dime.dim(2:4);
-        mask_hdr = mask_nii.hdr;
-        mask_ind = find(mask_nii.img > 0.5);
-
+        mask_fn = jobman.input_nifti.mask{1};
         [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
+        [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, out_info.outdir);
+        
         % spliting filename removal using , or ;
         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
         subj_ids_org = subj_ids_org_tmp;
@@ -104,11 +101,17 @@ switch(out_info.data_type)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
         
-        [data_infos, subj_ind, fil_inds, reg_good_subj, corr_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
-
-        fprintf('\n\tLoading nifti images...\n');
-        [data_2d_mat, data_tps, nii_hdr] = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
-
+        if strcmpi(stat_type, 'paired t-test') == 1
+            [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
+            reg_good_subj = '';
+            fprintf('\n\tLoading nifti images...\n');
+            data_2d_mat = cellfun(@(x) brant_4D_to_mat_new(x, mask_ind, 'mat', '')', nifti_list(subj_ind), 'UniformOutput', false);
+        else
+            [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+            fprintf('\n\tLoading nifti images...\n');
+            data_2d_mat = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
+        end
+            
         out_info.mask_ind = mask_ind;
         out_info.size_mask = size_mask;
         out_info.mask_hdr = mask_hdr;
@@ -126,10 +129,10 @@ switch(out_info.data_type)
         end
         
         if strcmpi(stat_type, 'paired t-test') == 1
-            [data_infos, subj_ind, fil_inds] = parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
+            [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
             reg_good_subj = '';
         else
-            [data_infos, subj_ind, fil_inds, reg_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+            [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         end
         
         fprintf('\n\tLoading correlation matrix...\n');
@@ -142,10 +145,7 @@ switch(out_info.data_type)
             num_rois = size(corr_mat{1}, 1);
             corr_ind = triu(true(num_rois), 1);
             if strcmpi(stat_type, 'paired t-test') == 1
-                data_2d_mat = cell(1, numel(corr_mat));
-                for m = 1:size(corr_mat, 2)
-                    data_2d_mat{m} = corr_mat{m}(corr_ind);
-                end
+                data_2d_mat = cellfun(@(x) x(corr_ind), corr_mat, 'UniformOutput', false);
             else
                 data_2d_mat = cat(3, corr_mat{:});
                 data_2d_mat = shiftdim(data_2d_mat, 2);
@@ -156,10 +156,7 @@ switch(out_info.data_type)
         else
             % arbitary matrix, use all value
             if strcmpi(stat_type, 'paired t-test') == 1
-                data_2d_mat = cell(1, numel(corr_mat));
-                for m = 1:size(corr_mat, 2)
-                    data_2d_mat{m} = corr_mat{m}(:);
-                end
+                data_2d_mat = cellfun(@(x) x(:), corr_mat, 'UniformOutput', false);
             else
                 data_2d_mat = cat(3, corr_mat{:});
                 data_2d_mat = shiftdim(data_2d_mat, 2);
@@ -299,7 +296,7 @@ switch(out_info.data_type)
         out_suffix = {'corr', 'spar'};
         
         calc_rsts_all = [data_load_all{1}; data_load_all{2}]';
-        net_fn_out = fullfile(out_info.outdir, 'network_numeric.xlsx');
+        
         
         
         thres_title_all = [thres_title{1}, thres_title{2}];
@@ -314,13 +311,15 @@ switch(out_info.data_type)
             warning(sprintf('Data of the above threshold(s) are not complete!\nThis situation happens when one or more subject''s correlation matrix don''t survive the threshold.')); %#ok<SPWRN>
         end
         
-        xls_title = ['Name', 'Group', reg_est, thres_title_all];
+        csv_title = ['Name', 'Group', reg_est, thres_title_all];
         
         for m = 1:n_field
+            net_fn_out = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '.csv']);
+            
             glob_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).global, calc_rsts_all(good_ind));
             glob_vecs_corr_all = nan(size(calc_rsts_all));
             glob_vecs_corr_all(good_ind) = glob_vecs_corr;
-            xlswrite(net_fn_out, [xls_title; [data_infos, num2cell([reg_good_subj, glob_vecs_corr_all])]], field_strs_good{m});
+            brant_write_csv(net_fn_out, [csv_title; [data_infos, num2cell([reg_good_subj, glob_vecs_corr_all])]]);
             
             if any(thres_ept)
                 glob_vecs_corr_all(:, thres_ept) = 0;

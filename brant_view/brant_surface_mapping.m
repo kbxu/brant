@@ -109,22 +109,38 @@ switch(disp_type{2})
         h = subplot(2, 2, 1);
         draw_brain(h_fig, thres_str, faces_left, vert_left, s_mat, vol_3d, draw_param, 'left_above', [-90, 0])
         set(h, 'Unit', 'pixel', 'Pos', [130, 300, 300, 250]);
-        set(h, 'Unit', 'normalised');
+        try
+            set(h, 'Unit', 'normalised');
+        catch
+            set(h, 'Unit', 'normalized');
+        end
         
         h = subplot(2, 2, 2);
         draw_brain(h_fig, thres_str, faces_right, vert_right, s_mat, vol_3d, draw_param, 'right_above', [90, 0])
         set(h, 'Unit', 'pixel', 'Pos', [380, 300, 300, 250]);
-        set(h, 'Unit', 'normalised');
+         try
+            set(h, 'Unit', 'normalised');
+        catch
+            set(h, 'Unit', 'normalized');
+        end
         
         h = subplot(2, 2, 3);
         draw_brain(h_fig, thres_str, faces_left, vert_left, s_mat, vol_3d, draw_param, 'left_below', [90, 0])
         set(h, 'Unit', 'pixel', 'Pos', [130, 80, 300, 250]);
-        set(h, 'Unit', 'normalised');
+         try
+            set(h, 'Unit', 'normalised');
+        catch
+            set(h, 'Unit', 'normalized');
+        end
         
         h = subplot(2, 2, 4);
         draw_brain(h_fig, thres_str, faces_right, vert_right, s_mat, vol_3d, draw_param, 'right_below', [-90, 0])
         set(h, 'Unit', 'pixel', 'Pos', [380, 80, 300, 250]);
-        set(h, 'Unit', 'normalised');
+         try
+            set(h, 'Unit', 'normalised');
+        catch
+            set(h, 'Unit', 'normalized');
+        end
         
         hold('off');
         

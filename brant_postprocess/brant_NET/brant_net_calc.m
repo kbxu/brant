@@ -23,15 +23,6 @@ num_workers = jobman.par_workers;
 fprintf('Loading network matrices...\n');
 [mat_list, subj_ids] = brant_get_subjs(jobman.input_matrix);
 
-% switch(mat_type)
-%     case {'raw value (corr_r)', 'absolute value (corr_r)'}
-%         corr_str = 'corr_r';
-%     case {'raw value', 'absolute value', 'raw value (corr_z)', 'absolute value (corr_z)'}
-%         corr_str = 'corr_z';
-%     otherwise
-%         error('Unknown matrix type!');
-% end
-
 num_subj = numel(mat_list);
 if num_workers > 0
     brant_parpool('open', num_workers);
@@ -128,9 +119,7 @@ for m = 1:num_subj
                                                       'subj_id', 'calc_rsts_corr', 'calc_rsts_spar');
 end
 
-if num_workers > 0
-    brant_parpool('close');
-end
+if num_workers > 0, brant_parpool('close'); end
 fprintf('\nFinished!\n');
 
 function net = brant_measure(net_measure_option, subj_id, gMatrix, net_type)
@@ -140,7 +129,7 @@ if ~any(gMatrix(:))
     return;
 end
 
-if net_measure_option.assortative == 1
+if net_measure_option.assortative_mixing == 1
     fprintf('%s: assortativity coefficient of network.\n', subj_id);
     [net.assortative.global] = CCM_Assortative(gMatrix);
 end
@@ -165,7 +154,7 @@ if net_measure_option.degree == 1
     [net.degree.global, net.degree.nodal] = CCM_Degree(gMatrix);
 end
 
-if net_measure_option.faulttol == 1
+if net_measure_option.fault_tolerance == 1
     fprintf('%s: fault tolerance of network based on global perspective.\n', subj_id);
     [net.faulttol.global, net.faulttol.nodal] = CCM_FaultTol(gMatrix);
 end

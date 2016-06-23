@@ -11,14 +11,14 @@ function brant_roi_script(jobman)
 % updated by kb at 2015-03-16
 
 
-brant_check_empty(jobman.mask, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 
 roi_wise_ind = jobman.roi_wise;
 rois = jobman.rois;
-mask_fn = jobman.mask{1};
+mask_fn = jobman.input_nifti.mask{1};
 outdir = jobman.out_dir{1};
 ext_mean_ind = jobman.ext_mean;
 roi2roi_ind = jobman.roi2roi;
@@ -149,11 +149,11 @@ for mm = 1:numel(split_prefix)
     if roi_wise_ind == 1
         % roi-wise correlation
         if ext_mean_ind == 1
-            out_ts = brant_make_outdir(out_dir_tmp, 'mean_ts');
+            out_ts = brant_make_outdir(out_dir_tmp, {'mean_ts'});
         end
         
         if roi2roi_ind == 1
-            out_mat = brant_make_outdir(out_dir_tmp, ['roi2roi_', corr_type]);
+            out_mat = brant_make_outdir(out_dir_tmp, {['roi2roi_', corr_type]});
         end
         
         if roi2wb_ind == 1

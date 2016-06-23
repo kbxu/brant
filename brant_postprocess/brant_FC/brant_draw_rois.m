@@ -49,7 +49,6 @@ if exist(outdir, 'dir') ~= 7
     mkdir(outdir);
 end
 
-
 if jobman.manual == 1
     coords = jobman.coords;
     
@@ -61,36 +60,35 @@ if jobman.manual == 1
     roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp, 'UniformOutput', false);
 else
     if isempty(jobman.coords_file)
-        error('A txt or excel file (*.xls,*.csv) is expected for the input!');
+        error('An csv file is expected for the input!');
     end
     
-    [pth, nm, ext] = fileparts(jobman.coords_file{1}); %#ok<ASGLU>
-    if strcmpi(ext, '.txt')
-        coords = load(jobman.coords_file{1});
-        roi_nms_tmp = 1:size(coords, 1);
-        roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp, 'UniformOutput', false);
-    elseif strcmpi(ext, '.csv') || strcmpi(ext, '.xls') || strcmpi(ext, '.xlsx')
-        fprintf('\tParsing roi information from %s.\n', jobman.coords_file{1});
-        node_info = brant_parse_node(jobman.coords_file{1});
-        coords = [node_info.x, node_info.y, node_info.z];
-        if ~all(arrayfun(@isnumeric, coords(:)))
-            error('Numeric values are expected for x, y, z of coordinates!');
-        end
-        
-        if isfield(node_info, 'label')
-            roi_strs = node_info.label;
-            
-            uniq_str = unique(roi_strs);
-            if numel(uniq_str) ~= numel(roi_strs)
-                uniq_num = cellfun(@(x) numel(find(strcmpi(x, roi_strs))), uniq_str);
-                error(['ROI labels are duplicated, please check!', sprintf('\n'), sprintf('%s\n', uniq_str{uniq_num > 1})]);
-            end
-        else
-            roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), 1:size(coords, 1), 'UniformOutput', false)';
+%     [pth, nm, ext] = fileparts(jobman.coords_file{1}); %#ok<ASGLU>
+%     if strcmpi(ext, '.txt')
+%         coords = load(jobman.coords_file{1});
+%         roi_nms_tmp = 1:size(coords, 1);
+%         roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp, 'UniformOutput', false);
+%     if any(strcmpi(ext, {'.csv', '.txt'}))
+    fprintf('\tParsing roi information from %s.\n', jobman.coords_file{1});
+    node_info = brant_parse_node(jobman.coords_file{1});
+    coords = [node_info.x, node_info.y, node_info.z];
+    if ~all(arrayfun(@isnumeric, coords(:)))
+        error('Numeric values are expected for x, y, z of coordinates!');
+    end
+
+    if isfield(node_info, 'label')
+        roi_strs = node_info.label;
+        uniq_str = unique(roi_strs);
+        if numel(uniq_str) ~= numel(roi_strs)
+            uniq_num = cellfun(@(x) numel(find(strcmpi(x, roi_strs))), uniq_str);
+            error(['ROI labels are duplicated, please check!', sprintf('\n'), sprintf('%s\n', uniq_str{uniq_num > 1})]);
         end
     else
-        error('A txt or excel file (*.xls,*.csv) is expected for the input!');
-    end    
+        roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), 1:size(coords, 1), 'UniformOutput', false)';
+    end
+%     else
+%         error('An csv file is expected!');
+%     end    
 end
 
 v_mat_shift = reshape(s_mat(1:3, 4), 1, 3);

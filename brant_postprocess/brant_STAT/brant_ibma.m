@@ -84,7 +84,7 @@ elseif strcmp(input_type, 'voxel')
     
     
     tbl_fields = {'center', 'group1', 'group2'};
-    [a, b, tbl_info] = xlsread(jobman.num_subjs_tbl{1}); %#ok<*ASGLU>
+    tbl_info = brant_read_csv(jobman.num_subjs_tbl{1});
     tbl_titles = tbl_info(1, :);
     if size(tbl_titles, 2) < 3
         error('Please use center, group1 and group2 in the first row!');
@@ -113,7 +113,7 @@ elseif strcmp(input_type, 'voxel')
     
     arrayfun(@(x, y, z) fprintf('Center: %s, group1: %d, group2: %d\n', x{1}, y, z), subj_ids_org, N1, N2);
     
-    mask_nii = load_nii(jobman.mask{1});
+    mask_nii = load_nii(jobman.input_nifti.mask{1});
     size_mask = mask_nii.hdr.dime.dim(2:4);
     mask_bin = mask_nii.img > 0.5;
     

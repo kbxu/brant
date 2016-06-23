@@ -155,7 +155,11 @@ if two_samp_ind == 1 || paired_t_ind == 1
             if paired_t_ind == 1
                 group_inds = true(size(subj_ids, 1), 1) & fil_tmp;
                 grp_ind_tmp = cellfun(@(x) find(strcmpi(group_est, x)), data_infos(1, :));
-                corr_2d_tmp = cellfun(@(x) x(group_inds, :), data_2d_raw(:, grp_ind_tmp), 'UniformOutput', false);
+                if iscell(data_2d_raw)
+                    corr_2d_tmp = arrayfun(@(x) cat(2, data_2d_raw{group_inds, x})', grp_ind_tmp, 'UniformOutput', false);
+                else
+                    corr_2d_tmp = arrayfun(@(x) cat(2, data_2d_raw(group_inds, x))', grp_ind_tmp, 'UniformOutput', false);
+                end
                 subj_ids_grp = subj_ids(group_inds, grp_ind_tmp);
                 
                 subjs = subj_ids(group_inds, :);
@@ -175,19 +179,23 @@ if two_samp_ind == 1 || paired_t_ind == 1
                 num_grp2 = sum(group_inds_2);
             end
 
-            
-            if ~isempty(reg_good_subj)
-                % mean centering covariates
-                reg_tmp = reg_good_subj(group_inds, :);
-                mean_reg = mean(reg_tmp, 1);
-                reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean_reg);
-                
-                grp_reg_m = [reg_good_subj_nm, ones(sum(group_inds), 1)];
-                glm_beta = grp_reg_m \ corr_2d_tmp;
-                data_mat_2d = corr_2d_tmp - grp_reg_m(:, 1:end-1) * glm_beta(1:end-1, :);
-            else
+            if paired_t_ind == 1
                 grp_reg_m = [];
                 data_mat_2d = corr_2d_tmp;
+            else
+                if ~isempty(reg_good_subj)
+                    % mean centering covariates
+                    reg_tmp = reg_good_subj(group_inds, :);
+                    mean_reg = mean(reg_tmp, 1);
+                    reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean_reg);
+
+                    grp_reg_m = [reg_good_subj_nm, ones(sum(group_inds), 1)];
+                    glm_beta = grp_reg_m \ corr_2d_tmp;
+                    data_mat_2d = corr_2d_tmp - grp_reg_m(:, 1:end-1) * glm_beta(1:end-1, :);
+                else
+                    grp_reg_m = [];
+                    data_mat_2d = corr_2d_tmp;
+                end
             end
             clear('corr_2d_tmp');
            
@@ -367,11 +375,9 @@ if two_samp_ind == 1 || paired_t_ind == 1
             for m = 1:num_csts
                 A = [[{'center'}, {'group1'}, {'group2'}]; [cen_strs{m}, num2cell(num_grp_all{m})]];
                 save(fullfile(out_info.outdir, [out_info.out_prefix, 'group_info.mat']), 'A');
-                try
-                    out_xlsx = fullfile(out_info.outdir, [out_info.out_prefix, 'group_info.xlsx']);
-                    xlswrite(out_xlsx, A, m);
-                catch
-                end
+                
+                out_csv = fullfile(out_info.outdir, [out_info.out_prefix, strrep(grp_csts{m}, ',', '_'), '_group_info.csv']);
+                brant_write_csv(out_csv, A);
             end
         end
     end
@@ -451,7 +457,7 @@ for n_contr = 1:numel(contrs)
 end
 
 out_fn_unc = fullfile(outdir, [out_prefix, sprintf('%s.mat', test_fn)]);
-save(out_fn_unc, 'group_est', 'tail_rst', 'p_rst_unc', 'h_rst_unc', 't_rst', 'df', 'subjs', 'rois_str', 'rois_tag', '-v7.3');
+save(out_fn_unc, 'group_est', 'tail_rst', 'p_rst_unc', 'h_rst_unc', 't_rst', 'df', 'subjs');
 
 dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_pval.txt', test_fn)]), p_rst_unc{1}); % group1 > group2
 dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_tval.txt', test_fn)]), t_rst);

@@ -48,12 +48,12 @@ for m = length(prompt):-1:1
 end
 
 function doCallback(obj, evd) %#ok
-userdata = get(obj,'Tag');
 
+userdata = get(obj,'Tag');
 h_board = findobj(0, 'Tag', userdata, 'Name', userdata);
 if isempty(h_board)    
-    [jobman, ui_strucs] = brant_postprocess_defaults(userdata);
-    brant_postprocesses_sub(userdata, jobman, ui_strucs);
+    [jobman, ui_strucs, process_fun] = brant_postprocess_defaults(userdata);
+    brant_postprocesses_sub(userdata, jobman, ui_strucs, process_fun);
 else
     h_parent = get(obj, 'Parent');
     pos_par = get(h_parent, 'Position');

@@ -1,17 +1,17 @@
-function [rois_cell, rois_str, roi_tags, roi_hdr] = brant_get_rois(rois, size_mask, roi_info_fn, show_msg)
+function [rois_cell, rois_str, roi_tags, roi_hdr] = brant_get_rois(rois, size_mask, roi_info_fn, show_msg, varargin)
 % if input many 3-D binary rois, use filename as roi strings
 % if input tagged roi, use strings in roi info
 
-% if nargin == 5
-%     load_nifti_func = varargin{1};
-% else
-%     load_nifti_func = @load_nii;
-% end
+if nargin == 5
+    load_nifti_func = varargin{1};
+else
+    load_nifti_func = @load_nii;
+end
 
 % check and load roi files
 roi_tags = 0;
 if numel(rois) == 1
-    roi_nii = load_nii(rois{1});
+    roi_nii = load_nifti_func(rois{1});
     roi_tags = unique(roi_nii.img(isfinite(roi_nii.img) & (roi_nii.img ~= 0)));
     roi_hdr = roi_nii.hdr;
     
@@ -38,7 +38,7 @@ if numel(rois) == 1
     roi_size = roi_nii.hdr.dime.dim(2:4);
     roi_size_4d = roi_nii.hdr.dime.dim(5);
 else
-    roi_nii = cellfun(@load_nii, rois);
+    roi_nii = cellfun(load_nifti_func, rois);
     roi_hdr = roi_nii(1).hdr;
 %     rois_cell = arrayfun(@(x) find(x.img > 0.5), roi_nii, 'UniformOutput', false);
     rois_cell = arrayfun(@(x) x.img > 0.5, roi_nii, 'UniformOutput', false);
@@ -76,34 +76,8 @@ if ~isempty(size_mask)
         error('Size of brain mask is different from roi, please check!');
     end
 end
-% commented on 2015-20-18, for potential discrepencies caused by data
-% rois_inds = cell(num_roi, 1);
-% for m = 1:num_roi
-%     rois_inds{m} = cell2mat(arrayfun(@(x) find(x == mask_ind), rois_cell{m}, 'UniformOutput', false));
-% end
-% 
-% ept_ind = cellfun(@isempty, rois_inds);
-% 
-% if any(ept_ind)
-%     warning(['No voxels of ROI survived the mask!',...
-%              sprintf('\n\t%s\n', rois_str{ept_ind})]);
-%          
-%     rois_inds = rois_inds(~ept_ind);
-%     rois_str = rois_str(~ept_ind);
-%     roi_tags = roi_tags(~ept_ind);
-% end
 
 if show_msg == 1
     num_vox = cellfun(@(x) numel(find(x)), rois_cell);
     arrayfun(@(x, y, z) fprintf('\tThe unmasked number of voxels marked as %s (%d) is %d\n', x{1}, y, z), rois_str, roi_tags, num_vox);
-    
-%     if numel(rois) == 1
-%         arrayfun(@(x, y, z) fprintf('\tThe unmasked number of voxels marked as %s (%d) is %d\n', x{1}, y, z), rois_str, roi_tags, num_vox);
-% %         roi_infos = cellstr(strcat('The unmasked number of voxels tagged by', 32, num2str(roi_tags), 32, 'is', 32, num2str(num_vox)));
-% %         fprintf('\t%s\n', roi_infos{:});
-%     else
-%         arrayfun(@(x, y, z) fprintf('\tThe unmasked number of voxels marked as %s (%d) is %d\n', x{1}, y, z), rois_str, roi_tags, num_vox);
-% %         roi_infos = cellstr(strcat('The unmasked number of voxels tagged by', 32, char(rois_str), 32, 'is', 32, num2str(num_vox)));
-% %         fprintf('\t%s\n', roi_infos{:});
-%     end
 end

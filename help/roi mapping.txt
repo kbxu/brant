@@ -1,14 +1,25 @@
 Help information for ROI Mapping:
 
-alpha: degree of transparency
-display: mode of display
-display surface: show surface
-surface: surface file
+alpha: degree of transparency.
+display: mode of display.
+display surface: show surface.
+surface: surface file.
+display legend: display legend.
+
 roi file: extract mean intensity in the roi tagged by numbers.
-roi info: labels of tagged ROIs. (optional)
-roi vals: select which roi to display
-spin&save: spin around a certain degree and save screenshots.
-output path: an output directory for saving results.
+roi info*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
+    1,SFG
+    2,MFG
+    3,IFG
+    
+roi vals: select which roi to display.
+color: optional. use random color or input color file.
+color file: the input color could be (ROI tag, R, G, B):
+    1,255,155,100
+    2,1,1,1
+
+output color: output color of current image.
+out dir: output directory for saving results.
 
 end
      

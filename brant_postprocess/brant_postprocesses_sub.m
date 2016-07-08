@@ -69,9 +69,28 @@ end
 
 current_pos.y = fig.height - 60;
 
-create_elements(hfig_inputdlg, prompt, [current_pos.x, current_pos.y], jobman); % create functional elements
+logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn.png');
+if exist(logo_fn, 'file') == 2
+    create_logo(hfig_inputdlg, current_pos, logo_fn);
+end
 
+create_elements(hfig_inputdlg, prompt, [current_pos.x, current_pos.y], jobman); % create functional elements
 brant_except_ui(hfig_inputdlg);
+
+function create_logo(hfig_inputdlg, current_pos, logo_fn)
+
+I = imresize(imread(logo_fn), [50, 210]);
+
+h_btn = uicontrol(...
+        'Parent',       hfig_inputdlg,...
+        'Style',        'pushbutton',...
+        'Position',     [current_pos.x, current_pos.y, 210, 50],...
+        'ForegroundColor', [0.2 0.4 0.8],...
+        'CData',        imresize(imread(logo_fn), [50, 210]),...
+        'Callback',     @brant_fun_web);
+
+function brant_fun_web(obj, evd)
+web('http://www.brainnetome.org/en/brainnetometool.html', '-browser');
 
 function brant_except_ui(hfig_inputdlg)
 % set ui control events for specific uis
@@ -82,26 +101,35 @@ lw_uiname = lower(ui_name);
 switch(lw_uiname)
     case 'roi calculation'
         h_roi = findobj(hfig_inputdlg, 'String', 'ROI-wise / voxel-wise correlation'); % add {} to checkbox ui elements!
-        val_roi = get(h_roi, 'Value');
-        if val_roi == 1
+        if get(h_roi, 'Value') == 1
             obj_strs{1} = {''}; % dual
             obj_strs{2} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb'}; % self
         else
             obj_strs{1} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb'}; % dual
             obj_strs{2} = {''}; % self
         end
+    case 'roi coordinates'
+        h_sep_c = findobj(hfig_inputdlg, 'String', 'seperated binary clusters');
+        if get(h_sep_c, 'Value') == 1
+            obj_strs{1} = {'template_info'}; % dual
+            obj_strs{2} = {''}; % self
+        else
+            obj_strs{1} = {''}; % self
+            obj_strs{2} = {'template_info'}; % dual
+        end
+        
     case 'dicom convert'
-        h_del = findobj(hfig_inputdlg, 'string', 'delete first * timepoints');
+        h_del = findobj(hfig_inputdlg, 'style', 'radiobutton', 'string', 'delete');
         val_del = get(h_del, 'Value');
         
         if val_del == 1
-            obj_strs{1} = {''}; % dual
-            obj_strs{2} = {'filetype', 'del:'}; % self
+            obj_strs{1} = {'_cvt:', '_cvt.'}; % dual
+            obj_strs{2} = {'_del:', '_del.'}; % self
         else
-            obj_strs{1} = {'filetype', 'del:'}; % dual
-            obj_strs{2} = {''}; % self
+            obj_strs{1} = {'_del:', '_del.'}; % dual
+            obj_strs{2} = {'_cvt:', '_cvt.'}; % self
         end
-    case 'del timepoints'
+    case 'delete timepoints'
         h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
         val_out = get(h_out, 'Value');
         if val_out == 1
@@ -111,7 +139,7 @@ switch(lw_uiname)
             obj_strs{1} = {'out_dir'}; % dual
             obj_strs{2} = {''}; % self
         end
-    case 'statistics'
+    case 't-tests' %'statistics'
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if val_mat == 1
@@ -135,11 +163,11 @@ switch(lw_uiname)
         h_merge = findobj(hfig_inputdlg, 'string', 'merge');
         val_merge = get(h_merge, 'Value');
         if val_merge == 1
-            obj_strs{1} = {'rois:', 'roi_info:', 'roi_vec'}; % dual
+            obj_strs{1} = {'rois:', 'roi_info:', 'roi_vec', 'out2single'}; % dual
             obj_strs{2} = {'input_nifti.', 'out_fn'}; % self
         else
             obj_strs{1} = {'input_nifti.', 'out_fn'}; % dual
-            obj_strs{2} = {'rois:', 'roi_info:', 'roi_vec'}; % self
+            obj_strs{2} = {'rois:', 'roi_info:', 'roi_vec', 'out2single'}; % self
         end
     case 'ibma'
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
@@ -151,14 +179,14 @@ switch(lw_uiname)
             obj_strs{1} = {'input_matrix'}; % dual
             obj_strs{2} = {'num_subjs_tbl', 'input_nifti'}; % self
         end
-    case {'extract mean adv', 'extract mean'}
+    case {'extract value'}
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if val_mat == 1
             obj_strs{1} = {'input_nifti.', 'rois:', 'roi_info:', 'mask'}; % dual
-            obj_strs{2} = {'corr_mat'}; % self
+            obj_strs{2} = {'input_matrix.', 'sym_ind'}; % self
         else
-            obj_strs{1} = {'corr_mat'}; % dual
+            obj_strs{1} = {'input_matrix.', 'sym_ind'}; % dual
             obj_strs{2} = {'input_nifti.', 'rois:', 'roi_info:', 'mask'}; % self
         end
     case 'roi mapping'
@@ -174,6 +202,8 @@ switch(lw_uiname)
     otherwise
         return;
 end
+
+brant_config_figure(hfig_inputdlg, 'pixel');
 
 h_objs = get(hfig_inputdlg, 'Children');
 tag_objs = arrayfun(@(x) get(x,'tag'), h_objs, 'UniformOutput', false);
@@ -191,7 +221,7 @@ end
 
 obj_ind_all = obj_ind{1} | obj_ind{2};
 
-enb_uis = {'roi calculation', 'roi mapping', 'dicom convert', 'del timepoints'};
+enb_uis = {'roi calculation', 'roi mapping', 'del timepoints'};
 
 if any(strcmpi(lw_uiname, enb_uis))
     % disable ui elements
@@ -243,7 +273,7 @@ end
 
 % more exceptions
 switch(lw_uiname)
-    case 'statistics'
+    case 't-tests'%'statistics'
         h_vox2vox_ind = findobj(hfig_inputdlg, 'tag', 'mat_vox2vox:checkbox');
         obj_strs = {'input_matrix.filetype:edit', 'input_matrix.nm_pos:edit', 'fdr', 'bonf'};
         obj_ind = false;
@@ -256,7 +286,38 @@ switch(lw_uiname)
         else
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
         end
+    case 'dicom convert'
+        h_cvt_ind = findobj(hfig_inputdlg, 'tag', 'convert:radio');
+        if get(h_cvt_ind, 'Value') == 1
+            obj_strs = {'del_N_cvt', 'filetype_cvt'};
+            obj_ind = false;
+        else
+            obj_strs = {'out_dir_del:text', 'out_dir_del:edit'};
+            obj_ind = false;
+        end
+        
+        for n = 1:numel(obj_strs)
+            obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
+        end
+            
+        if get(h_cvt_ind, 'Value') == 1
+            h_del_ind_cvt_ind = findobj(hfig_inputdlg, 'tag', 'del_ind_cvt:checkbox');
+            if get(h_del_ind_cvt_ind, 'Value') == 1
+                arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
+            else
+                arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
+            end
+        else
+            h_out_dir_del_ind = findobj(hfig_inputdlg, 'tag', 'out_ind_del:checkbox');
+            if get(h_out_dir_del_ind, 'Value') == 1
+                arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
+            else
+                arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
+            end
+        end
 end
+
+brant_config_figure(hfig_inputdlg, 'Normalized');
 
 function [fig, prompt] = figure_height(prompt, fig)
 
@@ -877,6 +938,9 @@ for m = 1:size(prompt, 1)
     end
 end
 
+set(findall(h_fig,'-property','FontSize'), 'FontSize', 8);
+brant_config_figure(h_fig, 'Normalized');
+
 function chb_cb(obj, evd, mode)
 
 h_parent = get(obj, 'Parent');
@@ -1126,7 +1190,7 @@ switch(mode)
         surf_pth = fullfile(fileparts(which('brant')), 'brant_surface');
         [disp_input, sts] = cfg_getfile(1, nifti_support, '', val, surf_pth);
     case 'str_edge'
-        [disp_input, sts] = cfg_getfile([0, 1], '^.*\.txt$', '', val);
+        [disp_input, sts] = cfg_getfile([0, 1], table_support, '', val);
     case 'str_node'
         [disp_input, sts] = cfg_getfile(1, table_support, '', val);
         if sts == 1
@@ -1134,15 +1198,6 @@ switch(mode)
         end
     case 'disp_coordinates'
         [disp_input, sts] = cfg_getfile([0 1], table_support, '', val, '');
-%         if sts == 1
-%             [pth, nm, ext] = fileparts(disp_input{1}); %#ok<ASGLU>
-%             if strcmp(ext, '.txt')
-%                 coords = load(disp_input{1});
-%                 if size(coords, 2) ~= 3
-%                     error('%s is not a valid coordinate file!', disp_input{1});
-%                 end
-%             end
-%         end
     case 'str_dir'
         [disp_input, sts] = cfg_getfile(1, 'dir', '', val);
    
@@ -1182,7 +1237,8 @@ switch(mode)
         nm_tmp = findobj(0, 'Name', 'Brant Net Measure Options', 'Type', 'Figure');
         if isempty(nm_tmp)
             hfig_inputdlg = brant_net_measures_setup(h_parent);
-            uiwait(hfig_inputdlg);
+            set(h_parent, 'DeleteFcn', {@delete_figure, hfig_inputdlg});
+%             uiwait(hfig_inputdlg);
         else
             figure(nm_tmp);
         end
@@ -1235,7 +1291,7 @@ if isfield(jobman.node, 'size')
     set(h_size, 'Value', 0);
     set(h_size_txt, 'enable', 'off');
 else
-    jobman.node_size = str2double(get(h_size_txt, 'String'));
+    jobman.node_size = str2num(get(h_size_txt, 'String'));
     set(h_size, 'Value', 1);
     set(h_size_txt, 'enable', 'on');
 end
@@ -1324,7 +1380,7 @@ nifti_support = '^.*\.(nii|img|nii.gz)$';
 
 switch(mode)
     case {'num_short_right', 'num_short_left', 'num_coords', 'num_long', 'num_longest', 'num_bin_num_edit'}
-        num = str2double(str);
+        num = str2num(str); %#ok<ST2NM> %do not use str2double! 
         if ~isempty(num)
             set_field_vals(h_parent, jobman, field_name, num);
         else
@@ -1422,11 +1478,11 @@ dlg_title = get(h_parent, 'Name');
 
 if isfield(jobman, 'out_dir')
     if ~isfield(jobman, 'out_ind')
-        if isempty(jobman.out_dir), error('Please input a directory for output!'); end
+        if isempty(jobman.out_dir{1}), error('Please input a directory for output!'); end
         if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
     else
         if jobman.out_ind == 1
-            if isempty(jobman.out_dir), error('Please input a directory for output!'); end
+            if isempty(jobman.out_dir{1}), error('Please input a directory for output!'); end
             if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
         end
     end
@@ -1445,6 +1501,16 @@ catch err
     rethrow(err);
 end
 
-function close_window(obj, evd)
-h_parent = get(obj,'Parent');
+function delete_figure(obj, evd, varargin)
+if nargin > 2
+    % delete whatever handle send to this function
+    delete(varargin{1});
+end
+
+function close_window(obj, evd, varargin)
+h_parent = get(obj, 'Parent');
 delete(h_parent);
+
+
+
+

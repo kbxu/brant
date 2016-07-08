@@ -27,16 +27,15 @@ if isfield(jobman, 'matrix') && isfield(jobman, 'volume')
         error('Unknown file type for statistics!');
     end
     
-    fdr_ind = jobman.fdr;
-    fdr2_ind = jobman.fdr2;
+    fdrID_ind = jobman.fdrID;
+    fdrN_ind = jobman.fdrN;
     bonf_ind = jobman.bonf;
-    multi_type = {'FDR', 'FDR2', 'Bonf'};
-    multi_ind  = [fdr_ind, fdr2_ind, bonf_ind];
-    out_info.p_thr = jobman.p_thr;
+    multi_type = {'fdrID', 'fdrN', 'bonf'};
+    multi_ind  = [fdrID_ind, fdrN_ind, bonf_ind];
+    out_info.thr = jobman.thr;
     out_info.multi_use = multi_type(multi_ind == 1);
 else
-    out_info.p_thr = 0.05;
-%     net_file = jobman.net_mat{1};
+    out_info.thr = 0.05;
     [net_files, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
     out_info.data_type = 'stat network';
     out_info.out_prefix = '';
@@ -138,37 +137,10 @@ switch(out_info.data_type)
         fprintf('\n\tLoading correlation matrix...\n');
         
         mat_list_good = mat_list(subj_ind);
-        corr_mat = cellfun(@load, mat_list_good, 'UniformOutput', false);
-        
-        if jobman.sym_ind == 1
-            % symmetric matrix, use only half value
-            num_rois = size(corr_mat{1}, 1);
-            corr_ind = triu(true(num_rois), 1);
-            if strcmpi(stat_type, 'paired t-test') == 1
-                data_2d_mat = cellfun(@(x) x(corr_ind), corr_mat, 'UniformOutput', false);
-            else
-                data_2d_mat = cat(3, corr_mat{:});
-                data_2d_mat = shiftdim(data_2d_mat, 2);
-                data_2d_mat = double(data_2d_mat(:, corr_ind));
-            end
-            out_info.mat_size = [num_rois, num_rois];
-            out_info.corr_ind = corr_ind;
-        else
-            % arbitary matrix, use all value
-            if strcmpi(stat_type, 'paired t-test') == 1
-                data_2d_mat = cellfun(@(x) x(:), corr_mat, 'UniformOutput', false);
-            else
-                data_2d_mat = cat(3, corr_mat{:});
-                data_2d_mat = shiftdim(data_2d_mat, 2);
-                data_2d_mat = reshape(data_2d_mat, size(data_2d_mat, 1), []);
-            end
-            out_info.mat_size = size(corr_mat{1});
-            out_info.corr_ind = true(out_info.mat_size);
-        end
-        clear('corr_mat');
+        paired_ind = strcmpi(stat_type, 'paired t-test') == 1;
+        [data_2d_mat, out_info.corr_ind, out_info.mat_size] = brant_load_matrices_to_2d(mat_list_good, jobman.sym_ind, paired_ind);
         
         out_info.sym_ind = jobman.sym_ind;
-        out_info.num_rois = num_rois;
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
               test_ind, out_info);
           

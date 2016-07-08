@@ -1,0 +1,22 @@
+Help information for Normalize of SPM12:
+
+Subject info:
+    source: Filetype of images for normalization are stored. Default is the mean*.nii generated from realign. Users can also change it to T1/T2 structural image of each subject stored in each subject's folder. If Coregister is checked, remember to add prefix of Coregister to the source filetype and change to template to the same modality of source.
+
+Estimate: 
+    biasreg: bias regularisation.
+    biasfwhm: FWHM of Gaussian smoothness of bias.
+    tpm: Tissue probability map which the source image will be registered to.
+    affreg: affine regularisation.
+    reg: the amount of regularization for the nonlinear part of the spatial normalization.
+    fwhm: option for smoothness.
+    samp: sampling distance.
+
+Write:
+    bb: Bounding box of the volume.
+    vox: The voxel sizes of the normalized images.
+    interp: Interpolation methods for write option. (0 for Nearest Neighbor; 1 for Trilinear; 2-7 for 2nd-7th Degree 
+
+Reference: spm manual.
+
+end

@@ -1,4 +1,7 @@
 function brant_write_csv(filename, csv_cell)
+% input filename, csv_cell
+% filename: output filename
+% csv_cell: csv data stored in cell array
 
 fid = fopen(filename, 'wt');
 

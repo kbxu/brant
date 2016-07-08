@@ -10,8 +10,7 @@
 %  Y axis from Posterior to Anterior, and Z axis from Inferior to
 %  Superior.
 %
-%  Usage: nii = load_nii(filename, [img_idx], [dim5_idx], [dim6_idx], ...
-%			[dim7_idx], [old_RGB], [tolerance], [preferredForm])
+%  Usage: nii = load_nii_mod(filename, [img_idx], [tolerance], [preferredForm])
 %
 %  filename  - 	NIFTI or ANALYZE file name.
 %
@@ -80,11 +79,14 @@ if ~exist('preferredForm','var') || isempty(preferredForm)
     preferredForm= 's';		% Jeff
 end
 
+img_idx = double(img_idx);
+
 %  new load header and image
-[nii.hdr, img] = load_nii_hdr_img_raw_c(filename);
+[nii.hdr, img] = load_nii_hdr_img_raw_c(filename, img_idx);
 nii.machine = 'ieee-le';
 
-[unused, nii.fileprefix] = brant_fileparts(filename); %#ok<ASGLU>
+[pth, fileprefix] = brant_fileparts(filename);
+nii.fileprefix = fullfile(pth, fileprefix);
 
 if ~strcmp(nii.hdr.hist.magic, 'n+1') && ~strcmp(nii.hdr.hist.magic, 'ni1')
     nii.hdr.hist.qform_code = 0;
@@ -202,7 +204,7 @@ if isempty(img_idx)
     img_idx = 1:hdr.dime.dim(5);
 end
 
-img = img(:, :, :, img_idx);
+% img = img(:, :, :, img_idx);
 
 hdr.dime.glmax = double(max(img(:)));
 hdr.dime.glmin = double(min(img(:)));

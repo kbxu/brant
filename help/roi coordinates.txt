@@ -1,0 +1,16 @@
+Help information for ROI coordinates:
+The current function can extract coordinates for each cluster and output to a table.
+
+input type: seperated binary clusters or labeled clusters
+mask*: optional. mask to do AND operation with.
+cluster size: threshold of cluster size.
+roi file: input ROI file
+roi info*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
+    1,SFG
+    2,MFG
+    3,IFG
+
+out dir: output directory for saving results.
+
+end
+     

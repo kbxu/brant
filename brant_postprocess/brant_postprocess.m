@@ -1,7 +1,5 @@
 function brant_postprocess(dlg_title)
 
-% dlg_title = 'STAT';
-
 userdata = ['fig_', dlg_title];
 h_board = findobj(0, 'Tag', userdata);
 if isempty(h_board)

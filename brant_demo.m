@@ -1,12 +1,27 @@
 function brant_demo
 
-brant; pause(0.5)
-brant_preprocess('init'); pause(0.5)
-brant_preprocess('quit'); pause(1)
-
 brant_path = fileparts(which('brant'));
 
-functypes = {'FC', 'SPON', 'STAT', 'NET', 'UTILITIES'};
+brant; 
+set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
+export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant.png'), '-nocrop', '-r800');
+
+pause(0.5)
+brant_preprocess('init'); pause(0.5)
+
+h_prep = findobj(0, 'Name', 'brant_Preprocessing');
+figure(h_prep);
+set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
+export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant_preprocess.png'), '-nocrop', '-r800');
+
+h_board = findobj(0, 'Name', 'brant_CheckBoard');
+figure(h_board);
+set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
+export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant_preprocess_info.png'), '-nocrop', '-r800');
+
+brant_preprocess('quit'); pause(1)
+
+functypes = {'FC', 'SPON', 'STAT', 'NET', 'UTILITY'};
 for m = 1:numel(functypes)
     brant_postprocess(functypes{m}); 
     h_parent = gcf; pos = get(gcf, 'Position'); pause(0.5);

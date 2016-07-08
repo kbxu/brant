@@ -28,7 +28,7 @@ if input_color_ind == 1
         color_input = load(color_input_file);
         assert(size(color_input) >= 4);
         roi_ind = color_input(:, 1);
-        rgb_color = color_input(2:4, 1);
+        rgb_color = color_input(:, 2:4);
     end
 end
 

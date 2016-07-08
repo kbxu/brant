@@ -1,9 +1,17 @@
 function [mask_hdr, mask_ind, size_mask, mask_new] = brant_check_load_mask(mask_raw, sample_raw, outdir)
-% check, reslice and load mask
+% check, reslice using nearest neighbour and load mask
 
 copyfile(mask_raw, outdir);
 [pth, mask_fn_raw, ext] = fileparts(mask_raw); %#ok<ASGLU>
-mask_fn = fullfile(outdir, [mask_fn_raw, ext]);
+
+if strcmpi(ext, '.gz')
+    gunzip(fullfile(outdir, [mask_fn_raw, ext]));
+    mask_fn = fullfile(outdir, mask_fn_raw);
+    [pth, mask_fn_raw, ext] = fileparts(mask_fn); %#ok<ASGLU>
+else
+    mask_fn = fullfile(outdir, [mask_fn_raw, ext]);
+end
+
 fprintf('Mask has been copied from %s to %s.\n', mask_raw, mask_fn);
 
 % use only the first sample
@@ -11,8 +19,9 @@ sample_fn = brant_get_sample(sample_raw);
 
 % check mask with sample
 mask_nii = load_nii(mask_fn);
-sample_nii = load_nii(sample_fn, 1);
-sts = brant_spm_check_orientations([mask_nii.hdr, sample_nii.hdr]);
+% sample_nii_hdr = load_nii_mod(sample_fn, 1);
+sample_nii_hdr = load_nii_mod(sample_fn);
+sts = brant_spm_check_orientations([mask_nii.hdr, sample_nii_hdr]);
 
 if (sts == false)
     res_prefix = 'resliced_';

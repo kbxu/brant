@@ -190,6 +190,8 @@ function nii = load_nii(filename, img_idx, dim5_idx, dim6_idx, dim7_idx, ...
 
       %  fix fileprefix so it doesn't point to temp location
       %
+      
+      
       nii.fileprefix = gzFileName(1:end-7);
       rmdir(tmpDir,'s');
    end

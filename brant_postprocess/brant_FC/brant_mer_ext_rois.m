@@ -11,6 +11,7 @@ extract_info.roi_vec = jobman.roi_vec;
 merge_info = jobman.input_nifti;
 merge_info.out_fn = jobman.out_fn;
 
+out2single = jobman.out2single;
 output_dir = jobman.out_dir{1};
 
 if mer_ind == 1;
@@ -64,18 +65,38 @@ elseif ext_ind == 1
     end
     
     % uses load_untouch_nii to load roi file
-    [rois_inds, rois_str, roi_tags] = brant_get_rois(extract_info.rois, [], extract_info.roi_info{1}, 0, @load_untouch_nii); %#ok<ASGLU>
+    [rois_inds, rois_str, roi_tags] = brant_get_rois(extract_info.rois, [], extract_info.roi_info{1}, 0, @load_untouch_nii);
+    
     
     roi_ind_bp = arrayfun(@(x) find(x == roi_tags), roi_vec);
-    
-    cla_input = class(roi_tags);
-    
-    roi_full.hdr.dime.glmax = 1;
-    for m = 1:numel(roi_ind_bp)
-        fprintf('Extract ROI index %d for %s.\n', roi_vec(m), rois_str{m});
-        ind_tmp = roi_ind_bp(m);
-        roi_full.img = eval([cla_input, '(rois_inds{ind_tmp})']);
-        save_untouch_nii(roi_full, fullfile(output_dir, [rois_str{ind_tmp}, '.nii']));
+    if out2single == 0
+        % output to seperated ROIs
+        cla_input = class(roi_tags);
+        roi_full.hdr.dime.glmax = 1;
+        for m = 1:numel(roi_ind_bp)
+            ind_tmp = roi_ind_bp(m);
+            fprintf('Extract ROI index %d for %s.\n', roi_tags(ind_tmp), rois_str{ind_tmp});
+            
+            roi_full.img = eval([cla_input, '(rois_inds{ind_tmp})']);
+            save_untouch_nii(roi_full, fullfile(output_dir, [rois_str{ind_tmp}, '.nii']));
+        end
+    else
+        % output to single ROI file
+        roi_full.hdr.dime.glmax = max(roi_vec);
+        roi_full.hdr.dime.glmin = min(roi_vec);
+        roi_full.img(:) = 0;
+        for m = 1:numel(roi_ind_bp)
+            ind_tmp = roi_ind_bp(m);
+            roi_full.img(rois_inds{ind_tmp}) = roi_tags(ind_tmp);
+        end
+        [pth, fn, ext] = fileparts(extract_info.rois{1}); %#ok<ASGLU>
+        save_untouch_nii(roi_full, fullfile(output_dir, ['brant_extract_', fn, '.nii']));
+        
+        fid = fopen(fullfile(output_dir, ['brant_extract_', fn, '.txt']), 'wt');
+        for m = 1:numel(roi_ind_bp)
+            fprintf(fid, '%d %s\n', m, rois_str{roi_ind_bp(m)});
+        end
+        fclose(fid);
     end
 else
     error('Unknown Input!');

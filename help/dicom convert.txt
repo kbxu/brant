@@ -1,12 +1,22 @@
 Help information for Dicom Convert:
 
-parallel workers: select how many workers to start a parallel work. The default is 0.
-convert to 4d: select to convert data to 4D format, otherwise to 3D.
-check timepoint: check the number of timepoints if filled with a positive number.
-del first timepoints: number of the timepoints to be deleted, the default is 10.
-name position: subject identifier for input data
-input dirs: directories can be input either using a .txt file or spm select window.
-output path: an output directory for saving results.
+operation: convert
+    parallel workers: select how many workers to start a parallel work. The default is 0.
+    convert to 4d: select to convert data to 4D format, otherwise to 3D.
+    id index: identifier to find unique string for each subject.
+    input dirs: directories can be input either using a .txt file or spm select window.
+    delete first N timepoints: delete heading fMRI volumes.
+    N: number of the heading timepoints to be deleted, the default is 10.
+    filetype: wildcard to search wanted fMRI data.
+    out dir: output directory for saving results.
+
+operation: delete
+    id index: identifier to find unique string for each subject
+    filetype: files in the filetype will be searched in input directories.
+    4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+    input dirs: directories can be input either using a .txt file or spm select window.
+    delete first N timepoints: delete heading fMRI volumes.
+    output fn: output filename.
+    output to another directory: output data to another directory
 
 end
-     

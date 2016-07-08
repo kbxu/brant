@@ -2,11 +2,6 @@ function brant_draw_rois(jobman)
 
 
 aio_ind = jobman.aio;
-
-% V = spm_vol(jobman.mask{1});
-% [mask, mask_XYZ] = spm_read_vols(V);
-% mask_ind = mask > 0.5;
-
 mask_nii = load_nii(jobman.mask{1});
 [mask_XYZ, s_mat] = brant_get_XYZ(mask_nii.hdr);
 mask_ind_all = mask_nii.img > 0.5;
@@ -21,14 +16,14 @@ if any(mask_vox_size_diff > 0.001)
 end
 mask_roi_ind = jobman.mask_roi;
 
-if jobman.box == 1
-    radius_type = 'box';
+if jobman.cube == 1
+    radius_type = 'cube';
     sphere_ind = 0;
-    box_ind = 1;
+    cube_ind = 1;
 else
     radius_type = 'sphere';
     sphere_ind = 1;
-    box_ind = 0;
+    cube_ind = 0;
 end
 
 if jobman.voxel == 1
@@ -63,12 +58,6 @@ else
         error('An csv file is expected for the input!');
     end
     
-%     [pth, nm, ext] = fileparts(jobman.coords_file{1}); %#ok<ASGLU>
-%     if strcmpi(ext, '.txt')
-%         coords = load(jobman.coords_file{1});
-%         roi_nms_tmp = 1:size(coords, 1);
-%         roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp, 'UniformOutput', false);
-%     if any(strcmpi(ext, {'.csv', '.txt'}))
     fprintf('\tParsing roi information from %s.\n', jobman.coords_file{1});
     node_info = brant_parse_node(jobman.coords_file{1});
     coords = [node_info.x, node_info.y, node_info.z];
@@ -86,9 +75,6 @@ else
     else
         roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), 1:size(coords, 1), 'UniformOutput', false)';
     end
-%     else
-%         error('An csv file is expected!');
-%     end    
 end
 
 v_mat_shift = reshape(s_mat(1:3, 4), 1, 3);
@@ -102,17 +88,17 @@ vox_ind = round(vox_ind_tmp);
 temp_nii_aio = zeros(size_mask, 'double'); % all in one
 roi_overlap = 0;
 
-if box_ind == 1
-    vox_ind_box_low = vox_ind - radius_vox;
-    vox_ind_box_up = vox_ind + radius_vox;
-    vox_ind_box_low(vox_ind_box_low < 1) = 1;
-    vox_ind_box_up(vox_ind_box_up(:, 1) > size_mask(1), 1) = size_mask(1);
-    vox_ind_box_up(vox_ind_box_up(:, 2) > size_mask(2), 2) = size_mask(2);
-    vox_ind_box_up(vox_ind_box_up(:, 3) > size_mask(3), 3) = size_mask(3);
+if cube_ind == 1
+    vox_ind_cube_low = vox_ind - radius_vox;
+    vox_ind_cube_up = vox_ind + radius_vox;
+    vox_ind_cube_low(vox_ind_cube_low < 1) = 1;
+    vox_ind_cube_up(vox_ind_cube_up(:, 1) > size_mask(1), 1) = size_mask(1);
+    vox_ind_cube_up(vox_ind_cube_up(:, 2) > size_mask(2), 2) = size_mask(2);
+    vox_ind_cube_up(vox_ind_cube_up(:, 3) > size_mask(3), 3) = size_mask(3);
     
     for m = 1:num_coords
         temp_nii = false(size_mask);
-        temp_nii(vox_ind_box_low(m, 1):vox_ind_box_up(m, 1), vox_ind_box_low(m, 2):vox_ind_box_up(m, 2), vox_ind_box_low(m, 3):vox_ind_box_up(m, 3)) = true;
+        temp_nii(vox_ind_cube_low(m, 1):vox_ind_cube_up(m, 1), vox_ind_cube_low(m, 2):vox_ind_cube_up(m, 2), vox_ind_cube_low(m, 3):vox_ind_cube_up(m, 3)) = true;
         if mask_roi_ind == 1
             temp_nii(~mask_ind_all) = false;
         end
@@ -162,17 +148,13 @@ if roi_overlap == 1
     warning('ROI overlaped in %s.nii!', num2str(num_coords, 'rois_%d'));
 end
 
-fid = fopen(fullfile(outdir, sprintf('roi_info_all_%d_rois.txt', num_coords)), 'wt');
-for m = 1:num_coords
-    fprintf(fid, '%-6d%s\n', m, roi_strs{m});
-end
-fclose(fid);
+brant_write_csv(fullfile(outdir, sprintf('roi_info_%s_%d_rois.csv', radius_type, num_coords)), [num2cell(1:num_coords)', roi_strs]);
 
-filename = fullfile(outdir, sprintf('all_%d_rois.nii', num_coords));
+filename = fullfile(outdir, sprintf('brant_%d_%s_rois.nii', num_coords, radius_type));
 nii = make_nii(temp_nii_aio, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
 save_nii(nii, filename);
 
-if ~isempty(roi_strs{1})
-    save(fullfile(outdir, sprintf('all_%d_rois.mat', num_coords)), 'roi_strs', 'coords', 'radius_mm', 'radius_vox');
-end
+% if ~isempty(roi_strs{1})
+%     save(fullfile(outdir, sprintf('all_%d_rois.mat', num_coords)), 'roi_strs', 'coords', 'radius_mm', 'radius_vox');
+% end
 fprintf('\n\tFinished!\n');

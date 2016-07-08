@@ -32,7 +32,6 @@ end
 
 if ~isempty(score_est)
     tbl_corr = brant_chk_tbl_cols(tbl_data, tbl_title, score_est, 'number');
-%     tbl_good = tbl_good & corr_good;
 end
 
 % filter for wanted groups and filters

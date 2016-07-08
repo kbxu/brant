@@ -4,15 +4,13 @@ function G = brant_randomizeGraph(G, kc)
 % works for symmetric binary network
 % Ref. R.Milo 2004, On the uniform generation of random graphs with prescribed degree sequences
 % Ref. Sergei Maslov 2002, Speci?city and Stability in Topology of Protein Networks
-% Write by: XU Kaibin, Dec,2015
+% Written by: XU Kaibin, Dec,2015
 
 N = size(G, 1);     %number of nodes
 G(1:(N+1):end) = 0; %clear self-edges
 [I, J] = find(triu(G, 1));
 M = length(I);        %number of edges
 T = M;
-
-
 
 for i = 1:T
 

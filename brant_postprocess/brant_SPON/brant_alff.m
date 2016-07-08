@@ -1,24 +1,20 @@
 function brant_alff(jobman)
 
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 FS = 1 / jobman.tr;
-BP = [jobman.lower_thr, jobman.higher_thr];
+BP = [jobman.lower_thr, jobman.upper_thr];
 
-tc_pts = jobman.timepoint;
+tc_pts = 1; %jobman.timepoint;
 nor_z_ind = jobman.nor;
 nor_m_ind = 0;
 outdir = jobman.out_dir{1};
 mask_fn = jobman.input_nifti.mask{1};
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
-% mask_nii = load_nii(mask_fn);
-% size_mask = mask_nii.hdr.dime.dim(2:4);
-% mask_hdr = mask_nii.hdr;
-% mask_ind = find(mask_nii.img > 0.5);
 
 for mm = 1:numel(split_prefix)
     
@@ -74,9 +70,8 @@ for mm = 1:numel(split_prefix)
         clear('fALFF', 'ALFF_BP_sum', 'ALFF_AP_sum');
     end
 end
-fprintf('\tFinished!\n');
-
 if any(tc_pts ~= subj_tps)
     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
 end
+fprintf('\tFinished!\n');

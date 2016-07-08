@@ -1,7 +1,7 @@
 function brant_tsnr(jobman)
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 mask_fn = jobman.input_nifti.mask{1};
@@ -32,9 +32,3 @@ for m = 1:numel(nifti_list)
     fprintf('\t%s finished...\n', subj_ids{m});
 end
 fprintf('\n\tAll finished.\n');
-
-% tsnr_ts_3d = nan(size_mask, 'single');
-% tsnr_ts_3d(mask_ind) = tsnr_ts_3d_mean;
-% filename = fullfile(outdir, 'TSNR_mean.nii');
-% nii = make_nii(tsnr_ts_3d, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
-% save_nii(nii, filename);

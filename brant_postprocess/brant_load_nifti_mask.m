@@ -11,7 +11,7 @@ end
 
 if num_files == 1
 % if ~iscell(nifti_files) % should be one 4-D file
-    nii = load_nii(nifti_files{1});
+    nii = load_nii_mod(nifti_files{1});
     nii_hdr = nii.hdr;
     nii_size = nii.hdr.dime.dim(2:5);
     
@@ -23,7 +23,7 @@ if num_files == 1
     end
 else    
     for m = 1:num_files
-        nii_tmp = load_nii(nifti_files{m});
+        nii_tmp = load_nii_mod(nifti_files{m});
 %         nii_tmp.img = nii_tmp.img / nanmean(nii_tmp.img(:)); % only for PET
         if m == 1
             nii_hdr = nii_tmp.hdr;

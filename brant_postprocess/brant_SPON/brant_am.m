@@ -1,10 +1,10 @@
 function brant_am(jobman)
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
-tc_pts = jobman.timepoint;
+tc_pts = 1;
 mask_fn = jobman.input_nifti.mask{1};
 outdir = jobman.out_dir{1};
 
@@ -79,9 +79,9 @@ for mm = 1:numel(split_prefix)
     end
 end
 
-fprintf('\n\t All finished. \n');
-
 if any(tc_pts ~= subj_tps)
     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
         sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
 end
+
+fprintf('\n\t All finished. \n');

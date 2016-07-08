@@ -70,11 +70,11 @@ if one_samp_ind == 1
                     fprintf('\tRunning one sample t-test for %s of %s\n', group_est_one{m}, filter_est{ooo});
                 end
                 try
-                    [h_vec_R, p_vec_R, ci, ttest_rst_stat] = ttest(data_mat_2d, 0, 'Alpha', out_info.p_thr, 'Tail', 'right');
-%                     [o1, o2, ci, o3] = ttest(data_mat_2d, 0, 'Alpha', out_info.p_thr, 'Tail', 'both');
+                    [h_vec_R, p_vec_R, ci, ttest_rst_stat] = ttest(data_mat_2d, 0, 'Alpha', out_info.thr, 'Tail', 'right');
+%                     [o1, o2, ci, o3] = ttest(data_mat_2d, 0, 'Alpha', out_info.thr, 'Tail', 'both');
                 catch
-                    [h_vec_R, p_vec_R, ci, ttest_rst_stat] = ttest(data_mat_2d, 0, out_info.p_thr, 'right');
-%                     [o1, o2, ci, o3] = ttest(data_mat_2d, 0, out_info.p_thr, 'right');
+                    [h_vec_R, p_vec_R, ci, ttest_rst_stat] = ttest(data_mat_2d, 0, out_info.thr, 'right');
+%                     [o1, o2, ci, o3] = ttest(data_mat_2d, 0, out_info.thr, 'right');
                 end
             end
             
@@ -93,10 +93,10 @@ if one_samp_ind == 1
             case 'stat volume'
                 contr_str = sprintf('SPM{T_[%.1f]} - Contrast: %s', df_stu, group_est_one{m});
                 save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
-                                 test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.p_thr, p_vec_R);
+                                 test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R);
             case 'stat matrix'
                 save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
-                                 test_fn, out_info.multi_use, out_info.p_thr, p_vec_R, group_est_one{m}, df_stu, subjs);
+                                 test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est_one{m}, df_stu, subjs);
              case 'stat matrix - voxel to voxel'
                 out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
                 df = df_stu;
@@ -291,9 +291,9 @@ if two_samp_ind == 1 || paired_t_ind == 1
                     end
                     
                     try
-                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, 'Tail', 'right', 'Alpha', out_info.p_thr); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, 'Tail', 'right', 'Alpha', out_info.thr); %#ok<*ASGLU>
                     catch
-                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, out_info.p_thr, 'right'); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, out_info.thr, 'right'); %#ok<*ASGLU>
                     end
                     stat_val = paired_t_stat.tstat;
                     df_stu = num_grp1 - 1;
@@ -307,9 +307,9 @@ if two_samp_ind == 1 || paired_t_ind == 1
                     end
                 
                     try
-                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), 'Tail', 'right', 'Alpha', out_info.p_thr); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), 'Tail', 'right', 'Alpha', out_info.thr); %#ok<*ASGLU>
                     catch
-                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), out_info.p_thr, 'right'); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), out_info.thr, 'right'); %#ok<*ASGLU>
                     end
                     stat_val = ttest2_rst_stat.tstat;
                     df_stu = num_grp1 + num_grp2 - 2;
@@ -325,7 +325,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                     fprintf('\n\tRunning two sample ranksum test for %s of %s\n', grp_csts{m}, filter_est{ooo});
                 end
                 num_vox = size(data_mat_2d, 2);
-                [p_vec_R, h_vec_R, ranksum_rst_stat] = arrayfun(@(x) ranksum(data_mat_2d(group_inds_1, x), data_mat_2d(group_inds_2, x), 'alpha', out_info.p_thr), 1:num_vox); %#ok<*ASGLU>
+                [p_vec_R, h_vec_R, ranksum_rst_stat] = arrayfun(@(x) ranksum(data_mat_2d(group_inds_1, x), data_mat_2d(group_inds_2, x), 'alpha', out_info.thr), 1:num_vox); %#ok<*ASGLU>
                 stat_val = arrayfun(@(x) x.zval, ranksum_rst_stat);
                 test_str = 'ranksum';
                 contr_str = sprintf('SPM{Z_[1]} - Contrast: %s_vs_%s', group_est{1}, group_est{2});
@@ -341,10 +341,10 @@ if two_samp_ind == 1 || paired_t_ind == 1
             switch(out_info.data_type)
                 case 'stat volume'
                     save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
-                                     test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.p_thr, p_vec_R);
+                                     test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R);
                 case 'stat matrix'
                     save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
-                                     test_fn, out_info.multi_use, out_info.p_thr, p_vec_R, group_est, df_stu, subjs);
+                                     test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est, df_stu, subjs);
                 case 'stat matrix - voxel to voxel'
                     out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
                     df = df_stu;
@@ -384,7 +384,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
     diary('off');
 end
 
-function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val, test_fn, mask_hdr, contr_str, multi_use, p_thr, p_vec_R)
+function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val, test_fn, mask_hdr, contr_str, multi_use, thr, p_vec_R)
 
 contrs = {'gt', 'st', 'diff'};
 contrs_tail = {'right', 'left', 'both'};
@@ -402,12 +402,12 @@ if ~isempty(multi_use)
     p_vec_L = 1 - p_vec_R;
 
     for n = 1:numel(multi_use)
-        stat_val_thres = brant_multi_thres_t(p_vec_L, p_vec_R, p_thr, multi_use{n}, stat_val);
+        stat_val_thres = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_use{n}, stat_val);
         if ~isempty(stat_val_thres)
             result_3d_mul = zeros(size_mask, 'double');
             result_3d_mul(mask_ind_new) = stat_val_thres;
 
-            out_fn = [out_prefix, sprintf('%s_%s_%s.nii', multi_use{n}, num2str(p_thr, '%.3f'), test_fn)];
+            out_fn = [out_prefix, sprintf('%s_%s_%s.nii', multi_use{n}, num2str(thr, '%.3f'), test_fn)];
             nii = make_nii(result_3d_mul, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3));
             nii.hdr.hist.descrip = contr_str;
             save_nii(nii, fullfile(outdir, out_fn));
@@ -415,7 +415,7 @@ if ~isempty(multi_use)
     end
 end
 
-function save_results_mat(outdir, out_prefix, mat_size, sym_ind, rois_tag, stat_val, corr_ind, test_fn, multi_use, p_thr, p_vec_R, group_est, df, subjs) %#ok<INUSD,INUSL>
+function save_results_mat(outdir, out_prefix, mat_size, sym_ind, rois_tag, stat_val, corr_ind, test_fn, multi_use, thr, p_vec_R, group_est, df, subjs) %#ok<INUSD,INUSL>
 
 contrs = {'gt', 'st', 'diff'};
 contrs_tail = {'right', 'left', 'both'};
@@ -452,7 +452,7 @@ for n_contr = 1:numel(contrs)
         p_rst_unc{n_contr} = p_rst_unc{n_contr} + p_rst_unc{n_contr}'; %#ok<*NASGU>
     end
 
-    h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < p_thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
+    h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
     tail_rst{n_contr} = contrs_tail{n_contr};
 end
 
@@ -468,7 +468,7 @@ if ~isempty(multi_use)
     stat_val_thres = [];
 
     for n = 1:numel(multi_use)
-        t_mat_thres_tmp = brant_multi_thres_t(p_vec_L, p_vec_R, p_thr, multi_use{n}, t_rst_vec);
+        t_mat_thres_tmp = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_use{n}, t_rst_vec);
 
         if ~isempty(t_mat_thres_tmp)
             t_mat_thres_mat = zeros(mat_size, 'double');

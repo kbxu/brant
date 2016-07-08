@@ -1,5 +1,6 @@
 function num_niis = brant_check_tps(is4d_ind, process_str, nifti_list, working_dir)
 % check and output time points
+% works only for unzipped files!
 
 if is4d_ind == 1
     num_niis = cellfun(@get_nii_frame, nifti_list);

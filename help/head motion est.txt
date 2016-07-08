@@ -1,9 +1,9 @@
 Help information for Head Motion Estimate:
 
-name position: subject identifier for input data
-input filetype: files in the filetype will be searched in input directories.
+id index: identifier to find unique string for each subject
+filetype: files in the filetype will be searched in input directories.
 input dirs: directories can be input either using a .txt file or spm select window.
-output path: an output directory for saving results.
+out dir: output directory for saving results.
 
 end
      

@@ -8,42 +8,41 @@ end
 switch upper(varargin{1})
     case 'INIT', % initialization
         hPreprocess = findobj(0, 'Tag', 'brant_preprocess_main');
-        if isempty(hPreprocess) || ~ishandle(hPreprocess) % check valid 
+        if isempty(hPreprocess) || ~ishandle(hPreprocess) % check valid
             % Version check
             if str2double(strtok(version,'.')) < 7
                 error('The version of MATLAT mustn''t be lower than 7.0');
             end
-
-            h = initFig();
+            
+            h = initFig;
             set(h.fig_Preprocess,'Visible','on');
             set(allchild(h.fig_Preprocess),'Units','characters');
+            set(findall(h.fig_Preprocess,'-property','FontSize'), 'FontSize', 8);
+            brant_config_figure(h.fig_Preprocess, 'Normalized');
+            brant_config_figure(h.fig_CheckBoard, 'Normalized', h.cb_panel_scrolls);
             % Set figure handle to appdata of root window
         else
             % newly edited on 20140219 begin
+            brant_config_figure(hPreprocess, 'pixels');
             h_Pr_pos = get(hPreprocess, 'Position');
-            [pos_fp, pos_cb] = brant_interface_pos(h_Pr_pos(3:4)); 
-            set(hPreprocess,'Position',pos_fp);
+            [pos_fp, pos_cb] = brant_interface_pos(h_Pr_pos(3:4));
+            set(hPreprocess, 'Position', pos_fp);
+            brant_config_figure(hPreprocess, 'normalized');
             figure(hPreprocess);
             hCheckBoard = findobj(0,'Tag','brant_preprocess_check');
             if(strcmp(get(hCheckBoard,'Visible'),'on'))
-                set(hCheckBoard,'Position',pos_cb);
+                brant_config_figure(hCheckBoard, 'pixels');
+                set(hCheckBoard, 'Position', pos_cb);
+                brant_config_figure(hCheckBoard, 'normalized');
                 figure(hCheckBoard);
             end
             % newly edited on 20140219 end
         end
-
-%     case 'RST_BTN',
-%         processes = {'slicetiming', 'realign', 'normalise', 'denoise', 'filter', 'smooth'};
-%         for n = 1:length(processes)
-%             set(findobj(0,'Tag',[processes{n},'_chb']),'Value',0);
-%         end
-%         set(findobj(0,'Tag','run_btn'),'Enable','on');
-
     case {'QUIT', 'CANCEL_BTN'}, % quit
         hPreprocess = findobj(0, 'Tag', 'brant_preprocess_main');
         hCheckBoard = findobj(0, 'Tag', 'brant_preprocess_check');
         hInput = findobj(0, 'Tag', 'figInput');
-
+        
         if ishandle(hCheckBoard)
             delete(hCheckBoard);
         end
@@ -104,7 +103,7 @@ set(findobj(gcf, 'Tag', 'chbd_chb'), 'Value', 1);
 brant_update_pre_disp;
 
 h_disp = findobj(0, 'Name',             'brant_CheckBoard',...
-                    'Tag',              'brant_preprocess_check');
+    'Tag',              'brant_preprocess_check');
 set(findobj(h_disp, 'Tag', 'dirboard_label_chbd'), 'String', '');
 
 
@@ -160,39 +159,39 @@ if fig_opts.pref.dirs_in_text == 0
         set(h_chbd_chb, 'Value', 1);
     end
 else
-%     ui_type = get(obj, 'Style');
-%     h_infile = findobj(h_fig, 'Tag', 'dir_text_edit');
-%     if strcmpi(ui_type, 'pushbutton')
-        if isempty(fig_opts.subj.text.inputfile)
-            wd = pwd;
-        else
-            wd = fileparts(fig_opts.subj.text.inputfile);
-        end
-
-        [dir_text_tmp, sts] = cfg_getfile(1, 'any', 'Select a text file', {fig_opts.subj.text.inputfile}, wd, '.*\.txt');
-        if sts == 1
-            dir_text = dir_text_tmp{1};
-        end
-%     else
-%         dir_text = get(obj, 'String');
-%         
-%         if exist(dir_text, 'file') == 2
-%             sts = 1;
-%         else
-%             fig_opts.subj.text.inputfile = '';
-%             fig_opts.subj.text.dirs = '';
-%             set(h_fig, 'Userdata', fig_opts);
-%             set(h_dirs, 'String', '');
-%             set(h_chbd, 'Visible', 'on');
-%             set(h_chbd_chb, 'Value', 1);
-%             if isempty(dir_text)
-%                 sts = 0;
-%             else
-%                 set(obj, 'String', fig_opts.subj.text.inputfile);
-%                 error('File %s not found!', dir_text);
-%             end
-%         end
-%     end
+    %     ui_type = get(obj, 'Style');
+    %     h_infile = findobj(h_fig, 'Tag', 'dir_text_edit');
+    %     if strcmpi(ui_type, 'pushbutton')
+    if isempty(fig_opts.subj.text.inputfile)
+        wd = pwd;
+    else
+        wd = fileparts(fig_opts.subj.text.inputfile);
+    end
+    
+    [dir_text_tmp, sts] = cfg_getfile(1, 'any', 'Select a text file', {fig_opts.subj.text.inputfile}, wd, '.*\.txt');
+    if sts == 1
+        dir_text = dir_text_tmp{1};
+    end
+    %     else
+    %         dir_text = get(obj, 'String');
+    %
+    %         if exist(dir_text, 'file') == 2
+    %             sts = 1;
+    %         else
+    %             fig_opts.subj.text.inputfile = '';
+    %             fig_opts.subj.text.dirs = '';
+    %             set(h_fig, 'Userdata', fig_opts);
+    %             set(h_dirs, 'String', '');
+    %             set(h_chbd, 'Visible', 'on');
+    %             set(h_chbd_chb, 'Value', 1);
+    %             if isempty(dir_text)
+    %                 sts = 0;
+    %             else
+    %                 set(obj, 'String', fig_opts.subj.text.inputfile);
+    %                 error('File %s not found!', dir_text);
+    %             end
+    %         end
+    %     end
     
     if sts == 1
         fig_opts.subj.text.inputfile = dir_text;
@@ -209,7 +208,7 @@ else
             set(h_fig, 'Userdata', fig_opts);
             set(h_chbd, 'Visible', 'on');
             set(h_chbd_chb, 'Value', 1);
-%             set(h_infile, 'String', fig_opts.subj.text.inputfile);
+            %             set(h_infile, 'String', fig_opts.subj.text.inputfile);
         else
             error_msgs = strcat('\t', ['Error: the following path(s) are not valid!'; dirs_tmp(~dirs_ind_valid)], '\n');
             error(sprintf([error_msgs{:}])); %#ok<SPERR>
@@ -235,7 +234,7 @@ if ~isempty(h_win)
     set(obj, 'Value', fig_opts.pref.norm12_ind);
     return;
 end
-    
+
 if obj_val == 1
     h_opt = findobj(h_fig, 'Tag', 'normalise_input');
     set(h_opt, 'Tag', 'normalise12_input');
@@ -254,7 +253,9 @@ else
     h_opt_chb = findobj(h_fig, 'Tag', 'normalise12_chb');
     set(h_opt_chb, 'Tag', 'normalise_chb');
     norm_ind = cellfun(@(x) strcmp(x, 'normalise12'), fig_opts.pref.order);
-    fig_opts.pref.order{norm_ind} = 'normalise';
+    if any(norm_ind)
+        fig_opts.pref.order{norm_ind} = 'normalise';
+    end
     
     if get(h_opt_chb, 'Value') == 1
         fig_opts.ind.normalise = 1;
@@ -296,11 +297,11 @@ if ~isempty(h_in)
 else
     dlg_rstbtn = 0;
     data_fig = get(h_fig, 'Userdata');
-
+    
+    brant_config_figure(h_fig, 'pixel');
     [dlg_title, sub_title_field, prompt, defAns] = brant_preprocess_parameters(func_name, data_fig);
     brant_inputdlg_new(dlg_title, dlg_rstbtn, sub_title_field, prompt, defAns, func_name, h_fig);
-    
-%     brant_input_prep(func_name, h_fig);
+    brant_config_figure(h_fig, 'Normalized');
 end
 
 function par_edit(obj, evd)
@@ -345,11 +346,15 @@ set(h_fig, 'Userdata', fig_opts);
 function chbd_cb(obj, evd, h_main) %#ok<*INUSD>
 
 h_chbd = findobj(0, 'Tag', 'brant_preprocess_check');
+brant_config_figure(h_chbd, 'pixels');
+
 if strcmp(get(h_chbd, 'Visible'), 'on')
     set(h_chbd, 'Visible', 'off');
     set(obj, 'Value', 0);
 else
+    brant_config_figure(gcf, 'pixels');
     pos_fp = get(gcf, 'Position');
+    brant_config_figure(gcf, 'Normalized');
     screensize = get(0, 'screensize');
     if (screensize(3) - pos_fp(1) - pos_fp(3) > pos_fp(3))
         pos_cb(1) = pos_fp(1) + pos_fp(3) + 16;
@@ -365,6 +370,7 @@ end
 function close_chbd(obj, evd)
 
 hCheckBoard = findobj(0,'Tag','brant_preprocess_check');
+brant_config_figure(hCheckBoard, 'pixels');
 set(hCheckBoard,'Visible','off');
 hchbd = findobj(0,'Tag','chbd_chb');
 set(hchbd,'Value',0);
@@ -402,14 +408,14 @@ fig_opts = get(h_fig, 'Userdata');
 dir_in_text = get(obj, 'Value');
 
 if dir_in_text == 0
-%     set(h_text, 'Enable', 'off');
+    %     set(h_text, 'Enable', 'off');
     fig_opts.pref.dirs_in_text = 0;
-%     set(h_text, 'String', 'Click the right button -->');
+    %     set(h_text, 'String', 'Click the right button -->');
     set(h_dirs, 'String', fig_opts.subj.spm.dirs);
 else
-%     set(h_text, 'Enable', 'on');
+    %     set(h_text, 'Enable', 'on');
     fig_opts.pref.dirs_in_text = 1;
-%     set(h_text, 'String', fig_opts.subj.text.inputfile);
+    %     set(h_text, 'String', fig_opts.subj.text.inputfile);
     set(h_dirs, 'String', fig_opts.subj.text.dirs);
 end
 
@@ -465,13 +471,13 @@ h.fig_Preprocess = figure(...
     'Color',            figColor,...
     'CloseRequestFcn',  [mfilename,'(''Quit'')'],...
     'Name',             'brant_Preprocessing',...
-	'NumberTitle',      'off',...
-	'Tag',              'brant_preprocess_main',...
+    'NumberTitle',      'off',...
+    'Tag',              'brant_preprocess_main',...
     'UserData',         brant_pps_fig,... % edited on 20140221
     'Units',            'pixels',...
-	'Resize',           'off',...	
-	'MenuBar',          'none',...    
-	'Visible',          'on');
+    'Resize',           'off',...
+    'MenuBar',          'none',...
+    'Visible',          'on');
 
 h.fig_CheckBoard = figure(...
     'IntegerHandle',    'off',...
@@ -479,22 +485,22 @@ h.fig_CheckBoard = figure(...
     'Color',            figColor,...
     'CloseRequestFcn',  @close_chbd,...
     'Name',             'brant_CheckBoard',...
-	'NumberTitle',      'off',...
-	'Tag',              'brant_preprocess_check',...	
+    'NumberTitle',      'off',...
+    'Tag',              'brant_preprocess_check',...
     'Units',            'pixels',...
-	'Resize',           'off',...	
-	'MenuBar',          'none',...    
-	'Visible',          'on');
+    'Resize',           'off',...
+    'MenuBar',          'none',...
+    'Visible',          'on');
 
 % display directories
 disp_uis = {'',	[30, 355 + 10, 280, 110 + 15], 'dirboard_label_chbd', '';...
-            '',	[30, 40, 280, 270 + 25], 'info_label_chbd', ''};
+    '',	[30, 40, 280, 270 + 25], 'info_label_chbd', ''};
 create_ui(disp_uis, 'edit_board', h.fig_CheckBoard, uipColor);
 
 labelOpt_chbd = {...
     'Directory',                [20, 470 + 25, 50, 18],     'dir_label_chbd';...
     'Preprocessing Parameters', [20, 315 + 25, 130, 18],     'par_label_chbd'};
-create_ui(labelOpt_chbd, 'text', h.fig_CheckBoard, figColor);
+h.cb_panel_scrolls = create_ui(labelOpt_chbd, 'text', h.fig_CheckBoard, figColor);
 
 disp_selected_chb = {'Display only selected steps', [160, 317 + 25, 200, 18], 'disp_only_sel_chbd', @disp_para_chbd_cb};
 create_ui(disp_selected_chb, 'checkbox', h.fig_CheckBoard, figColor, 1);
@@ -503,9 +509,9 @@ ini_panelOpt = {'', [20, 435 + 25, 300, 51],   'prep_panel'};
 h_panel_ini = create_ui(ini_panelOpt, 'panel', h.fig_Preprocess, uipColor);
 
 input_btnOpt = {'Output to wk dir'      ,	[10, 28, 134, 18],	'output_sel_chb',    @output_select_cb;...
-                'Check Board'           ,	[150, 28, 90, 18],	'chbd_chb',     {@chbd_cb, h.fig_Preprocess};...
-                'Sync'                  ,	[10, 5, 50, 18],	'sync_chb',     @sys_chb;...
-                'Parallel Workers'      ,	[150, 5, 100, 18],	'parallel_chb', @par_chb};
+    'Check Board'           ,	[150, 28, 90, 18],	'chbd_chb',     {@chbd_cb, h.fig_Preprocess};...
+    'Sync'                  ,	[10, 5, 50, 18],	'sync_chb',     @sys_chb;...
+    'Parallel Workers'      ,	[150, 5, 100, 18],	'parallel_chb', @par_chb};
 
 if strcmpi(brant_pps.pref.parallel, 'off')
     parallel_stat = 0;
@@ -524,14 +530,14 @@ h_out = findobj(h.fig_Preprocess, 'Tag', 'output_sel_chb');
 set(h_out, 'Value', brant_pps.subj.out.selected);
 if brant_pps.subj.out.selected ~= 0
     output_select_cb(h_out, '');
-%     set(findobj(h.fig_Preprocess, 'Tag', 'dir_out_text_edit'), 'String', brant_pps.subj.out.dir);
+    %     set(findobj(h.fig_Preprocess, 'Tag', 'dir_out_text_edit'), 'String', brant_pps.subj.out.dir);
     set(findobj(h.fig_Preprocess, 'Tag', 'name_pos_out_text_edit'), 'String', num2str(brant_pps.subj.out.nmpos));
 end
 
 %
 sys_btnOpt = {  'Run',      [40, 25, 60, 20],       'run_btn',      @run_cb;...
-                'Reset',    [140, 25, 60, 20],      'rst_btn',      @rst_cb_fake;...
-                'Cancel',   [240, 25, 60, 20],      'cancel_btn',   [mfilename,'(''Quit'')']};
+    'Reset',    [140, 25, 60, 20],      'rst_btn',      @rst_cb_fake;...
+    'Cancel',   [240, 25, 60, 20],      'cancel_btn',   [mfilename,'(''Quit'')']};
 create_ui(sys_btnOpt, 'pushbutton', h.fig_Preprocess, btn_bkgColor);
 
 prep_panelOpt = {'', [20, 55, 300, 300],   'prep_panel_chbd'};
@@ -635,17 +641,17 @@ switch(uiStyle)
             end
             
             h_out{n} = uicontrol(...
-            'Parent',           uiParent,...
-            'Units',            'pixels',...
-            'HorizontalAlignment',  'left',...
-            'String',           uiOpt{n, 1},...
-            'Position',         uiOpt{n, 2},...
-            'Tag',              uiOpt{n, 3},...
-            'Value',            vals_tmp(n),... % values for rabiobutton and checkbox
-            'Style',            uiStyle,...
-            'BackgroundColor',  uiColor,...
-            'Callback',         cb_func);
-        
+                'Parent',           uiParent,...
+                'Units',            'pixels',...
+                'HorizontalAlignment',  'left',...
+                'String',           uiOpt{n, 1},...
+                'Position',         uiOpt{n, 2},...
+                'Tag',              uiOpt{n, 3},...
+                'Value',            vals_tmp(n),... % values for rabiobutton and checkbox
+                'Style',            uiStyle,...
+                'BackgroundColor',  uiColor,...
+                'Callback',         cb_func);
+            
             brant_resize_ui(h_out{n});
         end
         
@@ -692,7 +698,7 @@ switch(uiStyle)
                 'enable',           'inactive',...
                 'BackgroundColor',  uiColor,...
                 'Callback',         cb_func);
-
+            
             % enable horizontal scrolling
             try
                 jEdit2 = findjobj(h_out{n});
@@ -700,8 +706,8 @@ switch(uiStyle)
                 jEditbox2.setWrapping(false);                % turn off word-wrapping
                 jEditbox2.setEditable(false);                % non-editable
                 set(jEdit2,'HorizontalScrollBarPolicy',30);  % HORIZONTAL_SCROLLBAR_AS_NEEDED
-            catch 
-            end 
+            catch
+            end
         end
 end
 
@@ -738,19 +744,9 @@ input_btnOpt = {...
 create_ui(input_btnOpt, 'pushbutton', h_panel{1}, btn_bkgColor);
 
 input_chbOpt = {'from text file', [75, 35, 80, 16], 'dir_in_text', {@dir_text_cb_new, h_fig};...
-                'data in 4D', [150, 10, 70, 16], 'is4d', {@is4d_cb, h_fig}};
+    'data in 4D', [150, 10, 70, 16], 'is4d', {@is4d_cb, h_fig}};
 
 create_ui(input_chbOpt, 'checkbox', h_panel{1}, uipColor, [brant_pps.pref.dirs_in_text, brant_pps.subj.is4d]);
-
-% output directory
-% labelOpt_pre = {'out dir',    	[10, 60, 50, 15],      'dir_out'};
-% create_ui(labelOpt_pre, 'text', h_panel{1}, uipColor);
-
-% textOpt = {brant_pps.subj.out.dir,             [75, 35 + 25, 170, 15],    'dir_out_text_edit',       {@dir_out_cb, h_fig}};
-% create_ui(textOpt, 'edit', h_panel{1}, [1 1 1]);
-
-% input_btnOpt = {'...', [260, 35 + 25, 18, 15], 'dir_out_btn', {@dir_out_cb, h_fig}};
-% create_ui(input_btnOpt, 'pushbutton', h_panel{1}, btn_bkgColor);
 
 function is4d_cb(obj, ev, h_fig)
 fig_opts = get(h_fig, 'Userdata');
@@ -760,7 +756,9 @@ set(h_fig, 'Userdata', fig_opts);
 function output_select_cb(obj, ev)
 
 h_fig = findobj(0, 'Name',             'brant_Preprocessing',...
-                   'Tag',              'brant_preprocess_main');
+    'Tag',              'brant_preprocess_main');
+
+brant_config_figure(h_fig, 'pixels');
 
 val_out_sel = get(obj, 'Value');
 h_ini = get(obj, 'Parent');
@@ -794,12 +792,12 @@ h_shift = [h_ini; h_sim_all];
 pos_h_sim_all = arrayfun(@(x) get(x, 'Position'), h_shift, 'UniformOutput', false);
 arrayfun(@(x, y) set(x, 'Position', y{1} + [0, panel_diff, 0, 0]), h_shift, pos_h_sim_all);
 
-if val_out_sel == 1    
+if val_out_sel == 1
     labelOpt_pre = {'name pos',     [10, 10, 50, 15],      'name_pos_out'};
     create_ui(labelOpt_pre, 'text', h_sim, [0.925 0.914 0.847]);
     
     textOpt = {num2str(brant_pps.subj.out.nmpos),           [75, 10, 40, 15],     'name_pos_out_text_edit',	''};
-
+    
     create_ui(textOpt, 'edit', h_sim, [1 1 1]);
 end
 

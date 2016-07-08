@@ -1,23 +1,15 @@
 function brant_reho(jobman)
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
-tc_pts = jobman.timepoint;
+tc_pts = 1; %jobman.timepoint;
 mask_fn = jobman.input_nifti.mask{1};
 totalvoxel = jobman.neighbour_num + 1;
 outdir = jobman.out_dir{1};
 nor_ind = jobman.nor;
 
-
-% mask_nii = load_nii(mask_fn);
-% mask_hdr = mask_nii.hdr;
-% size_mask = mask_hdr.dime.dim(2:4);
-% n_vox_slice = prod(size_mask(1:2));
-% n_vox_vol = prod(size_mask(1:3));
-% % get neighbour voxels' indexes
-% mask_ind = find(mask_nii.img > 0.5);
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 
@@ -108,12 +100,11 @@ for mm = 1:numel(split_prefix)
     clear('ind_out');
 end
 
-fprintf('\tFinished!\n');
-
 if any(tc_pts ~= subj_tps)
     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
 end
+fprintf('\tFinished!\n');
 
 function ReHo = calc_reho(nbr_array)
 [N, K] = size(nbr_array);

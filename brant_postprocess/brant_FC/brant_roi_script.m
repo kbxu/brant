@@ -11,8 +11,8 @@ function brant_roi_script(jobman)
 % updated by kb at 2015-03-16
 
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 
@@ -26,10 +26,7 @@ roi2wb_ind = jobman.roi2wb;
 partial_ind = jobman.partialcorr;
 pearson_ind = jobman.pearsoncorr;
 roi_info_fn = jobman.roi_info{1};
-vs_thres = jobman.roi_thres; % threshold of voxel size
-
-
-
+cs_thr = jobman.roi_thres; % threshold of voxel size
 
 % if roi_wise_ind == 0
 if any([roi2roi_ind, roi2wb_ind])
@@ -42,8 +39,8 @@ if any([roi2roi_ind, roi2wb_ind])
     else
         error('Error: wrong type of correlation!');
     end
-else
-    error('Error input!');
+% else
+%     error('Error input!');
 end
 % end
 
@@ -51,8 +48,13 @@ if roi_wise_ind == 1
     brant_check_empty(jobman.rois{1}, '\tPlease input one roi file!\n');
     
     if all([ext_mean_ind, roi2roi_ind, roi2wb_ind] == 0)
-        error('No calculations.')
+        warning('No calculations has been done.\n');
+        return;
     end
+end
+
+if exist(outdir, 'dir') ~= 7
+    mkdir(outdir);
 end
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
@@ -64,46 +66,39 @@ nifti_list = brant_get_subjs(jobman.input_nifti);
 [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir);
 
 if roi_wise_ind == 1
-    roi_show_msg = 1;
-    [rois_inds, rois_str, rois_tag] = brant_get_rois({rois_resliced}, size_mask, roi_info_fn, roi_show_msg);
-    if numel(rois_str) == 1 && roi2roi_ind == 1
-        warning('Only one roi tag is detected, roi2roi correlation will not be calculated!');
-        roi2roi_ind = 0;
+    % call external functoin
+    jobman_tmp.lab_c = 1;
+    jobman_tmp.sep_c = 0;
+    jobman_tmp.mask_in{1} = mask_fn;
+    jobman_tmp.cs_thr = cs_thr;
+    jobman_tmp.template_img{1} = rois_resliced;
+    jobman_tmp.template_info{1} = roi_info_fn;
+    jobman_tmp.out_dir{1} = outdir;
+    jobman_tmp.from_roi_calc = 1;
+    
+    roi_info_out = brant_roi_coordinates(jobman_tmp);
+    rois_str = roi_info_out.rois_str;
+    rois_tag = roi_info_out.rois_tag;
+    rois_inds_new = roi_info_out.rois_inds_new;
+    
+    num_roi = numel(rois_inds_new);
+    
+    % output new roi file
+    roi_new_img = zeros(size_mask);
+    for m = 1:num_roi
+        roi_new_img(mask_ind(rois_inds_new{m})) = rois_tag(m);
     end
+    nii = make_nii(roi_new_img, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], 'roi_new');
+    [pth, fn, ext] = fileparts(rois_resliced); %#ok<ASGLU>
+    filename = fullfile(outdir, ['masked_', fn, ext]);
+    save_nii(nii, filename);
     
-    fprintf('\n\tThe brain mask will be applied for ROI masks.\n\n')
-    mask_good_binary = zeros(size_mask);
-    mask_good_binary(mask_ind) = 1:numel(mask_ind);
-    mask_good_binary_nzero = mask_good_binary ~= 0;
-    rois_inds_new = cellfun(@(x) mask_good_binary(x & mask_good_binary_nzero), rois_inds, 'UniformOutput', false);
+    roi_info_new = [num2cell(rois_tag), rois_str];
+    brant_write_csv([filename, '.txt'], roi_info_new)
+    %
     
-    num_vox_raw = cellfun(@(x) sum(x(:)), rois_inds);
-    num_vox = cellfun(@numel, rois_inds_new);
     
-    diary(fullfile(outdir, 'roi_history.txt'));
-    diff_ind = find(num_vox_raw ~= num_vox);
-    if any(diff_ind)
-        fprintf('\n');
-        arrayfun(@(x, y, z) fprintf('\tThe changed roi size (masked) marked as %s is %d (raw %d)\n', x{1}, y, z), rois_str(diff_ind), num_vox(diff_ind), num_vox_raw(diff_ind));
-    end
-    
-    % delete bad rois
-    if vs_thres > 0
-        fprintf('\n\tROI size smaller than %d will be excluded!\n', vs_thres);
-        bad_roi_ind = num_vox < vs_thres;
-        arrayfun(@(x, y, z, k) fprintf('\tThe excluded roi''s (tag:%d, %s) voxelsize is %d (raw %d)\n', x, y{1}, z, k), rois_tag(bad_roi_ind), rois_str(bad_roi_ind), num_vox(bad_roi_ind), num_vox_raw(bad_roi_ind));
-        
-        rois_inds = rois_inds(~bad_roi_ind);
-        rois_str = rois_str(~bad_roi_ind);
-        rois_tag = rois_tag(~bad_roi_ind);
-        rois_inds_new = rois_inds_new(~bad_roi_ind);
-    end
-    diary('off');
-    
-    num_roi = numel(rois_inds);
     corr_ind = triu(true(num_roi, num_roi), 1);
-    num_corr = num_roi * (num_roi - 1) / 2;
-    
     if num_roi == 0
         error('No matched roi can be found for the following calculation!');
     end
@@ -128,24 +123,7 @@ for mm = 1:numel(split_prefix)
     jobman.input_nifti.filetype = split_prefix{mm};
     [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
     num_subj = numel(nifti_list);
-    
-%     % test for voxel size 20160425
-%     if strcmpi(jobman.input_nifti.filetype(end-2:end), '.gz')
-%         if jobman.input_nifti.is4d == 1;
-%             sample_hdr = load_nii(nifti_list{1}, 1);
-%         else
-%             sample_hdr = load_nii(nifti_list{1}{1}, 1);
-%         end
-%         brant_spm_check_orientations([mask_hdr, sample_hdr.hdr]);
-%     else
-%         if jobman.input_nifti.is4d == 1;
-%             sample_hdr = load_nii_hdr(nifti_list{1});
-%         else
-%             sample_hdr = load_nii_hdr(nifti_list{1}{1});
-%         end
-%         brant_spm_check_orientations([mask_hdr, sample_hdr]);
-%     end
-    
+        
     if roi_wise_ind == 1
         % roi-wise correlation
         if ext_mean_ind == 1
@@ -153,7 +131,8 @@ for mm = 1:numel(split_prefix)
         end
         
         if roi2roi_ind == 1
-            out_mat = brant_make_outdir(out_dir_tmp, {['roi2roi_', corr_type]});
+            out_mat_r = brant_make_outdir(out_dir_tmp, {['roi2roi_r_', corr_type]});
+            out_mat_z = brant_make_outdir(out_dir_tmp, {['roi2roi_z_', corr_type]});
         end
         
         if roi2wb_ind == 1
@@ -167,9 +146,11 @@ for mm = 1:numel(split_prefix)
     
     for m = 1:num_subj
         
-        [data_2d_mat, data_tps] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'mat', subj_ids{m});
-%         brant_spm_check_orientations([mask_hdr, nii_hdr]);
+        if all([roi2roi_ind, roi2wb_ind] == 0)
+            fprintf('\tSubject %d/%d %s\n', m, num_subj, subj_ids{m});
+        end
         
+        [data_2d_mat, data_tps] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'mat', subj_ids{m});        
         if roi_wise_ind == 0
             fprintf('\tCalculating voxel - voxel correlation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             
@@ -180,7 +161,7 @@ for mm = 1:numel(split_prefix)
             corr_z_vec = 0.5 .* log((1 + corr_r_vec) ./ (1 - corr_r_vec));
             clear('corr_r_vec');
             
-            fprintf('\tCalculating correlation finished in %.2f s\n', toc);% toc
+            fprintf('\tVoxel-wise correlation finished in %.2f s\n', toc);% toc
             out_mat_tmp = fullfile(out_mat{1}, subj_ids{m});
             if exist(out_mat_tmp, 'dir') ~= 7, mkdir(out_mat_tmp); end
             
@@ -193,8 +174,7 @@ for mm = 1:numel(split_prefix)
             end
             clear('corr_z', 'corr_z_vec');
             fprintf('\tSaving files finished in %.2f s\n\n', toc);% toc
-        else
-            
+        else            
             % roi wise calculation
             ts_rois = zeros([data_tps, num_roi], 'double');
             for n = 1:num_roi
@@ -202,16 +182,16 @@ for mm = 1:numel(split_prefix)
             end
             
             if ext_mean_ind == 1
-                save(fullfile(out_ts{1}, [subj_ids{m}, '_ts.mat']), 'ts_rois');
+                brant_write_csv(fullfile(out_ts{1}, [subj_ids{m}, '_ts.csv']), num2cell(ts_rois))
+%                 save(fullfile(out_ts{1}, [subj_ids{m}, '_ts.mat']), 'ts_rois');
             end
             
-            if roi2roi_ind == 1
-                
+            if roi2roi_ind == 1                
                 fprintf('\tCalculating roi - roi correlation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
                 corr_r = corrfun(ts_rois);
                 corr_z = 0.5 .* log((1 + corr_r) ./ (1 - corr_r));                
-                dlmwrite(fullfile(out_mat{1}, [subj_ids{m}, '_corr_r.txt']), corr_r);
-                dlmwrite(fullfile(out_mat{1}, [subj_ids{m}, '_corr_z.txt']), corr_z);
+                dlmwrite(fullfile(out_mat_r{1}, [subj_ids{m}, '_corr_r.txt']), corr_r);
+                dlmwrite(fullfile(out_mat_z{1}, [subj_ids{m}, '_corr_z.txt']), corr_z);
                 clear('corr_r', 'corr_z');
             end
             
@@ -230,18 +210,18 @@ for mm = 1:numel(split_prefix)
                         corr_r_wb(corr_p_wb > 0.001) = 0;
                     end
                     
+                    % corr_r
                     corr_out = zeros(size_mask, 'single');
                     corr_out(mask_ind) = corr_r_wb;
-                    filename = fullfile(out_roi_dirs_r{n}, ['corr_R_', subj_ids{m}, '.nii']);
-                    nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], corr_type);
-                    save_nii(nii, filename);
+                    nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['rval_', corr_type]);
+                    save_nii(nii, fullfile(out_roi_dirs_r{n}, [subj_ids{m}, '_corr_r.nii']));
                     
+                    % corr_z
                     corr_out = zeros(size_mask, 'single');
                     corr_z_wb = 0.5 .* log((1 + corr_r_wb) ./ (1 - corr_r_wb));
                     corr_out(mask_ind) = corr_z_wb;
-                    filename = fullfile(out_roi_dirs_z{n}, ['corr_Z_', subj_ids{m}, '.nii']);
-                    nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], corr_type);
-                    save_nii(nii, filename);
+                    nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['zval_', corr_type]);
+                    save_nii(nii, fullfile(out_roi_dirs_z{n}, [subj_ids{m}, '_corr_z.nii']));
                     
                     clear('corr_out', 'corr_r_wb', 'corr_p_wb', 'corr_z_wb');
                 end

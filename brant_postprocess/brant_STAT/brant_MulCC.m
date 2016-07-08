@@ -44,7 +44,7 @@ if nargin < 2
 end
 
 if nargin < 3
-    Type = 'FDR2';
+    Type = 'fdrID';
 end
 
 if (numel(alpha) > 1)
@@ -58,7 +58,7 @@ end
 % Determine if the actual significance exceeds the desired significance
 Num_comparison = length(p_vector);
 switch Type
-    case 'FDR' %% false discovery rate
+    case 'fdrN' %% false discovery rate not independent
         denominator = sum(1 ./ (1:Num_comparison));
 
         % sort the original p values
@@ -77,7 +77,7 @@ switch Type
             sts = -1;
         end
 
-    case 'Bonf'
+    case 'bonf'
         P_reference = alpha / Num_comparison;
         i = p_vector <= P_reference;
 
@@ -89,7 +89,7 @@ switch Type
             sts = -1;
 %             fprintf('\n\tCorrected P value does not exist. \n');
         end
-    case 'FDR2'        
+    case 'fdrID'    % independent    
         denominator = 1;
 
         % sort the original p values

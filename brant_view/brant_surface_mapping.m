@@ -1,7 +1,8 @@
 function brant_surface_mapping(jobman, h_con)
 
 if isempty(jobman.vol_map{1})
-    error('A volume of nifti format is expected!');
+%     error('A volume of nifti format is expected!');
+    vol_file = [];
 else
     vol_file = jobman.vol_map{1};
 end
@@ -15,20 +16,12 @@ draw_param.shading_type = jobman.shading_type;
 draw_param.colormap_type_pos = jobman.color_type_pos;
 draw_param.colormap_type_neg = jobman.color_type_neg;
 draw_param.alpha_num = jobman.alpha;
-% draw_param.smooth = jobman.smooth;
 draw_param.discrete = jobman.discrete;
 draw_param.zero_color = jobman.zero_color;
 vol_exp = jobman.vol_thr;
 
 assert(numel(draw_param.zero_color) == 3);
-
-% vol_thr = jobman.vol_thr;
-
 draw_param.colorbar_ind = jobman.colorbar;
-
-% spin_angle = '';
-% spin_angle = jobman.spin_angle;
-% outdir = jobman.out_dir{1};
 
 [vertices_coord, faces] = load_surface_new(surface_file);
 disp_type = strsplit(mode_disp, ':');
@@ -71,6 +64,7 @@ if ~isempty(vol_file)
     min_vol = min(vol_3d(good_vol));
     max_vol = max(vol_3d(good_vol));
 else
+    thres_str = '';
     min_vol = [];
     max_vol = [];
     s_mat = [];
@@ -102,9 +96,6 @@ set(h_fig, 'WindowButtonUpFcn', {@clickfn, h_fig}, 'Color', [1 1 1], 'InvertHard
 
 switch(disp_type{2})
     case 'left and right'
-        
-%         spin_angle = [];
-        
         hold('on');
         h = subplot(2, 2, 1);
         draw_brain(h_fig, thres_str, faces_left, vert_left, s_mat, vol_3d, draw_param, 'left_above', [-90, 0])
@@ -136,12 +127,11 @@ switch(disp_type{2})
         h = subplot(2, 2, 4);
         draw_brain(h_fig, thres_str, faces_right, vert_right, s_mat, vol_3d, draw_param, 'right_below', [-90, 0])
         set(h, 'Unit', 'pixel', 'Pos', [380, 80, 300, 250]);
-         try
+        try
             set(h, 'Unit', 'normalised');
         catch
             set(h, 'Unit', 'normalized');
         end
-        
         hold('off');
         
     case 'left medial'
@@ -165,53 +155,6 @@ switch(disp_type{2})
     case 'coronal posterior'
         draw_brain(h_fig, thres_str, faces, vertices_coord, s_mat, vol_3d, draw_param, disp_type{2}, [0, 0]);
 end
-
-% if colorbar_ind == 1
-%     
-%     set(h_fig, 'Unit', 'pixel', 'PaperPositionMode', 'auto');
-%     set(0, 'CurrentFigure', h_fig);
-% 
-%     cbar_h = colorbar('Location', 'SouthOutside');
-%     set(cbar_h, 'Position', [0.35, 0.07, 0.3, 0.025]);
-% 
-%     color_bar_limits = get(cbar_h, 'XTick');
-%     min_vol_str = num2str(fix(double(min(min_vol, 0)) * 100) / 100);
-%     max_vol_str = num2str(fix(double(max_vol) * 100) / 100);
-%     set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), color_bar_limits(end)]);
-%     
-% %     min_abs = min(abs([min_vol, max_vol]));
-% %     max_abs = max(abs([min_vol, max_vol]));
-% % 
-% %     min_pc = single(min_abs) / single(max_abs);
-% 
-% %     if draw_param.discrete == 1
-% %         set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), color_bar_limits(end)]);
-% %     else
-% %         len_cbr = get(cbar_h, 'TickLength');
-% %         if min_vol < 0 && max_vol > 0
-% %             if min_pc > len_cbr && min_pc < (1 - len_cbr)
-% %                 set(cbar_h, 'XTickLabel', {min_vol_str; '0'; max_vol_str}, 'XTick', [color_bar_limits(1), single(min_vol) / single(max_vol + min_vol), color_bar_limits(2)])
-% %             else
-% %                 set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), color_bar_limits(2)])
-% %             end
-% %         elseif min_vol > 0
-% %             if min_pc > len_cbr && min_pc < (1 - len_cbr)
-% %                 set(cbar_h, 'XTickLabel', {'0'; min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), single(min_vol) / single(max_vol), color_bar_limits(2)])
-% %             else
-% %                 set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [single(min_vol) / single(max_vol), color_bar_limits(2)])
-% %             end
-% %         elseif max_vol < 0
-% %             if min_pc > len_cbr && min_pc < (1 - len_cbr)
-% %                 set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str; '0'}, 'XTick', [color_bar_limits(1), abs(single(max_vol) / single(min_vol)), color_bar_limits(2)])
-% %             else
-% %                 set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), abs(single(max_vol) / single(min_vol))])
-% %             end
-% %         elseif min_vol == 0 || max_vol == 0
-% %             set(cbar_h, 'XTickLabel', {min_vol_str; max_vol_str}, 'XTick', [color_bar_limits(1), color_bar_limits(2)]);
-% %         end
-% % 
-% %     end
-% end
 
 function draw_brain(h_fig, thres_str, faces, vertices_coord, s_mat, volume_3d, draw_param, light_tag, view_angle)
 
@@ -325,7 +268,7 @@ view(view_angle);
 h_light = camlight('right');
 set(h_light, 'Position', campos, 'Tag', light_tag);
 
-if draw_param.colorbar_ind == 1
+if draw_param.colorbar_ind == 1 && ~isempty(s_mat)
     set(h_fig, 'Unit', 'pixel', 'PaperPositionMode', 'auto');
     set(0, 'CurrentFigure', h_fig);
 

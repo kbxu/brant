@@ -1,7 +1,7 @@
 function brant_fcd(jobman)
 
-brant_check_empty(jobman.input_nifti.mask, '\tA whole brain mask is expected!\n');
-brant_check_empty(jobman.out_dir, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 outdir = jobman.out_dir{1};
@@ -53,7 +53,6 @@ for mm = 1:numel(split_prefix)
         else
             system(['start', 32, '"brant fcd" cmd.exe /K', 32, cmd_str]);
         end
-        
     else
         error('Not supported platform!');
     end

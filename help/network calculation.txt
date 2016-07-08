@@ -1,12 +1,23 @@
 Help information for Network Calculation:
 
-FC file: file generated from roi-roi correlation, one ¡®.mat¡¯ file contains a 3D correlation matrix. The third dimension is subjects.
-field of correlation: a variable of correlation stored in the FC file.
+parallel workers: number of workers used for parallel computing.
+filetype: files in the filetype will be searched in input directories.
+data dir: directory where all *.txt correlation matrix results are stored.
+
+matrix type:
+    raw value: use raw value to construct binary matrix.
+    absolute value: use absolute value to construct binary matrix.
+	
 thresholds of correlation coefficient: a vector of correlation threshold, for each element, threshold the input matrix¡¯s intensity to a binary network.
+correlation thres: vector of thresholds for correlation.
+
 thresholds of sparsity: a vector of sparsity threshold, for each element, threshold the input matrix using the fraction of the matrix¡¯s largest number of connection n * (n+1)/2;
+correlation thres: vector of thresholds for sparsity.
+
 minimum spanning tree: a process to avoid unconnected network.
-measures: click ¡®...¡¯ and a window of network properties will be shown for selection.
-output path: an output directory for saving results.
+
+Network properies: a panel to select network properties.
+out dir: output directory for saving results.
 
 end
      

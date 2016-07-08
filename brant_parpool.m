@@ -5,7 +5,6 @@ function brant_parpool(ctr_str, varargin)
 num_dft = 2;
 
 if nargin == 0
-%     error('No inputs are detected!');
     ctr_str = 'open';
     num_workers = num_dft;
 end

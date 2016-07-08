@@ -1,7 +1,9 @@
 Help information for Visual Check:
+The function calls SPM Check Reg to visualize input volume, a keyboard callback is added to enable left/right and up/down to switch timepoint and subjects.
 
-name position: subject identifier for input data
-input filetype: files in the filetype will be searched in input directories.
+start subject: the volume to start with.
+id index: identifier to find unique string for each subject
+filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
 

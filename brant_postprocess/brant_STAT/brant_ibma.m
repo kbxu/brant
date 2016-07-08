@@ -16,17 +16,17 @@ fisher_ind = jobman.fisher;
 fem_ind = jobman.fem;
 mem_ind = jobman.mem;
 friston_ind = jobman.friston;
-nicolas_ind = jobman.nicolas;
+nichols_ind = jobman.nichols;
 
-p_thr = jobman.p_thr;
-fdr_ind = jobman.fdr;
-fdr2_ind = jobman.fdr2;
+thr = jobman.thr;
+
+fdrID_ind = jobman.fdrID;
+fdrN_ind = jobman.fdrN;
 bonf_ind = jobman.bonf;
-multi_ind  = [fdr_ind, fdr2_ind, bonf_ind];
-    
-multi_type = {'FDR', 'FDR2', 'Bonf'};
+multi_type = {'fdrID', 'fdrN', 'bonf'};
+multi_ind  = [fdrID_ind, fdrN_ind, bonf_ind];
 
-if ~any([stouffer_ind, fisher_ind, fem_ind, mem_ind, friston_ind, nicolas_ind])
+if ~any([stouffer_ind, fisher_ind, fem_ind, mem_ind, friston_ind, nichols_ind])
     error('At least one IBMA methods is expected!');
 end
 outdir = jobman.out_dir{1};
@@ -125,7 +125,7 @@ elseif strcmp(input_type, 'voxel')
 
 %     t_mats = zeros(size_T_all, 'double');
     t_maps_all = cellfun(@load_nii, nifti_list);
-    tf_df = arrayfun(@(x) regexpi(x.hdr.hist.descrip, 'SPM{([TF])_\[(.*)\]}.*', 'tokens'), t_maps_all, 'UniformOutput', false);
+    tf_df = arrayfun(@(x) regexpi(x.hdr.hist.descrip, '[SPM,REST,DPABI]{([TF])_\[(.*)\]}.*', 'tokens'), t_maps_all, 'UniformOutput', false);
     TF_ind = cellfun(@(x) strcmpi('T', x{1}{1}), tf_df, 'UniformOutput', false);
     if ~all(cell2mat(TF_ind))
         error('Only T maps are allowed!');
@@ -214,9 +214,9 @@ if stouffer_ind == 1
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(stouffer.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(stouffer.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        stouffer.([multi_type{n}, '_h']){m} = stouffer.pval{m} <= p_thr_tmp;
+                        stouffer.([multi_type{n}, '_h']){m} = stouffer.pval{m} <= thr_tmp;
                         stouffer.([multi_type{n}, '_h']){m}(diag_ind) = false;
                     else
                         stouffer.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
@@ -228,9 +228,9 @@ if stouffer_ind == 1
         
     
     if dim_t_mats == 4
-        brant_save_t_vals(multi_ind, p_thr, stouffer.pval, stouffer.zval, outdir, 'stouffers_z', mask_bin, pix_dim, org_mask, nStudies - 1);
+        brant_save_t_vals(multi_ind, thr, stouffer.pval, stouffer.zval, outdir, 'stouffers_z', mask_bin, pix_dim, org_mask, nStudies - 1);
 %         for m = 1:num_tail
-%             brant_save_p_vals(multi_ind, p_thr, stouffer.pval{m}, outdir, ['stouffers_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+%             brant_save_p_vals(multi_ind, thr, stouffer.pval{m}, outdir, ['stouffers_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
 %         end
     else
         save(outfn, 'stouffer', '-append');
@@ -251,9 +251,9 @@ if fisher_ind == 1
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(fisher.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(fisher.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        fisher.([multi_type{n}, '_h']){m} = fisher.pval{m} <= p_thr_tmp;
+                        fisher.([multi_type{n}, '_h']){m} = fisher.pval{m} <= thr_tmp;
                         fisher.([multi_type{n}, '_h']){m}(diag_ind) = false;
                     else
                         fisher.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
@@ -265,7 +265,7 @@ if fisher_ind == 1
     
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, p_thr, fisher.pval{m}, outdir, ['fisher_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+            brant_save_p_vals(multi_ind, thr, fisher.pval{m}, outdir, ['fisher_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
         end
     else
         save(outfn, 'fisher', '-append');
@@ -307,9 +307,9 @@ if fem_ind == 1
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(fix_effect.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(fix_effect.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        fix_effect.([multi_type{n}, '_h']){m} = fix_effect.pval{m} <= p_thr_tmp;
+                        fix_effect.([multi_type{n}, '_h']){m} = fix_effect.pval{m} <= thr_tmp;
                         fix_effect.([multi_type{n}, '_h']){m}(diag_ind) = false;
                     else
                         fix_effect.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
@@ -320,9 +320,9 @@ if fem_ind == 1
     end
 
     if dim_t_mats == 4
-        brant_save_t_vals(multi_ind, p_thr, fix_effect.pval, fix_effect.tval, outdir, 'fem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
+        brant_save_t_vals(multi_ind, thr, fix_effect.pval, fix_effect.tval, outdir, 'fem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
 %         for m = 1:num_tail
-%             brant_save_p_vals(multi_ind, p_thr, fix_effect.pval{m}, outdir, ['fem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+%             brant_save_p_vals(multi_ind, thr, fix_effect.pval{m}, outdir, ['fem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
 %         end
     else
         save(outfn, 'fix_effect', '-append');
@@ -367,11 +367,11 @@ if mem_ind == 1
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(mix_effect.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(mix_effect.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        mix_effect.([multi_type{n}, '_h']){m} = (mix_effect.pval{m} <= p_thr_tmp) .* sign_t;
+                        mix_effect.([multi_type{n}, '_h']){m} = (mix_effect.pval{m} <= thr_tmp) .* sign_t;
                         mix_effect.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                        dlmwrite(fullfile(outdir, ['mixed_effect_', multi_type{n}, num2str(p_thr, '_%.2e_h'), '.txt']), mix_effect.([multi_type{n}, '_h']){m})
+                        dlmwrite(fullfile(outdir, ['mixed_effect_', multi_type{n}, num2str(thr, '_%.2e_h'), '.txt']), mix_effect.([multi_type{n}, '_h']){m})
                     else
                         mix_effect.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
                     end
@@ -381,11 +381,11 @@ if mem_ind == 1
     end
         
     if dim_t_mats == 4
-        brant_save_p_vals(multi_ind, p_thr, mix_effect.pval_h, outdir, 'mem_ES_p_h', mask_bin, pix_dim, org_mask);
-        brant_save_t_vals(multi_ind, p_thr, mix_effect.pval, mix_effect.tval, outdir, 'mem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
+        brant_save_p_vals(multi_ind, thr, mix_effect.pval_h, outdir, 'mem_ES_p_h', mask_bin, pix_dim, org_mask);
+        brant_save_t_vals(multi_ind, thr, mix_effect.pval, mix_effect.tval, outdir, 'mem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
 %         for m = 1:num_tail
         mix_effect = brant_MulCC_tmp(mix_effect, multi_ind);
-%             brant_save_p_vals(multi_ind, p_thr, mix_effect.pval{m}, outdir, ['mem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+%             brant_save_p_vals(multi_ind, thr, mix_effect.pval{m}, outdir, ['mem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
 %         end
 %     else
 %         
@@ -406,9 +406,9 @@ if friston_ind == 1
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(friston.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(friston.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        friston.([multi_type{n}, '_h']){m} = friston.pval{m} <= p_thr_tmp;
+                        friston.([multi_type{n}, '_h']){m} = friston.pval{m} <= thr_tmp;
                         friston.([multi_type{n}, '_h']){m}(diag_ind) = false;
                     else
                         friston.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
@@ -420,31 +420,31 @@ if friston_ind == 1
     
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, p_thr, friston.pval{m}, outdir, ['friston_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+            brant_save_p_vals(multi_ind, thr, friston.pval{m}, outdir, ['friston_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
         end
     else
         save(outfn, 'friston', '-append');
     end
 end
 
-if nicolas_ind == 1
-    fprintf('\tCalculating Nicolas''s meta-analysis on %d studies\n', nStudies);
+if nichols_ind == 1
+    fprintf('\tCalculating nichols''s meta-analysis on %d studies\n', nStudies);
     
     for m = 1:num_tail
-        nicolas.pval{m} = max(p_mats.(tail_est{m}), [], dim_t_mats);
-        nicolas.pval{m}(diag_ind) = 0;
+        nichols.pval{m} = max(p_mats.(tail_est{m}), [], dim_t_mats);
+        nichols.pval{m}(diag_ind) = 0;
         
         if dim_t_mats == 3
-            nicolas.pval{m}(diag_ind) = 0;
+            nichols.pval{m}(diag_ind) = 0;
             
             for n = 1:numel(multi_type)
                 if multi_ind(n) == 1
-                    [p_thr_tmp, sts] = brant_MulCC(nicolas.pval{m}(upper_ind), p_thr, multi_type{n});
+                    [thr_tmp, sts] = brant_MulCC(nichols.pval{m}(upper_ind), thr, multi_type{n});
                     if sts == 1
-                        nicolas.([multi_type{n}, '_h']){m} = nicolas.pval{m} <= p_thr_tmp;
-                        nicolas.([multi_type{n}, '_h']){m}(diag_ind) = false;
+                        nichols.([multi_type{n}, '_h']){m} = nichols.pval{m} <= thr_tmp;
+                        nichols.([multi_type{n}, '_h']){m}(diag_ind) = false;
                     else
-                        nicolas.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
+                        nichols.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
                     end
                 end
             end
@@ -453,10 +453,10 @@ if nicolas_ind == 1
     
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, p_thr, nicolas.pval{m}, outdir, ['nicolas_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+            brant_save_p_vals(multi_ind, thr, nichols.pval{m}, outdir, ['nichols_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
         end
     else
-        save(outfn, 'nicolas', '-append');
+        save(outfn, 'nichols', '-append');
     end
 end
 
@@ -465,7 +465,7 @@ disp([9, 'Finished'])
 function mth_struc = brant_MulCC_tmp(mth_struc, multi_ind)
 
 if any(multi_ind)
-    multi_type = {'FDR', 'FDR2', 'Bonf'};
+    multi_type = {'fdrID', 'fdrN', 'bonf'};
     for n = 1:numel(multi_type)
         if multi_ind(n) == 1
             mth_struc.(multi_type{n}) = 1;
@@ -474,31 +474,31 @@ if any(multi_ind)
 end
 
 
-function brant_save_t_vals(multi_ind, p_thr, pval, tval, tardir, tok, mask_bin, pix_dim, org_mask, df)
+function brant_save_t_vals(multi_ind, thr, pval, tval, tardir, tok, mask_bin, pix_dim, org_mask, df)
 
 filename = fullfile(tardir, ['meta_', tok, '_t.nii']);
 nii = make_nii(tval .* mask_bin, pix_dim, org_mask, 16, 'SPM_Z[1]');
 save_nii(nii, filename);
 
 % for m = 1:numel(tails)
-p_mask = (pval{1} > 0 & pval{1} < p_thr) | (pval{2} > 0 & pval{2} < p_thr);
+p_mask = (pval{1} > 0 & pval{1} < thr) | (pval{2} > 0 & pval{2} < thr);
 tval_tmp = tval .* p_mask .* mask_bin;
 
-filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', num2str(p_thr, '%.2e'), '.nii']);
+filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', num2str(thr, '%.2e'), '.nii']);
 nii = make_nii(tval_tmp, pix_dim, org_mask, 16, 'SPM_Z[1]');
 save_nii(nii, filename);
 
 
 if any(multi_ind)
-    multi_type = {'FDR', 'FDR2', 'Bonf'};
+    multi_type = {'fdrID', 'fdrN', 'bonf'};
     p_vec_L = pval{1}(mask_bin);
     p_vec_R = pval{2}(mask_bin);
     for n = 1:numel(multi_type)
         if multi_ind(n) == 1
-            t_mat_thres = brant_multi_thres_t(p_vec_L, p_vec_R, p_thr, multi_type{n}, tval);
+            t_mat_thres = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_type{n}, tval);
             
             if ~isempty(t_mat_thres)
-                filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', multi_type{n}, num2str(p_thr, '_%.2e'), '.nii']);
+                filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', multi_type{n}, num2str(thr, '_%.2e'), '.nii']);
                 nii = make_nii(t_mat_thres, pix_dim, org_mask, 16, 'SPM_Z[1]');
                 save_nii(nii, filename);
             end
@@ -508,7 +508,7 @@ end
 % end
 
 
-function brant_save_p_vals(multi_ind, p_thr, pval, tardir, tok, mask_bin, pix_dim, org_mask)
+function brant_save_p_vals(multi_ind, thr, pval, tardir, tok, mask_bin, pix_dim, org_mask)
 
 filename = fullfile(tardir, ['meta_', tok, '_p.nii']);
 nii = make_nii(pval .* mask_bin, pix_dim, org_mask, 16);

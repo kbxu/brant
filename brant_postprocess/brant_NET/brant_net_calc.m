@@ -124,6 +124,8 @@ fprintf('\nFinished!\n');
 
 function net = brant_measure(net_measure_option, subj_id, gMatrix, net_type)
 
+N = size(gMatrix, 1);
+
 if ~any(gMatrix(:))
     net = [];
     return;
@@ -139,14 +141,19 @@ if net_measure_option.neighbor_degree == 1
     [net.neighbor_degree.global, net.neighbor_degree.nodal] = CCM_AvgNeighborDegree(gMatrix);
 end
 
-if net_measure_option.betweenness_rw == 1
-    fprintf('%s: random-walk betweenness.\n', subj_id);
-    [net.betweeness_rw.global, net.betweeness_rw.nodal] = CCM_RBetweenness(gMatrix);
-end
+% if net_measure_option.betweenness_rw == 1
+%     fprintf('%s: random-walk betweenness.\n', subj_id);
+%     [net.betweeness_rw.global, net.betweeness_rw.nodal] = CCM_RBetweenness(gMatrix);
+% end
+% 
+% if net_measure_option.betweenness_spe == 1 || net_measure_option.betweenness_spv == 1
+%     fprintf('%s: shorest-path betweenness.\n', subj_id);
+%     [net.betweeness_spv, net.betweeness_spe] = brant_SBetweenness(gMatrix, net_type);
+% end
 
-if net_measure_option.betweenness_spe == 1 || net_measure_option.betweenness_spv == 1
-    fprintf('%s: shorest-path betweenness.\n', subj_id);
-    [net.betweeness_spv, net.betweeness_spe] = brant_SBetweenness(gMatrix, net_type);
+if net_measure_option.betweenness_centrality == 1
+    fprintf('%s: betweenness centrality.\n', subj_id);
+    net.betweenness_centrality = betweenness_centrality(sparse(gMatrix)) / (N * (N - 1) / 2);
 end
 
 if net_measure_option.degree == 1
@@ -165,7 +172,7 @@ if any([net_measure_option.local_efficiency,...
     fprintf('%s: the shortest distance matrix of source nodes.\n', subj_id);
     dist = graphallshortestpaths(sparse(gMatrix), 'Directed', false);
     
-    N = size(gMatrix, 1);
+    
     if net_measure_option.shortest_path_length == 1
         net.shortest_path_length.nodal = sum(dist, 2) / (N - 1);
         net.shortest_path_length.global = mean(net.shortest_path_length.nodal);

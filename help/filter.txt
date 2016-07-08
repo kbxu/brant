@@ -1,9 +1,0 @@
-Help information for Filter:
-
-lower cotoff(Hz): lower cutoff for band-pass filter.
-upper cotoff(Hz): upper cutoff for band-pass filter.
-TR: repetition time.
-Timepoints: number of volumes.
-Brain mask: whole brain mask.
-
-end

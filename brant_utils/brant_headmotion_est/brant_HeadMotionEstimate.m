@@ -29,7 +29,7 @@ for i = 1:SubjNum
     
     motion_diff = diff(head_motion);
     for j = 1:size(motion_diff, 1)
-        Motion(j) = norm(motion_diff(j, 1:3));
+        Motion(j) = norm(motion_diff(j, 1:3)); %#ok<AGROW>
     end
 %     TT = abs(head_motion(:,1:3));
 %     HeadMotion.xyzmove(i) = max(TT(:));

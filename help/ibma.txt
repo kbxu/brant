@@ -1,17 +1,34 @@
 Help information for IBMA:
 
-data: input data can be either matrices or volumes
-brain mask: mask for the data. (optional for matrix input)
-name position: subject identifier for input data
-input filetype: files in the filetype will be searched in input directories.
-input dirs: directories can be input either using a .txt file or spm select window.
-center info: number of subjects for different centers
-P threshold: threshold of p value for multiple comparison correction.
-FDR: a parsimonious FDR correction.
-FDR2: a loose FDR correction.
-Bonferroni: bonferroni correction.
-subj info: subjects information in an excel file, including subject ids, group, regressors (optional), etc.
-output path: an output directory for saving results.
+data: matrix
+    filetype: files in the filetype will be searched in input directories.
+    data dir: directory where all ttest2*.mat results are stored.
+
+data: volume
+    center info: number of subjects for different centers. A csv format table is required. N1 and N2 is the number of subjects in each group.
+        center, N1, N2
+        ttest2_center1_a_vs_b, 40, 39
+        ttest2_center2_a_vs_b, 38, 37
+    mask: could be whole brain mask or gray matter mask.
+    id index: identifier to find unique string for each subject
+    filetype: files in the filetype will be searched in input directories.
+    data dir: directories can be input either using a .txt file or spm select window.
+	
+Multiple comparison correction methods (voxel-wise)
+    threshold: the level of MULCC
+    fdrID: false discovery rate (independent input)
+    fdrN: false discovery rate (inputs not independent)
+    bonf: Bonferroni correction for family wise error rate
+
+IBMA Methods:
+    Stouffer's z-score
+    Fisher's method
+    Fixed Effect Model
+    Mixed Effect Model
+    Friston's method
+    Nichols's method
+	
+out dir: output directory for saving results.
 
 end
      

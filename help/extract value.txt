@@ -1,0 +1,22 @@
+Help information for Extract Value:
+
+data: matrix
+    symmetric matrix: check to extract the upper right matrix's elements, uncheck to extract all elements
+    filetype: filetype
+    data dir: Input directories of matrices.
+	
+	
+data: volume
+    roi file: ROI file used for extracting mean intensity in each roi tagged by number.
+    roi info: labels of tagged ROIs. (optional)
+    mask: could be whole brain mask or gray matter mask.
+    id index: identifier to find unique string for each subject
+    filetype: files in the filetype will be searched in input directories.
+    4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+    input dirs: directories can be input either using a .txt file or spm select window.).
+	
+string removal*: optional. remove partial string from string parsed by id index.
+out dir: output directory for saving results.
+
+end
+     

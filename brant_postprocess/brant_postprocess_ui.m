@@ -47,6 +47,8 @@ for m = length(prompt):-1:1
     current_pos.y = current_pos.y + current_pos.height + dis_interval;
 end
 
+set(findall(hfig_inputdlg, '-property', 'FontSize'), 'FontSize', 8);
+
 function doCallback(obj, evd) %#ok
 
 userdata = get(obj,'Tag');
@@ -55,12 +57,14 @@ if isempty(h_board)
     [jobman, ui_strucs, process_fun] = brant_postprocess_defaults(userdata);
     brant_postprocesses_sub(userdata, jobman, ui_strucs, process_fun);
 else
+    brant_config_figure(h_board, 'pixel');
     h_parent = get(obj, 'Parent');
     pos_par = get(h_parent, 'Position');
     pos_curr = get(h_board, 'Position');
     fig_pos = [pos_par(1) + pos_par(3) + 15, pos_par(4) + pos_par(2) - pos_curr(4), pos_curr(3), pos_curr(4)];
     set(h_board, 'Position', fig_pos);
 
+    brant_config_figure(h_board, 'Normalized');
     figure(h_board);
 end
 

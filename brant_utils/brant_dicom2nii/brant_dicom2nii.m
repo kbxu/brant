@@ -1,18 +1,34 @@
 function brant_dicom2nii(jobman)
 
+if jobman.convert == 1
+    convert_ind = jobman.convert;
+    par_workers = jobman.par_workers_cvt;
+    is4d_ind = jobman.cvt4d_cvt;
+    input_dcm_cvt = jobman.input_dcm_cvt;
+    delete_ind = jobman.del_ind_cvt;
+    del_tps = jobman.del_N_cvt;
+    filetype_cvt = jobman.filetype_cvt;
+    outdir = jobman.out_dir_cvt{1};
+    out_fn = 'brant_4D';
+else
+    delete_ind = jobman.delete;
+    convert_ind = jobman.convert;
+    input_nifti_del = jobman.input_nifti_del;
+    is4d_ind = input_nifti_del.is4d;
+    del_tps = jobman.del_N_del;
+    out_fn = jobman.out_fn_del;
+    out_ind_del = jobman.out_ind_del;
+    outdir = jobman.out_dir_del{1};
+end
 
-
-if isfield(jobman, 'input_dcm')
+if convert_ind == 1
     
-    outdir = jobman.out_dir{1};
-    par_workers = jobman.par_workers;
-    if jobman.cvt4d == 1
+    if is4d_ind == 1
         cvt_mode = '-4 Y';
     else
         cvt_mode = '-4 N';
     end
 
-    del_tps = jobman.del;
     if isempty(outdir)
         error('Output directory is empty!');
     end
@@ -21,19 +37,19 @@ if isfield(jobman, 'input_dcm')
     dcm2nii_path = [brant_path, filesep, 'brant_utils', filesep, 'brant_dicom2nii'];
     switch(computer)
         case {'PCWIN', 'PCWIN64'}
-            dcm2nii_dir = fullfile(dcm2nii_path, 'dcm2nii.exe');
+            dcm2nii_full = fullfile(dcm2nii_path, 'dcm2nii.exe');
         case 'MACI64'
-            dcm2nii_dir = fullfile(dcm2nii_path, 'dcm2nii.mac');
-            system(['chmod a+x', 32, dcm2nii_dir]);
+            dcm2nii_full = fullfile(dcm2nii_path, 'dcm2nii.mac');
+            system(['chmod a+x', 32, dcm2nii_full]);
         case {'GLNX86', 'GLNXA64'}
-            dcm2nii_dir = fullfile(dcm2nii_path, 'dcm2nii.unix');
-            system(['chmod a+x', 32, dcm2nii_dir]);
+            dcm2nii_full = fullfile(dcm2nii_path, 'dcm2nii.unix');
+            system(['chmod a+x', 32, dcm2nii_full]);
         otherwise
             error('Unknown operation system!');
     end
 
     warning('off', 'MATLAB:MKDIR:DirectoryExists');
-    [dicom_dirs, subj_ids] = brant_get_subjs(jobman.input_dcm);
+    [dicom_dirs, subj_ids] = brant_get_subjs(input_dcm_cvt);
     outdirs_subj = cellfun(@(x) fullfile(outdir, x), subj_ids, 'UniformOutput', false);
     cellfun(@mkdir, outdirs_subj);
 
@@ -41,7 +57,7 @@ if isfield(jobman, 'input_dcm')
     cellfun(@(x) fprintf(fid, '%s\n', x), outdirs_subj);
     fclose(fid);
 
-    command_strs = cellfun(@(x, y) ['"', dcm2nii_dir, '"', 32, '-b', 32,...
+    command_strs = cellfun(@(x, y) ['"', dcm2nii_full, '"', 32, '-b', 32,...
                                     '"', [dcm2nii_path, filesep, 'dcm2nii.ini'], '"', 32,...
                                     '-d Y -e Y -n Y -c Y -g N', 32, cvt_mode, 32,...
                                     '-o', 32, '"', y, '"', 32, '"', x, '"'],...
@@ -66,44 +82,33 @@ if isfield(jobman, 'input_dcm')
     if par_workers > 0
         brant_parpool('close');
     end
+    
+    % files to delete the first N timepoints
+    output_cvt.dirs = outdirs_subj;
+    output_cvt.filetype = filetype_cvt;
+    output_cvt.nm_pos = 1;
+    output_cvt.is4d = is4d_ind;
 else
     % delete timepoint settings
-    jobman.del_ind = 1;
-    del_tps = jobman.del;
-    
-    [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
+    [nifti_list, subj_ids] = brant_get_subjs(input_nifti_del);
     num_subj = numel(subj_ids);
-    if jobman.out_ind == 1
-        outdir = jobman.out_dir{1};
+    if out_ind_del == 1
         outdirs_subj = cellfun(@(x) fullfile(outdir, x), subj_ids, 'UniformOutput', false);
     else
-        if jobman.input_nifti.is4d == 1
+        if is4d_ind == 1
             outdirs_subj = cellfun(@fileparts, nifti_list, 'UniformOutput', false);
         else
             outdirs_subj = cellfun(@(x) fileparts(x{1}), nifti_list, 'UniformOutput', false);
         end
     end
-    
-    is4d_ind = jobman.input_nifti.is4d;
-    out_fn = jobman.out_fn;
 end
 
-if jobman.del_ind == 1 && del_tps > 0
-    if isfield(jobman, 'input_dcm')
-        jobman.input_dcm.dirs = outdirs_subj;
-        jobman.input_dcm.filetype = jobman.filetype;
-        jobman.input_dcm.nm_pos = 1;
-
-        jobman.input_dcm.is4d = jobman.cvt4d;
-        nifti_list = brant_get_subjs(jobman.input_dcm);
-        out_fn = 'brant_4D';
-        
-        is4d_ind = jobman.input_dcm.is4d;
+if delete_ind == 1 && del_tps > 0
+    if convert_ind == 1
+        nifti_list = brant_get_subjs(output_cvt);
     end
-    
     if is4d_ind == 1
         nifti_tps = cellfun(@get_nii_frame, nifti_list);
-        
         for m = 1:num_subj
             if nifti_tps(m) > del_tps
                 fprintf('\tDeleting first %d timepoints for data %s\n', del_tps, nifti_list{m});
@@ -111,11 +116,10 @@ if jobman.del_ind == 1 && del_tps > 0
                 save_untouch_nii(nifti_tmp, fullfile(outdirs_subj{m}, [out_fn, '.nii']));
             else
                 warning('First %d timepoints will not be discarded for %s, please check!\n', del_tps, nifti_list{m});
-            end        
+            end
         end
     else
         nifti_tps = cellfun(@numel, nifti_list);
-        
         for m = 1:num_subj
             if nifti_tps(m) > del_tps
                 for n = (del_tps + 1):nifti_tps(m)
@@ -126,14 +130,8 @@ if jobman.del_ind == 1 && del_tps > 0
             end   
         end
     end
-    
-%     warning('on'); %#ok<WNON>
-%     if tps_check > 0
-%         if any(nifti_tps ~= tps_check)
-%             warning([sprintf('Listed files has a different timepoint, please check your data!\n'),...
-%                      sprintf('\t%s\n', nifti_list{nifti_tps ~= tps_check})]);
-%         end
-%     end
+else
+    warning('No timepoints will be deleted!\n');
 end
 
 fprintf('\tFinished.\n');

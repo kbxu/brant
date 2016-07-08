@@ -1,10 +1,10 @@
-function varargout = brant(Action, varargin)
+function varargout = brant(Action)
 % BRANT   BRAinNetome Toolkit
-%   Authors: Kaibin XU, Yafeng ZHAN, Yong HU, Yong LIU
+%   Authors: XU Kaibin, ZHAN Yafeng, HU Yong, LIU Yong
 %   Usages: brant(Action)
-%         Action maybe { ''(empty)| 'Init' | 'Restart'  | 'Resize' |
+%         Actions: { ''(empty)| 'fMRI' | 
 %         'Path' | 'Preprocess' | 'Net' | 'Spon' | 'FC' | 'Stat'   | 
-%         'Quit' | 'Aboutbrant'  | 'View'| 'Mail'}.
+%         'Quit' | 'About'  | 'View'| 'Mail'}.
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 % Copyright(c) 2010 - now
 % Brainnetome Center: http://www.brainnetome.org
@@ -12,8 +12,8 @@ function varargout = brant(Action, varargin)
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 2.88;
-% $Release = 20160622;
+% $Version = 2.90;
+% $Release = 20160706;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles
@@ -29,24 +29,18 @@ switch upper(Action)
             h_fig = initFig;
             set(h_fig, 'Visible', 'on');
             set(allchild(h_fig), 'Units', 'characters');
-
-            spm_pth = which('spm');
-            if isempty(spm_pth)
-                error('Spm paths should be added!')
-            end
-            
+            brant_check_paths;
         else % singlgton
             figure(Hbrant);
         end
 
     case 'PATH', % update search path
-        filepath = fileparts(which(mfilename));
-        brant_updatepath(filepath);
+        brant_check_paths;
 
     case {'PREPROCESS','PREP'},
         brant_preprocess;
 
-    case {'FC', 'SPON', 'UTILITIES', 'STAT', 'NET', 'VIEW' }
+    case {'FC', 'SPON', 'UTILITY', 'STAT', 'NET', 'VIEW' }
         brant_postprocess(upper(Action));
         
     case 'QUIT',
@@ -68,8 +62,11 @@ switch upper(Action)
     case 'MAIL', % mail to author
         web('mailto:liuyong.ccm@gmail.com');
         
+    case {'LICENCE', 'LICENSE'}
+        fprintf('o\n');
+        
     otherwise
-        error(['Usage: ', mfilename, '(''Init'')']);
+        error(['Usage: ', mfilename]);
 end
 
 if(nargout>0),  varargout{1} = Hbrant;    end
@@ -142,7 +139,7 @@ h_uip = uipanel(...
 % Handles of pushbutton     
 btnOpt = {...
     'Preprocess',       [15  84 90 25];...
-    'Utilities',        [15  46 90 25];...
+    'Utility',          [15  46 90 25];...
     'FC',               [120 84 60 25];...
     'SPON',             [195 84 60 25];...
     'NET',              [120 46 60 25];...
@@ -174,4 +171,4 @@ uicontrol(h_fig,...
     'String',           'Copyright(c) 2010 ',...
     'BackgroundColor',  defColor,...
     'ForegroundColor',  [1 1 1]*0.7,...
-'FontSize',         8);
+    'FontSize',         8);

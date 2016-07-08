@@ -17,7 +17,7 @@ if numel(rois) == 1
     
     if ~isempty(roi_info_fn)
         roi_info = importdata(roi_info_fn, '\n');
-        roi_info_tmp = regexpi(roi_info, '[\s]+', 'split');
+        roi_info_tmp = regexpi(roi_info, '[\s,]+', 'split');
         roi_ref_vals = cellfun(@(x) str2num(x{1}), roi_info_tmp);
         roi_ref_strs = cellfun(@(x) x{2}, roi_info_tmp, 'UniformOutput', false);
     

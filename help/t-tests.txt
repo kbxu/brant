@@ -1,0 +1,45 @@
+Help information for Statistics:
+
+data: matrix
+    symmetric matrix: check to extract the upper right matrix's elements, uncheck to extract all elements
+data: volume
+    mask: could be whole brain mask or gray matter mask.
+
+filetype: filetype
+data dir: Input directories of matrices.
+
+grouping info:
+    stat type: one sample t-test and two sample t-test.
+    groups:
+        for two sample and paired t-test, e.g. SZ,NC -> will do two-sample t-test for SZ and NC
+        for one sample t-test, e.g. SZ;NC -> will do one-sample t-test for both SZ and NC group
+    
+    table: A csv table, for example: <- for one and two sample t-tests
+        name , group, fileter, age
+        subj1 , SZ, center1, 28
+        subj2 , SZ, center1, 27
+        subj3 , NC, center1, 30
+        subj4 , NC, center2, 25
+        
+    table: A csv table, for example: <- for paired t-test
+        group1, group2
+        subj1 , subj4
+        subj2 , subj5
+        subj3 , subj6
+        subj4 , subj7
+        
+    string removal*: optional. remove partial string from string parsed by id index.
+    regressors*: optional. title of regressors which will be regressed out before statistical analysis. e.g. age
+    filter*: optional. use the control for subject in different state or center, fill in center1 here and subject4 won't be included in the analysis.
+    discard subjects without info: when checked, if subjects' information are not found in the table, a warning message will be shown; when unchecked, an error message will be shown.
+    
+Multiple comparison correction methods (voxel-wise)
+	threshold: the level of MULCC
+	fdrID: false discovery rate (independent input)
+	fdrN: false discovery rate (inputs not independent)
+	bonf: Bonferroni correction for family wise error rate
+
+out dir: output directory for saving results.
+
+end
+     

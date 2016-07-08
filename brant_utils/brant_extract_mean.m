@@ -1,6 +1,5 @@
 function brant_extract_mean(jobman)
 
-% jobman.mask = {'D:\SZ_Anatomy_Index\aal_mask_3mm_mod.nii'};
 outdir = jobman.out_dir{1};
 if exist(outdir, 'dir') ~= 7, mkdir(outdir); end
 
@@ -19,29 +18,20 @@ end
 if volume_ind == 1
     jobman.input_nifti.single_3d = 1;
     [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
-    subj_ids_org = strrep(subj_ids_org_tmp, jobman.subj_prefix, '');
-
-%     % mask roi files
-%     mask_nii = load_nii(mask_fn);
-%     size_mask = mask_nii.hdr.dime.dim(2:4);
-%     mask_bin = mask_nii.img > 0.5;
-%     mask_ind = find(mask_bin);
-    
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir); %#ok<ASGLU>
-    
 elseif matrix_ind == 1
-    tmp = load(fc_file, 'subj_ids');
-    subj_ids_org = tmp.subj_ids;
+%     tmp = load(fc_file, 'subj_ids');
+%     subj_ids_org = tmp.subj_ids;
+    
+    [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
 else
     error('Unknown input!');
 end
 
+subj_ids_org = strrep(subj_ids_org_tmp, jobman.subj_prefix, '');
+
 if matrix_ind == 1
-    data_2d_mat = load(fc_file, 'corr_z_tot');
-    data_2d_mat = shiftdim(data_2d_mat.corr_z_tot(:, :, subj_ind), 2);
-    corr_ind = triu(true(size(data_2d_mat, 2)), 1);
-    data_2d_mat = data_2d_mat(:, corr_ind);
-%     num_roi = size(data_2d_mat, 2);
+    [data_2d_mat, corr_ind] = brant_load_matrices_to_2d(mat_list, jobman.sym_ind, 0);
 elseif volume_ind == 1
     
     show_msg = 1;
@@ -79,7 +69,7 @@ if volume_ind == 1
 else
     fc_strs = arrayfun(@(x) num2str(x, 'fc%05d'), 1:size(data_2d_mat, 2), 'UniformOutput', false);
     tbl = [['Name', fc_strs]; subj_ids_org, num2cell(single(data_2d_mat))];
-    save(fullfile(outdir, 'brant_mean_value.mat'), 'tbl');
+    dlmwrite(fullfile(outdir, 'corr_ind.csv'), corr_ind);
     brant_write_csv(fullfile(outdir, 'brant_mean_value_mat.csv'), tbl);
 end
 

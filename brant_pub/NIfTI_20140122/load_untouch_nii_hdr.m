@@ -2,7 +2,7 @@
 
 %  - Jimmy Shen (jimmy@rotman-baycrest.on.ca)
 
-function hdr = load_nii_hdr(fileprefix, machine, filetype)
+function hdr = load_untouch_nii_hdr(fileprefix, machine, filetype)
 
    if filetype == 2
       fn = sprintf('%s.nii',fileprefix);

@@ -152,8 +152,8 @@ end
 % end
 
 if net_measure_option.betweenness_centrality == 1
-    fprintf('%s: betweenness centrality.\n', subj_id);
-    net.betweenness_centrality = betweenness_centrality(sparse(gMatrix)) / (N * (N - 1) / 2);
+    fprintf('%s: un-normalized betweenness centrality.\n', subj_id);
+    net.betweenness_centrality = brant_betweenness_centrality(sparse(gMatrix)); %  not normalized / (N * (N - 1) / 2)
 end
 
 if net_measure_option.degree == 1

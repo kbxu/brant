@@ -29,7 +29,7 @@ switch upper(Action)
             h_fig = initFig;
             set(h_fig, 'Visible', 'on');
             set(allchild(h_fig), 'Units', 'characters');
-            brant_check_paths;
+%             brant_check_paths;
         else % singlgton
             figure(Hbrant);
         end

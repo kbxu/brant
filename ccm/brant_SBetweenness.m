@@ -61,7 +61,7 @@ end
 % vert.nodal = 2*vert.nodal./((N-1)*(N-2));        	%normalised
 vert.global = mean(vert.nodal(:));
 
-edge.nodal = 2*edge.nodal./((N-1)*(N-2));        	%normalised
+% edge.nodal = 2*edge.nodal./((N-1)*(N-2));        	%normalised
 edge.global = mean(edge.nodal(:));
 
 

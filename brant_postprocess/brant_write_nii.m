@@ -18,8 +18,8 @@ nii = make_nii(result_3d, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:
 save_nii(nii, filename);
 
 if any([nor_m, nor_z])
-    mask_new = brant_check_mask(result_3d, mask_ind, subj_id);
-    data_vec = result_3d(mask_new);
+%     mask_new = brant_check_mask(result_3d, mask_ind);
+    data_vec = result_3d(mask_ind);
     mean_data = nanmean(data_vec);
     
     if nor_z == 1
@@ -30,7 +30,7 @@ end
 
 if nor_m == 1
     result_3d_nor = nan(size_mask, 'single');
-    result_3d_nor(mask_new) = data_vec / mean_data;
+    result_3d_nor(mask_ind) = data_vec / mean_data;
 
     filename = fullfile(out_nor{1}, [calc_type, '_m_', subj_id, '.nii']);
     nii = make_nii(result_3d_nor, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
@@ -39,7 +39,7 @@ end
 
 if nor_z == 1
     result_3d_nor = nan(size_mask, 'single');
-    result_3d_nor(mask_new) = (data_vec - mean_data) ./ std_data;
+    result_3d_nor(mask_ind) = (data_vec - mean_data) ./ std_data;
 
     filename = fullfile(out_nor{2}, [calc_type, '_z_', subj_id, '.nii']);
     nii = make_nii(result_3d_nor, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 

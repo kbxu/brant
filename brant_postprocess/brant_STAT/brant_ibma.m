@@ -3,6 +3,10 @@ function brant_ibma(jobman)
 % when using a table to specify the number of subjects in each group,
 % use the title of center, group1 and group2.
 
+brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
+brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
+brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
+
 if jobman.matrix == 1
     input_type = 'mat';
 elseif jobman.volume == 1
@@ -113,15 +117,19 @@ elseif strcmp(input_type, 'voxel')
     
     arrayfun(@(x, y, z) fprintf('Center: %s, group1: %d, group2: %d\n', x{1}, y, z), subj_ids_org, N1, N2);
     
-    mask_nii = load_nii(jobman.input_nifti.mask{1});
-    size_mask = mask_nii.hdr.dime.dim(2:4);
-    mask_bin = mask_nii.img > 0.5;
+    [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(jobman.input_nifti.mask{1}, nifti_list{1}, outdir);
+    
+%     mask_nii = load_nii(jobman.input_nifti.mask{1});
+%     size_mask = mask_nii.hdr.dime.dim(2:4);
+%     mask_bin = mask_nii.img > 0.5;
+    mask_bin = false(size_mask);
+    mask_bin(mask_ind) = true;
     
     nStudies = numel(nifti_list);
     
     size_T_all = [size_mask, nStudies];
-    pix_dim = mask_nii.hdr.dime.pixdim(2:4);
-    org_mask = mask_nii.hdr.hist.originator(1:3);
+    pix_dim = mask_hdr.dime.pixdim(2:4);
+    org_mask = mask_hdr.hist.originator(1:3);
 
 %     t_mats = zeros(size_T_all, 'double');
     t_maps_all = cellfun(@load_nii, nifti_list);

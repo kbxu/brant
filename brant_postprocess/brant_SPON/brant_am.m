@@ -17,14 +17,8 @@ if ~any([am_ind, std_ind, var_ind])
 end
 
 nor_ind = jobman.nor;
-
-
-% mask_nii = load_nii(mask_fn);
-% size_mask = mask_nii.hdr.dime.dim(2:4);
-% mask_hdr = mask_nii.hdr;
-% mask_ind = find(mask_nii.img > 0.5);
-% [mask_x, mask_y, mask_z] = ind2sub(size_mask, mask_ind);
-
+sm_ind = jobman.sm_ind;
+sm_fwhm = jobman.fwhm;
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 
@@ -76,6 +70,10 @@ for mm = 1:numel(split_prefix)
         end
         
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
+    end
+    
+    if sm_ind == 1
+        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end
 end
 

@@ -96,16 +96,16 @@ function brant_except_ui(hfig_inputdlg)
 % set ui control events for specific uis
 
 ui_name = get(hfig_inputdlg, 'Name');
-
 lw_uiname = lower(ui_name);
+exp_col_ind = 1;
 switch(lw_uiname)
     case 'roi calculation'
-        h_roi = findobj(hfig_inputdlg, 'String', 'ROI-wise / voxel-wise correlation'); % add {} to checkbox ui elements!
+        h_roi = findobj(hfig_inputdlg, 'String', 'check: roi-wise | uncheck: voxel-wise'); % add {} to checkbox ui elements!
         if get(h_roi, 'Value') == 1
             obj_strs{1} = {''}; % dual
-            obj_strs{2} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb'}; % self
+            obj_strs{2} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb', 'sm_ind', 'fwhm'}; % self
         else
-            obj_strs{1} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb'}; % dual
+            obj_strs{1} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb', 'sm_ind', 'fwhm'}; % dual
             obj_strs{2} = {''}; % self
         end
     case 'roi coordinates'
@@ -200,76 +200,79 @@ switch(lw_uiname)
             obj_strs{2} = {'color_input'}; % self
         end
     otherwise
-        return;
+        exp_col_ind = 0;
+%         return;
 end
-
-brant_config_figure(hfig_inputdlg, 'pixel');
 
 h_objs = get(hfig_inputdlg, 'Children');
 tag_objs = arrayfun(@(x) get(x,'tag'), h_objs, 'UniformOutput', false);
+    
+if exp_col_ind == 1
+    brant_config_figure(hfig_inputdlg, 'pixel');
+    vis_states = {'on', 'off'};
+    vis_set_states = {'off', 'on'};
 
-vis_states = {'on', 'off'};
-vis_set_states = {'off', 'on'};
-
-obj_ind = cell(2, 1);
-for m = 1:numel(obj_strs)
-    obj_ind{m} = false;
-    for n = 1:numel(obj_strs{m})
-       obj_ind{m} = obj_ind{m} | cellfun(@(x) ~isempty(strfind(x, obj_strs{m}{n})), tag_objs);
+    obj_ind = cell(2, 1);
+    for m = 1:numel(obj_strs)
+        obj_ind{m} = false;
+        for n = 1:numel(obj_strs{m})
+           obj_ind{m} = obj_ind{m} | cellfun(@(x) ~isempty(strfind(x, obj_strs{m}{n})), tag_objs);
+        end
     end
-end
 
-obj_ind_all = obj_ind{1} | obj_ind{2};
+    obj_ind_all = obj_ind{1} | obj_ind{2};
 
-enb_uis = {'roi calculation', 'roi mapping', 'del timepoints'};
+    enb_uis = {'roi calculation', 'roi mapping', 'del timepoints'};
 
-if any(strcmpi(lw_uiname, enb_uis))
-    % disable ui elements
-    arrayfun(@(x) set(x, 'enable', 'off'), h_objs(obj_ind{1}));
-    arrayfun(@(x) set(x, 'enable', 'on'), h_objs(obj_ind{2}));
-else
-    % move ui elements
-    pos_obj_tmp = arrayfun(@(x) get(x, 'Position'), h_objs, 'UniformOutput', false);
-    pos_obj_all = cat(1, pos_obj_tmp{:});
-
-    % get min y location of moveable elements
-    move_obj_ind = (pos_obj_all(:, 2) >= min(pos_obj_all(obj_ind_all, 2))) & (~obj_ind_all);
-    move_pos_min = min(pos_obj_all(move_obj_ind, 2));
-
-    % get min location of dual and self elements
-    min_pos_ds = min(pos_obj_all(obj_ind_all, 2));
-
-    % set dual elements to invisible
-    arrayfun(@(x) set(x, 'visible', 'off'), h_objs(obj_ind{1}));
-
-    % get min y location of self elements
-    self_pos = pos_obj_all(obj_ind{2}, :);
-    if ~isempty(self_pos)
-        [self_pos_max, max_loc] = max(self_pos(:, 2));
-        self_pos_min = min(pos_obj_all(obj_ind{2}, 2));
-        self_height = self_pos_max - self_pos_min + self_pos(max_loc, 4) + 10;
-
-        % calculate distance between global min and self elements
-        dist_tmp = min_pos_ds - self_pos_min;
-
-        % move self elements
-        arrayfun(@(x, y) set(x, 'Position', y{1} + [0, dist_tmp, 0, 0]), h_objs(obj_ind{2}), pos_obj_tmp(obj_ind{2}));
-
-        % set self elements to visible
-        arrayfun(@(x) set(x, 'visible', 'on'), h_objs(obj_ind{2}));
+    if any(strcmpi(lw_uiname, enb_uis))
+        % disable ui elements
+        arrayfun(@(x) set(x, 'enable', 'off'), h_objs(obj_ind{1}));
+        arrayfun(@(x) set(x, 'enable', 'on'), h_objs(obj_ind{2}));
     else
-        self_height = 0;
+        % move ui elements
+        pos_obj_tmp = arrayfun(@(x) get(x, 'Position'), h_objs, 'UniformOutput', false);
+        pos_obj_all = cat(1, pos_obj_tmp{:});
+
+        % get min y location of moveable elements
+        move_obj_ind = (pos_obj_all(:, 2) >= min(pos_obj_all(obj_ind_all, 2))) & (~obj_ind_all);
+        move_pos_min = min(pos_obj_all(move_obj_ind, 2));
+
+        % get min location of dual and self elements
+        min_pos_ds = min(pos_obj_all(obj_ind_all, 2));
+
+        % set dual elements to invisible
+        arrayfun(@(x) set(x, 'visible', 'off'), h_objs(obj_ind{1}));
+
+        % get min y location of self elements
+        self_pos = pos_obj_all(obj_ind{2}, :);
+        if ~isempty(self_pos)
+            [self_pos_max, max_loc] = max(self_pos(:, 2));
+            self_pos_min = min(pos_obj_all(obj_ind{2}, 2));
+            self_height = self_pos_max - self_pos_min + self_pos(max_loc, 4) + 10;
+
+            % calculate distance between global min and self elements
+            dist_tmp = min_pos_ds - self_pos_min;
+
+            % move self elements
+            arrayfun(@(x, y) set(x, 'Position', y{1} + [0, dist_tmp, 0, 0]), h_objs(obj_ind{2}), pos_obj_tmp(obj_ind{2}));
+
+            % set self elements to visible
+            arrayfun(@(x) set(x, 'visible', 'on'), h_objs(obj_ind{2}));
+        else
+            self_height = 0;
+        end
+
+        % calculate distance between moveable elements and top of self elements
+        dist_tmp = min_pos_ds - move_pos_min + self_height;
+
+        % move moveable elements to the top of self elements
+        arrayfun(@(x, y) set(x, 'Position', y{1} + [0, dist_tmp, 0, 0]), h_objs(move_obj_ind), pos_obj_tmp(move_obj_ind));
+
+        % adjust figure height
+        set(hfig_inputdlg, 'Position', get(hfig_inputdlg, 'Position') + [0, -1 * dist_tmp, 0, dist_tmp]);
     end
-
-    % calculate distance between moveable elements and top of self elements
-    dist_tmp = min_pos_ds - move_pos_min + self_height;
-
-    % move moveable elements to the top of self elements
-    arrayfun(@(x, y) set(x, 'Position', y{1} + [0, dist_tmp, 0, 0]), h_objs(move_obj_ind), pos_obj_tmp(move_obj_ind));
-
-    % adjust figure height
-    set(hfig_inputdlg, 'Position', get(hfig_inputdlg, 'Position') + [0, -1 * dist_tmp, 0, dist_tmp]);
 end
+
 
 % more exceptions
 switch(lw_uiname)
@@ -285,6 +288,22 @@ switch(lw_uiname)
             arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
         else
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
+        end
+    case {'am', 'reho', 'alff/falff', 'roi calculation'}
+        h_sm_ind = findobj(hfig_inputdlg, 'tag', 'sm_ind:checkbox');
+        obj_strs = {'fwhm:edit'};
+        obj_ind = false;
+        for n = 1:numel(obj_strs)
+           obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
+        end
+        val_sm_ind = get(h_sm_ind, 'Value');
+        if strcmpi(lw_uiname, 'roi calculation')
+            val_sm_ind = val_sm_ind && get(h_roi, 'Value');
+        end
+        if val_sm_ind == 1
+            arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
+        else
+            arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
         end
     case 'dicom convert'
         h_cvt_ind = findobj(hfig_inputdlg, 'tag', 'convert:radio');

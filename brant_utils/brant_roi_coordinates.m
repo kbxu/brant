@@ -39,13 +39,13 @@ if is_label_ind == 1
     
     if ~isempty(mask_fn)
         [xyz_hdr, xyz_ind, size_xyz] = brant_check_load_mask(mask_fn, tpl_fn, outdir);
-        fprintf('\n\tThe brain mask will be applied for ROI masks.\n\n')
+        fprintf('\n\tThe brain mask will be applied for ROI masks.\n\n');
     else
         tpl_data = load_nii(tpl_fn);
         xyz_hdr = tpl_data.hdr;
         xyz_ind = find(abs(tpl_data.img) > tol);
         size_xyz = size(tpl_data.img);
-        fprintf('\n\tNo mask will be applied for ROI masks.\n\n')
+        fprintf('\n\tNo mask will be applied for ROI masks.\n\n');
     end
     
     [rois_inds, rois_str, rois_tag] = brant_get_rois({tpl_fn}, size_xyz, tpl_info, v_opt);

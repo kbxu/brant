@@ -40,6 +40,7 @@ brant('quit');
 
 function pos = update_pos(pos)
 
+brant_config_figure(gcf, 'pixel');
 pos_s = get(gcf, 'Position');
 pos = [pos(1) + pos(3) + 10, pos(2) - (pos_s(4) - pos(4)), pos_s(3:4)];
 set(gcf, 'Position', pos);

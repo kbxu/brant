@@ -14,6 +14,9 @@ nor_m_ind = 0;
 outdir = jobman.out_dir{1};
 mask_fn = jobman.input_nifti.mask{1};
 
+sm_ind = jobman.sm_ind;
+sm_fwhm = jobman.fwhm;
+
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 
 for mm = 1:numel(split_prefix)
@@ -69,6 +72,10 @@ for mm = 1:numel(split_prefix)
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
         clear('fALFF', 'ALFF_BP_sum', 'ALFF_AP_sum');
     end
+    
+    if sm_ind == 1
+        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
+    end      
 end
 if any(tc_pts ~= subj_tps)
     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...

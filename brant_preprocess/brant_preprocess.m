@@ -355,6 +355,8 @@ else
     brant_config_figure(gcf, 'pixels');
     pos_fp = get(gcf, 'Position');
     brant_config_figure(gcf, 'Normalized');
+    
+    brant_config_figure(h_chbd, 'pixels');
     screensize = get(0, 'screensize');
     if (screensize(3) - pos_fp(1) - pos_fp(3) > pos_fp(3))
         pos_cb(1) = pos_fp(1) + pos_fp(3) + 16;
@@ -365,6 +367,7 @@ else
     figure(h_chbd);
     set(h_chbd, 'Visible', 'on');
     set(obj, 'Value', 1);
+    brant_config_figure(h_chbd, 'normalized');
 end
 
 function close_chbd(obj, evd)

@@ -10,6 +10,8 @@ totalvoxel = jobman.neighbour_num + 1;
 outdir = jobman.out_dir{1};
 nor_ind = jobman.nor;
 
+sm_ind = jobman.sm_ind;
+sm_fwhm = jobman.fwhm;
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 
@@ -98,6 +100,11 @@ for mm = 1:numel(split_prefix)
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
     end
     clear('ind_out');
+    
+    
+    if sm_ind == 1
+        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
+    end
 end
 
 if any(tc_pts ~= subj_tps)

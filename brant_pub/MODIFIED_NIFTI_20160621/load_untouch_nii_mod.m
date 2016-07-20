@@ -10,7 +10,7 @@
 %  Y axis from Posterior to Anterior, and Z axis from Inferior to
 %  Superior.
 %
-%  Usage: nii = load_nii_mod(filename, [img_idx], [tolerance], [preferredForm])
+%  Usage: nii = load_untouch_nii_mod(filename, [img_idx])
 %
 %  filename  - 	NIFTI or ANALYZE file name.
 %
@@ -52,8 +52,6 @@
 %
 %	img - 		3D (or 4D) matrix of NIFTI data.
 %
-%	original -	the original header before any affine transform.
-%
 %  Part of this file is copied and modified from:
 %  http://www.mathworks.com/matlabcentral/fileexchange/1878-mri-analyze-tools
 %
@@ -61,22 +59,14 @@
 %
 %  - Jimmy Shen (jimmy@rotman-baycrest.on.ca)
 %
-function nii = load_nii_mod(filename, img_idx, tolerance, preferredForm)
+function nii = load_untouch_nii_mod(filename, img_idx)
 
 if ~exist('filename','var')
-    error('Usage: nii = load_nii_mod(filename, [img_idx], [dim5_idx], [tolerance], [preferredForm])');
+    error('Usage: nii = load_untouch_nii_mod(filename, [img_idx])');
 end
 
 if ~exist('img_idx','var') || isempty(img_idx)
     img_idx = [];
-end
-
-if ~exist('tolerance','var') || isempty(tolerance)
-    tolerance = 0.1;			% 10 percent
-end
-
-if ~exist('preferredForm','var') || isempty(preferredForm)
-    preferredForm= 's';		% Jeff
 end
 
 img_idx = double(img_idx);
@@ -101,11 +91,16 @@ else
     nii.filetype = 0;
 end
 
-[nii.img,nii.hdr] = load_nii_img_mod(nii.hdr,img,img_idx);
-%  Perform some of sform/qform transform
-nii = xform_nii(nii, tolerance, preferredForm);
+[nii.img, nii.hdr] = load_nii_img_mod(nii.hdr,img,img_idx);
 
-fields_org = {'hdr', 'filetype', 'fileprefix', 'machine', 'img', 'original'};
+nii.hdr.hist = rmfield(nii.hdr.hist, 'originator');
+
+%  Perform some of sform/qform transform
+% nii = xform_nii(nii, tolerance, preferredForm);
+nii.untouch = 1;
+nii.ext = [];
+
+fields_org = {'hdr', 'filetype', 'fileprefix', 'machine', 'ext', 'img', 'untouch'};
 nii = orderfields(nii, fields_org);
 
 %  - Jimmy Shen (jimmy@rotman-baycrest.on.ca)

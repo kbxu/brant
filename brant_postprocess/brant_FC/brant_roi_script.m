@@ -24,20 +24,23 @@ ext_mean_ind = jobman.ext_mean;
 roi2roi_ind = jobman.roi2roi;
 roi2wb_ind = jobman.roi2wb;
 partial_ind = jobman.partialcorr;
-pearson_ind = jobman.pearsoncorr;
+% pearson_ind = jobman.pearsoncorr;
 roi_info_fn = jobman.roi_info{1};
 cs_thr = jobman.roi_thres; % threshold of voxel size
+
+sm_ind = jobman.sm_ind;
+sm_fwhm = jobman.fwhm;
 
 % if roi_wise_ind == 0
 if any([roi2roi_ind, roi2wb_ind])
     if partial_ind == 1
         corr_type = 'partial_correlation';
         corrfun = @partialcorr;
-    elseif pearson_ind == 1
+    else % if pearson_ind == 1
         corr_type = 'pearson_correlation';
         corrfun = @corr;
-    else
-        error('Error: wrong type of correlation!');
+%     else
+%         error('Error: wrong type of correlation!');
     end
 % else
 %     error('Error input!');
@@ -202,7 +205,7 @@ for mm = 1:numel(split_prefix)
                     
                     if partial_ind == 1
                         [corr_r_wb, corr_p_wb] = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
-                    elseif pearson_ind == 1
+                    else % if pearson_ind == 1
                         [corr_r_wb, corr_p_wb] = corr(ts_rois(:, n), data_2d_mat);
                     end
                     
@@ -223,6 +226,9 @@ for mm = 1:numel(split_prefix)
                     nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['zval_', corr_type]);
                     save_nii(nii, fullfile(out_roi_dirs_z{n}, [subj_ids{m}, '_corr_z.nii']));
                     
+                    if sm_ind == 1
+                        brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, 's', 1)
+                    end 
                     clear('corr_out', 'corr_r_wb', 'corr_p_wb', 'corr_z_wb');
                 end
             end

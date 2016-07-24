@@ -94,7 +94,7 @@ elseif ext_ind == 1
         
         fid = fopen(fullfile(output_dir, ['brant_extract_', fn, '.txt']), 'wt');
         for m = 1:numel(roi_ind_bp)
-            fprintf(fid, '%d %s\n', m, rois_str{roi_ind_bp(m)});
+            fprintf(fid, '%d %s\n', roi_tags(roi_ind_bp(m)), rois_str{roi_ind_bp(m)});
         end
         fclose(fid);
     end

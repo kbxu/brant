@@ -7,7 +7,7 @@ matrix_ind = 0;
 volume_ind = 0;
 if jobman.matrix == 1
     matrix_ind = 1;
-    fc_file = jobman.corr_mat{1};
+%     fc_file = jobman.corr_mat{1};
 else
     volume_ind = 1;
     rois = jobman.rois;

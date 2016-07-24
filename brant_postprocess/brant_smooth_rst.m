@@ -15,6 +15,7 @@ for m = 1:numel(datadirs)
     if ~isempty(datadirs{m})
         fns = dir(fullfile(datadirs{m}, filetype));
         if ~isempty(fns)
+            fprintf('\tSmoothing data in %s...\n', datadirs{m});
             fns_full = arrayfun(@(x) fullfile(datadirs{m}, x.name), fns, 'UniformOutput', false);
             sminfo.data = fns_full;
             

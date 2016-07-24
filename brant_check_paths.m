@@ -39,7 +39,7 @@ function add_rm_prop_paths(searpaths, root_path, path_file, opt)
 
 paths_tmp = importdata(path_file, '\n');
 paths_tmp_prop = cellfun(@(x) regexprep(x, '[\\\/]', filesep), paths_tmp, 'UniformOutput', false);
-paths_tmp_prop_full = fullfile(root_path, paths_tmp_prop);
+paths_tmp_prop_full = cellfun(@(x) fullfile(root_path, x), paths_tmp_prop, 'UniformOutput', false);
 
 if strcmp(opt, 'add')
     nexist_ind = cellfun(@(x) ~any(strcmpi(searpaths, x)) && exist(x, 'dir') == 7, paths_tmp_prop_full);

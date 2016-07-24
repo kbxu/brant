@@ -1,7 +1,7 @@
 function [mask_hdr, mask_ind, size_mask, mask_new] = brant_check_load_mask(mask_raw, sample_raw, outdir)
 % check, reslice using nearest neighbour and load mask
 
-[pth, mask_fn_raw, ext] = fileparts(mask_raw); %#ok<ASGLU>
+[pth, mask_fn_raw, ext] = fileparts(mask_raw);
 
 if ~(exist(fullfile(outdir, [mask_fn_raw, ext]), 'file') == 2)
     copyfile(mask_raw, outdir);
@@ -20,11 +20,11 @@ mask_fn = fullfile(outdir, [mask_fn_raw, ext]);
 fprintf('Mask has been copied from %s to %s.\n', mask_raw, mask_fn);
 
 % use only the first sample
-sample_fn = brant_get_sample(sample_raw);
+sample_fn = brant_get_sample(sample_raw, outdir);
 
 % check mask with sample
-mask_nii = load_nii_mod(mask_fn);
-sample_nii = load_nii_mod(sample_fn);
+mask_nii = load_nii_mod(mask_fn, 1);
+sample_nii = load_nii_mod(sample_fn, 1);
 sts = brant_spm_check_orientations([mask_nii.hdr, sample_nii.hdr]);
 
 if (sts == false)
@@ -40,10 +40,17 @@ mask_hdr = mask_nii.hdr;
 mask_ind = find(mask_nii.img > 0.5);
 size_mask = mask_nii.hdr.dime.dim(2:4);
 
-function sample_out = brant_get_sample(sample_raw)
+function sample_out = brant_get_sample(sample_raw, outdir)
 % sample fn could be either multiple 3D files or one 4D file
 if iscell(sample_raw)
     sample_out = sample_raw{1};
 else
     sample_out = sample_raw;
+end
+
+if strcmpi(sample_out(end-2:end), '.gz')
+    [pth, fn, ext] = fileparts(sample_out); %#ok<*ASGLU>
+    tmp_ref = load_untouch_nii_mod(sample_out, 1);
+    sample_out = fullfile(outdir, ['first_vol_', fn]);
+    save_untouch_nii(tmp_ref, sample_out);
 end

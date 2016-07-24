@@ -8,12 +8,12 @@ if iscell(ref_file)
     ref_file = ref_file{1};
 end
 
-if strcmpi(ref_file(end-2:end), '.gz')
-    pth = fileparts(ref_file);
-    tmp_ref = load_untouch_nii_mod(ref_file, 1);
-    ref_file = fullfile(pth, ['first_vol_', ref_file(1:end-3)]);
-    save_untouch_nii(tmp_ref, ref_file);
-end
+% if strcmpi(ref_file(end-2:end), '.gz')
+%     pth = fileparts(ref_file);
+%     tmp_ref = load_untouch_nii_mod(ref_file, 1);
+%     ref_file = fullfile(pth, ['first_vol_', ref_file(1:end-3)]);
+%     save_untouch_nii(tmp_ref, ref_file);
+% end
 
 if ischar(src_file)
     src_file = {src_file};

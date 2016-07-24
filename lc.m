@@ -6,11 +6,11 @@ function file_paths = lc(varargin)
 
 if nargin == 0
     tarfile = '';
-    filepat = '*.*';
+    filepat = '*';
     filetype = 'd';
 elseif nargin == 1
     tarfile = varargin{1};
-    filepat = '*.*';
+    filepat = '*';
     filetype = 'd';
 elseif nargin == 2
     tarfile = varargin{1};

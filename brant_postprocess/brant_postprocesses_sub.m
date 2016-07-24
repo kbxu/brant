@@ -69,7 +69,7 @@ end
 
 current_pos.y = fig.height - 60;
 
-logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn.png');
+logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn_resize.png');
 if exist(logo_fn, 'file') == 2
     create_logo(hfig_inputdlg, current_pos, logo_fn);
 end
@@ -79,14 +79,14 @@ brant_except_ui(hfig_inputdlg);
 
 function create_logo(hfig_inputdlg, current_pos, logo_fn)
 
-I = imresize(imread(logo_fn), [50, 210]);
+% I = imresize(imread(logo_fn), [50, 210]);
 
 h_btn = uicontrol(...
         'Parent',       hfig_inputdlg,...
         'Style',        'pushbutton',...
         'Position',     [current_pos.x, current_pos.y, 210, 50],...
         'ForegroundColor', [0.2 0.4 0.8],...
-        'CData',        imresize(imread(logo_fn), [50, 210]),...
+        'CData',        imread(logo_fn),...
         'Callback',     @brant_fun_web);
 
 function brant_fun_web(obj, evd)
@@ -129,7 +129,18 @@ switch(lw_uiname)
             obj_strs{1} = {'_del:', '_del.'}; % dual
             obj_strs{2} = {'_cvt:', '_cvt.'}; % self
         end
-    case 'delete timepoints'
+    case 'gzip/gunzip files'
+        h_gzip = findobj(hfig_inputdlg, 'tag', 'gzip:radio');
+        val_gzip = get(h_gzip, 'Value');
+        if val_gzip == 1
+            obj_strs{1} = {'input_gunzip'}; % dual
+            obj_strs{2} = {'input_gzip'}; % self
+        else
+            obj_strs{1} = {'input_gzip'}; % dual
+            obj_strs{2} = {'input_gunzip'}; % self
+        end
+        
+    case {'delete timepoints'}
         h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
         val_out = get(h_out, 'Value');
         if val_out == 1
@@ -305,6 +316,22 @@ switch(lw_uiname)
         else
             arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
         end
+    case 'gzip/gunzip files'
+        h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
+        val_out = get(h_out, 'Value');
+        
+        obj_strs = {'out_dir'};
+        obj_ind = false;
+        for n = 1:numel(obj_strs)
+            obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
+        end
+        
+        if val_out == 1
+            arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
+        else
+            arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
+        end
+        
     case 'dicom convert'
         h_cvt_ind = findobj(hfig_inputdlg, 'tag', 'convert:radio');
         if get(h_cvt_ind, 'Value') == 1

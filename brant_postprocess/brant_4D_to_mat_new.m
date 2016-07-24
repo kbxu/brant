@@ -1,4 +1,5 @@
 function [data_2d_mat, data_tps, nii_hdr] = brant_4D_to_mat_new(nifti_files, mask_ind, outtype, subjname)
+% internal function
 
 % output cell or mat 2d
 if ~isempty(subjname)

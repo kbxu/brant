@@ -185,8 +185,7 @@ for mm = 1:numel(split_prefix)
             end
             
             if ext_mean_ind == 1
-                brant_write_csv(fullfile(out_ts{1}, [subj_ids{m}, '_ts.csv']), num2cell(ts_rois))
-%                 save(fullfile(out_ts{1}, [subj_ids{m}, '_ts.mat']), 'ts_rois');
+                brant_write_csv(fullfile(out_ts{1}, [subj_ids{m}, '_ts.csv']), num2cell(ts_rois));
             end
             
             if roi2roi_ind == 1                
@@ -203,14 +202,20 @@ for mm = 1:numel(split_prefix)
                 for n = 1:num_roi
                     fprintf('\tCalculating roi - whole brain correlation for subject %d/%d %s, roi %s\n', m, num_subj, subj_ids{m}, rois_str{n});
                     
-                    if partial_ind == 1
-                        [corr_r_wb, corr_p_wb] = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
-                    else % if pearson_ind == 1
-                        [corr_r_wb, corr_p_wb] = corr(ts_rois(:, n), data_2d_mat);
-                    end
-                    
                     if mask_wb_by_p == 1
+                        if partial_ind == 1
+                            [corr_r_wb, corr_p_wb] = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
+                        else % if pearson_ind == 1
+                            [corr_r_wb, corr_p_wb] = corr(ts_rois(:, n), data_2d_mat);
+                        end
+                        
                         corr_r_wb(corr_p_wb > 0.001) = 0;
+                    else
+                        if partial_ind == 1
+                            corr_r_wb = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
+                        else % if pearson_ind == 1
+                            corr_r_wb = corr(ts_rois(:, n), data_2d_mat);
+                        end
                     end
                     
                     % corr_r
@@ -226,15 +231,18 @@ for mm = 1:numel(split_prefix)
                     nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['zval_', corr_type]);
                     save_nii(nii, fullfile(out_roi_dirs_z{n}, [subj_ids{m}, '_corr_z.nii']));
                     
-                    if sm_ind == 1
-                        brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, 's', 1)
-                    end 
                     clear('corr_out', 'corr_r_wb', 'corr_p_wb', 'corr_z_wb');
                 end
             end
         end
         fprintf('\n');
         clear('data_2d_mat');
+    end
+    
+    if roi_wise_ind == 1 && sm_ind == 1
+        for n = 1:num_roi
+            brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, 's', 1)
+        end
     end
 end
 

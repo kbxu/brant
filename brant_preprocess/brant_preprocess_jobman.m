@@ -183,14 +183,14 @@ if any(process_ind)
                             end
                         end
                         
-                        mask_all_uni_new_hdr = cellfun(@load_nii_hdr, mask_all_uni_new);
+                        mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
                         
                         if data_input.is4d == 1
                             sample_file = run_data.subjs.files{1};
-                            data_sample_hdr = load_nii_hdr(sample_file);
+                            data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
                         else
                             sample_file = run_data.subjs.files{1}{1};
-                            data_sample_hdr = load_nii_hdr(sample_file);
+                            data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
                         end
                         
                         sts = brant_spm_check_orientations([mask_all_uni_new_hdr; data_sample_hdr]);
@@ -203,35 +203,17 @@ if any(process_ind)
                             for n = 1:numel(mask_all)
                                 if ~isempty(mask_all{n})
                                     [path_tmp, fn_tmp, ext] = fileparts(mask_all{n});
-                                    mask_all_new{n} = fullfile(working_dir, [img_size_str, fn_tmp, ext]);
+                                    mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
                                 end
                             end
 
-                            ept_ind_mask_new = cellfun(@isempty, mask_all_new);
-                            check_mask_new = cellfun(@(x) exist(x, 'file') ~= 2, mask_all_new(~ept_ind_mask_new));
-
-                            if any(check_mask_new)
-                                fprintf('\tReslicing masks.\n');
-                                ept_ind = cellfun(@isempty, mask_all_uni_new);
-                                job.ref = {[sample_file, ',1']};
-                                job.source = mask_all_uni_new(~ept_ind);
-                                job.roptions.interp = 4;
-                                job.roptions.mask = 0;
-                                job.roptions.wrap = [0, 0, 0];
-                                job.roptions.prefix = img_size_str;
-
-                                if strcmpi(spm('ver'), 'SPM12')
-                                    spm_run_coreg(job);
-                                else
-                                    spm_run_coreg_reslice(job);
-                                end
-                            end
-                        
-                            run_data.denoise.subj.wb_mask = mask_all_new{1, 1};
-                            run_data.denoise.detrend_mask.gs = mask_all_new{2, 1};
-                            run_data.denoise.detrend_mask.wm = mask_all_new{3, 1};
-                            run_data.denoise.detrend_mask.csf = mask_all_new{4, 1};
-                            run_data.denoise.detrend_mask.user_mask = mask_all_new{5, 1};
+                            mask_all_new_resliced = brant_reslice(sample_file, mask_all_new, img_size_str);
+                            
+                            run_data.denoise.subj.wb_mask = mask_all_new_resliced{1, 1};
+                            run_data.denoise.detrend_mask.gs = mask_all_new_resliced{2, 1};
+                            run_data.denoise.detrend_mask.wm = mask_all_new_resliced{3, 1};
+                            run_data.denoise.detrend_mask.csf = mask_all_new_resliced{4, 1};
+                            run_data.denoise.detrend_mask.user_mask = mask_all_new_resliced{5, 1};
                         end
                     end
                     

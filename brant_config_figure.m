@@ -8,7 +8,11 @@ set(findall(h_fig, '-property', 'Units' ), 'Units', conf_type);
 set(findall(h_fig, '-property', 'FontUnits' ), 'FontUnits', conf_type);
 
 if nargin > 2
-    set(h_fig, 'SizeChangedFcn', {@brant_size_change, varargin{1}});
+    if verLessThan('matlab','8.5')
+        set(h_fig, 'ResizeFcn', {@brant_size_change, varargin{1}});
+    else
+        set(h_fig, 'SizeChangedFcn', {@brant_size_change, varargin{1}});
+    end
 end
 
 function brant_size_change(obj, evd, h_text) %#ok<INUSL>

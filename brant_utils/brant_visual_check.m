@@ -5,6 +5,10 @@ function brant_visual_check(jobman)
 num_chk = jobman.num_chk;
 [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
 
+if strcmpi(jobman.input_nifti.filetype(end-2:end), '.gz')
+    cellfun(@gunzip, nifti_list);
+end
+
 num_subj = numel(subj_ids);
 if num_subj < num_chk
     num_chk = num_subj;
@@ -42,28 +46,6 @@ else
     curr_tp = 1;
     set(h_chk_fig, 'Userdata', all_tps);
     set(h_chk_fig, 'KeyReleaseFcn', {@brant_spm_figure_KeyFun, [curr_set, curr_tp, num_subj, curr_tps], subj_ids, nifti_list});
-    
-%     h_axes = findobj(h_chk_fig, 'Type', 'axes');
-    
-%     for m = 2:3:numel(h_axes)
-%         pos_ind = (m + 1) / 3;
-%         pos_tmp(pos_ind, :) = get(h_axes(m), 'Position');
-%     end
-    
-%     pos_tmp = sortrows(pos_tmp, 1);
-%     pos_tmp = sortrows(pos_tmp, -2);
-    
-%     for m = 2:3:numel(h_axes)
-%         pos_ind = (m + 1) / 3;
-%         pos_new = [pos_tmp(pos_ind, 1), pos_tmp(pos_ind, 2) + pos_tmp(pos_ind, 4), pos_tmp(pos_ind, 3) * 2, pos_tmp(pos_ind, 4) / 7];
-%         uicontrol(  'Parent', h_chk_fig,...
-%                     'Units', 'normalised',...
-%                     'Style', 'text',...
-%                     'Position', pos_new,...
-%                     'String', current_label,...
-%                     'HorizontalAlignment', 'left',...
-%                     'Backgroundcolor',[1,1,1]);
-%     end
 end
 
 function brant_spm_figure_KeyFun(obj, evd, img_info, subj_ids, nifti_list)
@@ -108,25 +90,3 @@ current_img = strcat(nifti_list{img_info(1)}, curr_tp_str);
 spm_check_registration(char(current_img));
 fprintf('Current file %d/%d %s\n\n', img_info(1), img_info(3), current_img);
 set(obj, 'KeyReleaseFcn', {@brant_spm_figure_KeyFun, img_info, subj_ids, nifti_list});
-
-% h_axes = findobj(obj, 'Type', 'axes');
-
-% for m = 2:3:numel(h_axes)
-%     pos_ind = (m + 1) / 3;
-%     pos_tmp(pos_ind, :) = get(h_axes(m), 'Position');
-% end
-% 
-% pos_tmp = sortrows(pos_tmp, 1);
-% pos_tmp = sortrows(pos_tmp, -2);
-% 
-% for m = 2:3:numel(h_axes)
-%     pos_ind = (m + 1) / 3;
-%     pos_new = [pos_tmp(pos_ind, 1), pos_tmp(pos_ind, 2) + pos_tmp(pos_ind, 4), pos_tmp(pos_ind, 3) * 2, pos_tmp(pos_ind, 4) / 7];
-%     uicontrol(  'Parent', obj,...
-%                 'Units', 'normalised',...
-%                 'Style', 'text',...
-%                 'Position', pos_new,...
-%                 'String', current_label{(m + 1) / 3},...
-%                 'HorizontalAlignment', 'left',...
-%                 'Backgroundcolor',[1,1,1]);
-% end

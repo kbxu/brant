@@ -15,7 +15,6 @@ if num_files == 1
     nii_hdr = nii.hdr;
     nii_size = nii.hdr.dime.dim(2:5);
     
-    
     nii_2d_tmp = shiftdim(nii.img, 3);
     nii_2d = reshape(nii_2d_tmp, nii_size(4), []);
     if ~isempty(mask_ind)

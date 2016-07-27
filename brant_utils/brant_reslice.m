@@ -1,4 +1,4 @@
-function brant_reslice(ref_file, src_file, prefix)
+function rst_files = brant_reslice(ref_file, src_file, prefix)
 % ref_file: reference, cell or string
 % src_file: source files, cell array or string. NOTE: the source files
 % should only be 3D files or cell array of 3D files
@@ -26,7 +26,12 @@ else
     add_str = '';
 end
 
+rst_files = cell(numel(src_file), 1);
 for m = 1:numel(src_file)
+    if isempty(src_file{m})
+        continue;
+    end
+    
     gz_ind = 0;
     if strcmpi(src_file{m}(end-2:end), '.gz')
         gz_ind = 1;
@@ -54,10 +59,17 @@ for m = 1:numel(src_file)
     
     if gz_ind == 1
         if strcmpi(out.rfiles{1}(end-1:end), ',1')
-            gzip(out.rfiles{1}(1:end-2), pth);
+            tmp = gzip(out.rfiles{1}(1:end-2), pth);
         else
-            gzip(out.rfiles{1}, pth);
+            tmp = gzip(out.rfiles{1}, pth);
         end
+        rst_files{m} = tmp{1};
         rmdir(tmpDir, 's');
+    else
+        if strcmpi(out.rfiles{1}(end-1:end), ',1')
+            rst_files{m} = out.rfiles{1}(1:end-2);
+        else
+            rst_files{m} = out.rfiles{1};
+        end
     end
 end

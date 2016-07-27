@@ -22,9 +22,9 @@ if any([nor_m, nor_z])
     data_vec = result_3d(mask_ind);
     mean_data = nanmean(data_vec);
     
-    if nor_z == 1
-        std_data = nanstd(data_vec);
-    end
+%     if nor_z == 1
+%         
+%     end
 end
 
 
@@ -38,6 +38,8 @@ if nor_m == 1
 end
 
 if nor_z == 1
+    std_data = nanstd(data_vec);
+    
     result_3d_nor = nan(size_mask, 'single');
     result_3d_nor(mask_ind) = (data_vec - mean_data) ./ std_data;
 

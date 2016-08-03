@@ -37,7 +37,7 @@ for mm = 1:numel(split_prefix)
     [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp);
     
-    subj_tps = zeros(numel(subj_ids), 1);
+%     subj_tps = zeros(numel(subj_ids), 1);
     
     num_subj = numel(subj_ids);
     for m = 1:num_subj
@@ -46,7 +46,7 @@ for mm = 1:numel(split_prefix)
         [data_2d_mat, data_tps, nii_hdr] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'mat', subj_ids{m});
         brant_spm_check_orientations([mask_hdr, nii_hdr]);
         
-        subj_tps(m) = data_tps;
+%         subj_tps(m) = data_tps;
         
         if am_ind == 1
             fprintf('\tCalculating mean temporal amplitude for subject %d/%d %s\n', m, num_subj, subj_ids{m});
@@ -77,9 +77,9 @@ for mm = 1:numel(split_prefix)
     end
 end
 
-if any(tc_pts ~= subj_tps)
-    warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-        sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-end
+% if any(tc_pts ~= subj_tps)
+%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
+%         sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
+% end
 
 fprintf('\n\t All finished. \n');

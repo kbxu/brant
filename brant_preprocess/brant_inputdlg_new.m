@@ -467,10 +467,12 @@ delete(gcf);
         
 function btn_cb(obj, evd, h_edit, val_type)
 
+nifti_support = '^.*\.(nii|img|nii.gz)$';
+
 val = get(h_edit, 'String');
 switch(val_type)
     case {'file', 'file_img', 'file_img_tmp', 'file_img_*', 'box_file_img', 'box_file_img_*'}
-        [file_input, sts] = cfg_getfile(1, '^.*\.(nii|img)$', '', {val}, '');
+        [file_input, sts] = cfg_getfile(1, nifti_support, '', {val}, '');
         if sts == 1
             set(h_edit, 'String', file_input{1});
         end

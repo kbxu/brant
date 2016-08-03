@@ -4,7 +4,7 @@ brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!
 brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
-tc_pts = 1; %jobman.timepoint;
+% tc_pts = 1; %jobman.timepoint;
 mask_fn = jobman.input_nifti.mask{1};
 totalvoxel = jobman.neighbour_num + 1;
 outdir = jobman.out_dir{1};
@@ -32,7 +32,7 @@ for mm = 1:numel(split_prefix)
     n_vox_slice = prod(size_mask(1:2));
     n_vox_vol = prod(size_mask(1:3));
     
-    subj_tps = zeros(numel(subj_ids), 1);
+%     subj_tps = zeros(numel(subj_ids), 1);
     num_subj = numel(subj_ids);
     
     ind_out = brant_nbr_vox(mask_ind, totalvoxel, size_mask, n_vox_slice, n_vox_vol);
@@ -50,7 +50,7 @@ for mm = 1:numel(split_prefix)
         diff_mat = cell2mat(cellfun(@(x) diff(x) == 0, TC_total_sorted, 'UniformOutput', false));
 
         uniq_ind = sum(diff_mat, 1) == 0;
-        subj_tps(m) = data_tps;
+%         subj_tps(m) = data_tps;
         TC_total_ranked = nan([data_tps, num_mask], 'single');
         asc_seq = 1:data_tps;
         for n = 1:num_mask
@@ -107,10 +107,10 @@ for mm = 1:numel(split_prefix)
     end
 end
 
-if any(tc_pts ~= subj_tps)
-    warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-             sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-end
+% if any(tc_pts ~= subj_tps)
+%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
+%              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
+% end
 fprintf('\tFinished!\n');
 
 function ReHo = calc_reho(nbr_array)

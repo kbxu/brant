@@ -69,7 +69,8 @@ end
 
 current_pos.y = fig.height - 60;
 
-logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn_resize.png');
+% logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn_resize.png');
+logo_fn = fullfile(fileparts(which('brant')), 'logo_resize.png');
 if exist(logo_fn, 'file') == 2
     create_logo(hfig_inputdlg, current_pos, logo_fn);
 end
@@ -79,13 +80,14 @@ brant_except_ui(hfig_inputdlg);
 
 function create_logo(hfig_inputdlg, current_pos, logo_fn)
 
-% I = imresize(imread(logo_fn), [50, 210]);
+%I = imresize(imread(logo_fn), 50/159);
 
 h_btn = uicontrol(...
         'Parent',       hfig_inputdlg,...
         'Style',        'pushbutton',...
-        'Position',     [current_pos.x, current_pos.y, 210, 50],...
-        'ForegroundColor', [0.2 0.4 0.8],...
+        'Position',     [current_pos.x, current_pos.y, 210, 50],... % 210, 50
+        'ForegroundColor', [1, 1, 1],... %[0.2 0.4 0.8]
+        'BackgroundColor', [1, 1, 1],... %[0.2 0.4 0.8]
         'CData',        imread(logo_fn),...
         'Callback',     @brant_fun_web);
 
@@ -194,11 +196,11 @@ switch(lw_uiname)
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if val_mat == 1
-            obj_strs{1} = {'input_nifti.', 'rois:', 'roi_info:', 'mask'}; % dual
+            obj_strs{1} = {'input_nifti.', 'rois:', 'mask'}; % dual
             obj_strs{2} = {'input_matrix.', 'sym_ind'}; % self
         else
             obj_strs{1} = {'input_matrix.', 'sym_ind'}; % dual
-            obj_strs{2} = {'input_nifti.', 'rois:', 'roi_info:', 'mask'}; % self
+            obj_strs{2} = {'input_nifti.', 'rois:', 'mask'}; % self
         end
     case 'roi mapping'
         h_rand = findobj(hfig_inputdlg, 'string', 'random');

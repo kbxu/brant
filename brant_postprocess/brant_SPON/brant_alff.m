@@ -8,7 +8,7 @@ brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\
 FS = 1 / jobman.tr;
 BP = [jobman.lower_thr, jobman.upper_thr];
 
-tc_pts = 1; %jobman.timepoint;
+% tc_pts = 1; %jobman.timepoint;
 nor_z_ind = jobman.nor;
 nor_m_ind = 0;
 outdir = jobman.out_dir{1};
@@ -34,7 +34,7 @@ for mm = 1:numel(split_prefix)
     [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp);
     
-    subj_tps = zeros(numel(subj_ids), 1);
+%     subj_tps = zeros(numel(subj_ids), 1);
 
     num_subj = numel(subj_ids);
     for m = 1:num_subj
@@ -44,7 +44,7 @@ for mm = 1:numel(split_prefix)
         brant_spm_check_orientations([mask_hdr, nii_hdr]);
         fprintf('\tCalculating ALFF/fALFF for subject %d/%d %s please wait ...\n', m, num_subj, subj_ids{m});
 
-        subj_tps(m) = data_tps;
+%         subj_tps(m) = data_tps;
         L = data_tps;
         NFFT = 2^nextpow2(L); % Next power of 2 from length of y
         f = FS / 2 * linspace(0 , 1, NFFT / 2 + 1);
@@ -77,8 +77,8 @@ for mm = 1:numel(split_prefix)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end      
 end
-if any(tc_pts ~= subj_tps)
-    warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-             sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-end
+% if any(tc_pts ~= subj_tps)
+%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
+%              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
+% end
 fprintf('\tFinished!\n');

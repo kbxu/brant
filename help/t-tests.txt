@@ -15,7 +15,7 @@ grouping info:
         for one sample t-test, e.g. SZ;NC -> will do one-sample t-test for both SZ and NC group
     
     table: A csv table, for example: <- for one and two sample t-tests
-        name , group, fileter, age
+        name , group, filter, age
         subj1 , SZ, center1, 28
         subj2 , SZ, center1, 27
         subj3 , NC, center1, 30

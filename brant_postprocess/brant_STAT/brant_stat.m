@@ -120,12 +120,14 @@ switch(out_info.data_type)
               test_ind, out_info);
     case 'stat matrix'
         [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
-        % spliting filename removal using , or ;
-        fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
-        subj_ids_org = subj_ids_org_tmp;
-        for m = 1:numel(fn_rmv)
-            subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
-        end
+%         % spliting filename removal using , or ;
+%         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
+%         subj_ids_org = subj_ids_org_tmp;
+%         for m = 1:numel(fn_rmv)
+%             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
+%         end
+        
+        subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
         
         if strcmpi(stat_type, 'paired t-test') == 1
             [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);

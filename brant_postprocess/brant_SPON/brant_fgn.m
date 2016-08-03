@@ -5,7 +5,7 @@ brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n'
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 mask_fn = jobman.input_nifti.mask{1};
-tc_pts = 1; %jobman.timepoint;
+% tc_pts = 1; %jobman.timepoint;
 [pL, pR, H0, alpha] = brant_truncated_alpha(jobman.timepoints);
 
 outdir = jobman.out_dir{1};
@@ -28,14 +28,14 @@ for mm = 1:numel(split_prefix)
     [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp);
     
-    subj_tps = zeros(numel(subj_ids), 1);
+%     subj_tps = zeros(numel(subj_ids), 1);
     num_subj = numel(subj_ids);
     for m = 1:num_subj
         tic
         [data_2d_mat, data_tps, mask_ind_new] = brant_4D_to_mat(nifti_list{m}, size_mask, mask_ind, 'cell', subj_ids{m});
         fprintf('\n\tCalculating the Hurst exponentof the whole brain for subject %d/%d %s...\n', m, num_subj, subj_ids{m});
 
-        subj_tps(m) = data_tps;
+%         subj_tps(m) = data_tps;
         Hurst = zeros(size_mask, 'single');
         Sigma = zeros(size_mask, 'single');
 
@@ -54,9 +54,9 @@ for mm = 1:numel(split_prefix)
 end
 
 
-if any(tc_pts ~= subj_tps)
-    warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-             sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-end
+% if any(tc_pts ~= subj_tps)
+%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
+%              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
+% end
 
 fprintf('\n\tFinished!\n');

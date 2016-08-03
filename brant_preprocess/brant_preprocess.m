@@ -796,7 +796,7 @@ pos_h_sim_all = arrayfun(@(x) get(x, 'Position'), h_shift, 'UniformOutput', fals
 arrayfun(@(x, y) set(x, 'Position', y{1} + [0, panel_diff, 0, 0]), h_shift, pos_h_sim_all);
 
 if val_out_sel == 1
-    labelOpt_pre = {'name pos',     [10, 10, 50, 15],      'name_pos_out'};
+    labelOpt_pre = {'id index',     [10, 10, 50, 15],      'name_pos_out'};
     create_ui(labelOpt_pre, 'text', h_sim, [0.925 0.914 0.847]);
     
     textOpt = {num2str(brant_pps.subj.out.nmpos),           [75, 10, 40, 15],     'name_pos_out_text_edit',	''};

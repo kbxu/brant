@@ -272,7 +272,7 @@ struc_ind = cell2mat(cellfun(@(x) ~isstruct(net_options.(x)), fns_tmp, 'UniformO
 fns_options = fns_tmp(struc_ind);
 selected_ind = cellfun(@(x) net_options.(x) == 1, fns_options, 'UniformOutput', false);
 selected_opts = strrep(fns_options(cell2mat(selected_ind)), '_', ' ');
-edit_tmp = findobj(fath_fig, 'Style', 'edit', 'Tag', 'net_measure_methods_disp');
+edit_tmp = findobj(fath_fig, 'Style', 'edit', 'Tag', 'net_calcs:disp');
 set(edit_tmp, 'String', selected_opts);
 delete(h_parent);
 

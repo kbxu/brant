@@ -13,9 +13,10 @@ function [LE, CC] = brant_LE_CC(gMatrix, LE_ind, CC_ind)
 %  [3] Tore Opsahl and Pietro Panzarasa (2009). "Clustering in Weighted 
 %      Networks". Social Networks31(2).
 
-if ~any([LE_ind, CC_ind])
-    LE = [];
-    CC = [];
+LE = [];
+CC = [];
+
+if ~any([LE_ind, CC_ind])    
     return;
 end
 

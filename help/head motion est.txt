@@ -5,5 +5,19 @@ filetype: files in the filetype will be searched in input directories.
 input dirs: directories can be input either using a .txt file or spm select window.
 out dir: output directory for saving results.
 
+Meaning of results:
+max-absmotion(mm): maximum translation. Estimated as the max absolute value of the first 3 columns from rp*.txt
+max-absrotation(deg): maximum rotation. Estimated as the max absolute value of the last 3 columns from rp*.txt multiple by 180/pi.
+
+From van Dijk et al., Neuroimage 2012
+max-motion-Dijk(mm): maximum root-mean-square of translation.
+mean-motion-Dijk(mm): mean root-mean-square of translation.
+num-movements-Dijk(>0.1mm): number of micro-movement. The number of root-mean-square of translation that is greater than 0.1mm
+mean-rotation-Dijk(deg): mean absolute Euler angle
+
+From Power et al., Neuroimage 2012
+mean-FD(mm): frame-wise displacement. Estimated using translation and rotation.
+num-FD>0.5: number of frame-wise displacement that is greater than 0.5mm.
+
 end
      

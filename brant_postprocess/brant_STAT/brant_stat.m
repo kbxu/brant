@@ -236,13 +236,14 @@ switch(out_info.data_type)
         field_strs_good = setdiff(field_strs, '');
         n_field = size(field_strs_good, 1);
         
-        % parse data
-        fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
-        subj_ids_org = subj_ids_org_tmp;
-        for m = 1:numel(fn_rmv)
-            subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
-        end
-        [data_infos, subj_ind, fil_inds, reg_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, '', discard_bad_ind);
+        subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
+%         % parse data
+%         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
+%         subj_ids_org = subj_ids_org_tmp;
+%         for m = 1:numel(fn_rmv)
+%             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
+%         end
+        [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, '', discard_bad_ind);
         
         % get the data out of mats
         num_subj = sum(subj_ind);
@@ -287,6 +288,7 @@ switch(out_info.data_type)
         
         csv_title = ['Name', 'Group', reg_est, thres_title_all];
         
+        % error!?????
         for m = 1:n_field
             net_fn_out = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '.csv']);
             

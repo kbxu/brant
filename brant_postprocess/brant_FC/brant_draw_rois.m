@@ -52,7 +52,7 @@ if jobman.manual == 1
     end
     
     roi_nms_tmp = 1:size(coords, 1);
-    roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp, 'UniformOutput', false);
+    roi_strs = arrayfun(@(x) num2str(x, 'ROI_%03d'), roi_nms_tmp', 'UniformOutput', false);
 else
     if isempty(jobman.coords_file)
         error('An csv file is expected for the input!');

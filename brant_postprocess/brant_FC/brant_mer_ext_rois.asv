@@ -89,8 +89,7 @@ elseif ext_ind == 1
             ind_tmp = roi_ind_bp(m);
             roi_full.img(rois_inds{ind_tmp}) = roi_tags(ind_tmp);
         end
-        
-        [pth, fn, ext] = brant_fileparts(extract_info.rois{1});  %#ok<ASGLU>
+        [pth, fn, ext] = fileparts(extract_info.rois{1}); %#ok<ASGLU>
         save_untouch_nii(roi_full, fullfile(output_dir, ['brant_extract_', fn, '.nii']));
         
         out_file = fullfile(output_dir, ['brant_extract_', fn, '.csv']);
@@ -107,4 +106,4 @@ else
     error('Unknown Input!');
 end
 
-fprintf('\tFinished!\n')
+fprintf('Finished!\n')

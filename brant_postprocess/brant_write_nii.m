@@ -17,10 +17,13 @@ filename = fullfile(outdir, [calc_type, '_raw_', subj_id, '.nii']);
 nii = make_nii(result_3d, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
 save_nii(nii, filename);
 
+
+data_good_ind = (isfinite(data_vec)) & (data_vec ~= 0);
+
 if any([nor_m, nor_z])
 %     mask_new = brant_check_mask(result_3d, mask_ind);
     data_vec = result_3d(mask_ind);
-    mean_data = nanmean(data_vec);
+    mean_data = mean(data_vec(data_good_ind));
     
 %     if nor_z == 1
 %         
@@ -38,7 +41,7 @@ if nor_m == 1
 end
 
 if nor_z == 1
-    std_data = nanstd(data_vec);
+    std_data = std(data_vec(data_good_ind));
     
     result_3d_nor = nan(size_mask, 'single');
     result_3d_nor(mask_ind) = (data_vec - mean_data) ./ std_data;

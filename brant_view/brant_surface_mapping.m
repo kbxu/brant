@@ -24,7 +24,8 @@ assert(numel(draw_param.zero_color) == 3);
 draw_param.colorbar_ind = jobman.colorbar;
 
 [vertices_coord, faces] = load_surface_new(surface_file);
-disp_type = strsplit(mode_disp, ':');
+% disp_type = strsplit(mode_disp, ':');
+disp_type = regexp(mode_disp, ':', 'split');
 % split faces
 if strcmpi(disp_type{1}, 'whole brain') ~= 1
     vert_left_ind = vertices_coord(:, 1) < 0;

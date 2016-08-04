@@ -1236,7 +1236,7 @@ switch(mode)
         [disp_input, sts] = cfg_getfile(1, '^.*\.mat$', '', val);
     case 'str_surf'
         surf_pth = fullfile(fileparts(which('brant')), 'brant_surface');
-        [disp_input, sts] = cfg_getfile(1, nifti_support, '', val, surf_pth);
+        [disp_input, sts] = cfg_getfile(1, '^.*\.(txt|nii|img|nii.gz)$', '', val, surf_pth);
     case 'str_edge'
         [disp_input, sts] = cfg_getfile([0, 1], table_support, '', val);
     case 'str_node'

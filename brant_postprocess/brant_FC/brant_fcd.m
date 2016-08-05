@@ -52,10 +52,10 @@ for mm = 1:numel(split_prefix)
         fprintf(fid, 'set INFILE="%s"\n', text_out);
         fprintf(fid, 'set MASK="%s"\n', new_mask_fn);
         fprintf(fid, 'set OUTDIR="%s"\n', outdir);
-        fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr 0.6 -mask %%MASK%% -nmpos %d -out %%OUTDIR%%, %s', nmpos, mode_str);
+        fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr 0.6 -mask %%MASK%% -nmpos %d -out %%OUTDIR%% %s', nmpos, mode_str);
         fclose(fid);
         
-        fprintf('dos command line:\n%s\n', cmd_str);
+%         fprintf('dos command line:\n%s\n', cmd_str);
         if numel(split_prefix) > 1
             fprintf('\n\tFCD is running... logs will be output when finished.\n');
             system(bat_file);

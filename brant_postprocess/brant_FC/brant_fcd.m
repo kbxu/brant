@@ -45,13 +45,22 @@ for mm = 1:numel(split_prefix)
 
     if ispc == 1
         fprintf('\n\tRunning FCD in new command windows...\n');
-        cmd_str = sprintf('"%s" -infile "%s" -coef fcd -thres_corr 0.6 -mask "%s" -nmpos %d -out "%s" %s',...
-                        ba_full, text_out, new_mask_fn, nmpos, outdir, mode_str);
+        bat_file = fullfile(out_dir_tmp, 'fcd.bat');
+        
+        fid = fopen(bat_file, 'wt');
+        fprintf(fid, 'set BN="%s"\n', ba_full);
+        fprintf(fid, 'set INFILE="%s"\n', text_out);
+        fprintf(fid, 'set MASK="%s"\n', new_mask_fn);
+        fprintf(fid, 'set OUTDIR="%s"\n', outdir);
+        fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr 0.6 -mask %%MASK%% -nmpos %d -out %%OUTDIR%%, %s', nmpos, mode_str);
+        fclose(fid);
+        
+        fprintf('dos command line:\n%s\n', cmd_str);
         if numel(split_prefix) > 1
             fprintf('\n\tFCD is running... logs will be output when finished.\n');
-            system(cmd_str);
+            system(bat_file);
         else
-            system(['start', 32, '"brant fcd" cmd.exe /K', 32, cmd_str]);
+            system(['start', 32, '"brant fcd" cmd.exe /K', 32, bat_file]);
         end
     else
         error('Not supported platform!');

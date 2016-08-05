@@ -12,8 +12,8 @@ function varargout = brant(Action)
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 2.90;
-% $Release = 20160706;
+% $Version = 2.92;
+% $Release = 20160805;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles

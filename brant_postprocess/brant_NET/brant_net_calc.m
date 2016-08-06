@@ -57,7 +57,7 @@ for m = 1:num_subj
     corr_mat(bad_ind) = 0;
     corr_mat(eye(num_node) == 1) = 0;
     
-    sym_ind = issymmetric(corr_mat);
+    sym_ind = isequal(corr_mat, corr_mat');
     if sym_ind == 0
         error('Matrix is not symmetric!');
     end

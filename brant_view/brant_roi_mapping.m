@@ -51,7 +51,7 @@ if ~isempty(h_fig)
     set(0, 'CurrentFigure', h_fig);
     figure(h_fig);
 else
-    h_fig = figure('Name', uni_name_tag, 'Position', [200, 200, 800, 600]);
+    h_fig = figure('Name', uni_name_tag, 'Position', [50, 50, 800, 600]);
 end
 
 if ~isempty(h_con)

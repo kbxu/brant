@@ -1071,9 +1071,9 @@ for m = 1:size(curr_field, 1)
         case 'set_module_str_color_diff'
             h_get = findobj(h_parent, 'Tag', curr_field{m, 2}{1});
             
-            jobman_val = jobman.(curr_field{m, 3}{1});
+%             jobman_val = jobman.(curr_field{m, 3}{1});
             
-            if isempty(jobman.node_txt) == 1
+            if isempty(jobman.node_txt{1}) == 1
                 pop_str = get(h_get, 'String');
             else
                 pop_str = unique(jobman.node.module);

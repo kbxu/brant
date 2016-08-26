@@ -1,6 +1,5 @@
 function [vertices, faces] = load_surface_new(surface_file)
 
-
 [o1, o2, ext] = fileparts(surface_file); %#ok<ASGLU>
 if strcmpi(ext, '.txt')
     fid = fopen(surface_file);

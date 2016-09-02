@@ -154,7 +154,7 @@ end
 if net_measure_option.betweenness_centrality == 1
     fprintf('%s: Un-normalized betweenness centrality.\n', subj_id);
     
-    if ispc == 1
+    if strcmp(computer('arch'), 'win64') == 1
         bc = brant_betweenness_centrality(sparse(gMatrix)); %  normalized / ((N - 1) * (N - 2) / 2)
         N = size(gMatrix, 1);
 %         bc = bc; %  unnormalized / ((N - 1) * (N - 2) / 2)

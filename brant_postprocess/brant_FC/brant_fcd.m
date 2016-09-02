@@ -7,10 +7,18 @@ brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\
 outdir = jobman.out_dir{1};
 mask_fn = jobman.input_nifti.mask{1};
 bn_path = fileparts(which(mfilename));
-ba_full = fullfile(bn_path, 'BN.exe');
+
+switch(computer('arch'))
+    case {'win64', 'win32'}
+        ba_full = fullfile(bn_path, 'BN.win32');
+    otherwise %case 'glnxa64'
+        ba_full = fullfile(bn_path, 'BN.unix64');
+    %otherwise
+    %    error('Not supported operation system!');
+end
 
 is4d_ind = jobman.input_nifti.is4d;
-if is4d_ind == 0 || ispc == 0
+if is4d_ind == 0
     error('Current C++ excutable only works on 4-D data.');
 end
 
@@ -61,6 +69,24 @@ for mm = 1:numel(split_prefix)
             system(bat_file);
         else
             system(['start', 32, '"brant fcd" cmd.exe /K', 32, bat_file]);
+        end
+    elseif isunix == 1
+        fprintf('\n\tRunning FCD in command windows...\n');
+        bat_file = fullfile(out_dir_tmp, 'fcd.sh');
+        
+        fid = fopen(bat_file, 'wt');
+        fprintf(fid, '#!/usr/bin/env bash\n\n');
+        fprintf(fid, 'BN="%s"\n', ba_full);
+        fprintf(fid, 'INFILE="%s"\n', text_out);
+        fprintf(fid, 'MASK="%s"\n', new_mask_fn);
+        fprintf(fid, 'OUTDIR="%s"\n', outdir);
+        fprintf(fid, 'chmod u+x ${BN}\n');
+        fprintf(fid, '${BN} -infile ${INFILE} -coef fcd -thres_corr 0.6 -mask ${MASK} -nmpos %d -out ${OUTDIR} %s', nmpos, mode_str);
+        fclose(fid);
+        
+        if numel(split_prefix) > 1
+            fprintf('\n\tFCD is running... logs will be output when finished.\n');
+            system(['sh', 32, bat_file]);
         end
     else
         error('Not supported platform!');

@@ -7,5 +7,9 @@ filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
 
+Keyboard Operation:
+Up/Down:last/next timepoint of the same subject.
+Left/Right:same timepoint of last/next subject.
+
 end
      

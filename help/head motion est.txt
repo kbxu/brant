@@ -6,7 +6,7 @@ input dirs: directories can be input either using a .txt file or spm select wind
 out dir: output directory for saving results.
 
 Meaning of results:
-max-absmotion(mm): maximum translation. Estimated as the max absolute value of the first 3 columns from rp*.txt
+max-abstranslation(mm): maximum translation. Estimated as the max absolute value of the first 3 columns from rp*.txt
 max-absrotation(deg): maximum rotation. Estimated as the max absolute value of the last 3 columns from rp*.txt multiple by 180/pi.
 
 From van Dijk et al., Neuroimage 2012

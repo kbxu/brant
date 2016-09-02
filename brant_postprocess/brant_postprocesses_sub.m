@@ -1552,7 +1552,9 @@ end
 function delete_figure(obj, evd, varargin)
 if nargin > 2
     % delete whatever handle send to this function
-    delete(varargin{1});
+    if ishandle(varargin{1})
+        delete(varargin{1});
+    end
 end
 
 function close_window(obj, evd, varargin)

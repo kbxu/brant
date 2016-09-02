@@ -22,7 +22,7 @@ for i = 1:SubjNum
     head_motion = load(HeadMotionList{i});
     xyz_abs = abs(head_motion(:, 1:3));
     rot_abs = abs(head_motion(:, 4:6)) * 180 / pi;
-    HeadMotion.max_absmotion(i) = max(xyz_abs(:));
+    HeadMotion.max_abstranslation(i) = max(xyz_abs(:));
     HeadMotion.max_absrotation(i) = max(rot_abs(:));
     
     %%  refer van Dijk et al., Neuroimage 2012

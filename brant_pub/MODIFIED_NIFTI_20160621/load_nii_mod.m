@@ -63,7 +63,7 @@
 %
 function nii = load_nii_mod(filename, img_idx, tolerance, preferredForm)
 
-if strcmp(computer('arch'), 'win64') == 0 %ismac == 1
+if ismac == 1 %strcmp(computer('arch'), 'win64') == 0
     nii = load_nii(filename, img_idx, [], [], [], [], tolerance, preferredForm);
     return;
 end

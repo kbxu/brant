@@ -183,19 +183,25 @@ if any(process_ind)
                             end
                         end
                         
-                        mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
+                        if ismac == 1
+                            load_hdr_func = @load_nii_hdr;
+                            mask_all_uni_new_hdr = cellfun(@load_nii_hdr, mask_all_uni_new);
+                        else
+                            load_hdr_func = @load_nii_hdr_img_raw_c;
+                            mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
+                        end
                         
                         if data_input.is4d == 1
                             sample_file = run_data.subjs.files{1};
-                            data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
+                            data_sample_hdr = load_hdr_func(sample_file);
                         else
                             sample_file = run_data.subjs.files{1}{1};
-                            data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
+                            data_sample_hdr = load_hdr_func(sample_file);
                         end
                         
                         sts = brant_spm_check_orientations([mask_all_uni_new_hdr; data_sample_hdr]);
                         
-                        % reslice when mask size don't match
+                        % reslice if mask's size doesn't match with data
                         if sts == 0
                             img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
 

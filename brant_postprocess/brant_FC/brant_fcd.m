@@ -11,10 +11,10 @@ bn_path = fileparts(which(mfilename));
 switch(computer('arch'))
     case {'win64', 'win32'}
         ba_full = fullfile(bn_path, 'BN.win32');
-    otherwise %case 'glnxa64'
+    case 'glnxa64'
         ba_full = fullfile(bn_path, 'BN.unix64');
-    %otherwise
-    %    error('Not supported operation system!');
+    otherwise
+       error('Not supported operation system!');
 end
 
 is4d_ind = jobman.input_nifti.is4d;

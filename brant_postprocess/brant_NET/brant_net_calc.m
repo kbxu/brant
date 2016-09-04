@@ -232,7 +232,7 @@ end
 if net_measure_option.small_worldness == 1
     fprintf('%s: small-worldness of network.\n', subj_id);
     randperm_num = net_measure_option.sw.num_simulation;
-    [net.smallworldness_sigma.global, net.smallworldness_lambda.global, net.smallworldness_gamma.global] = brant_SmallWorldness(gMatrix, randperm_num, net_type, net_measure_option.sw.keep_connectivity, net_measure_option.sw.num_paral > 0);
+    [net.smallworldness_sigma.global, net.smallworldness_lambda.global, net.smallworldness_gamma.global] = brant_SmallWorldness(gMatrix, randperm_num, net_type, net_measure_option.sw.keep_connectivity, 0);
 end
 
 fprintf('\n');

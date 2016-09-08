@@ -116,7 +116,7 @@ brant_pps.normalise12.eoptions.samp = 3;
 brant_pps.normalise12.woptions.bb = [-90 -126 -72;90 90 108];
 brant_pps.normalise12.woptions.vox = [3, 3, 3];
 brant_pps.normalise12.woptions.interp = 4;
-
+brant_pps.normalise12.woptions.prefix = 'w';
 
 
 

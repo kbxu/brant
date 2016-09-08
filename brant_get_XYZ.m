@@ -1,5 +1,5 @@
 function [XYZ, s_mat] = brant_get_XYZ(mask_hdr)
-% brant_get_XYZ.m can only be used when image header is loaded by load_nii.m!
+% brant_get_XYZ.m can ONLY be used when image header is loaded by load_nii.m!
 % assumes s_mat is in accordance with nifti data loaded by load_nii
 % with left in left side
 

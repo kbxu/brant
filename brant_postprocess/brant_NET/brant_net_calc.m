@@ -133,7 +133,7 @@ end
 
 if net_measure_option.assortative_mixing == 1
     fprintf('%s: assortativity coefficient of network.\n', subj_id);
-    [net.assortative.global] = CCM_Assortative(gMatrix);
+    [net.assortative_mixing.global] = CCM_Assortative(gMatrix);
 end
 
 if net_measure_option.neighbor_degree == 1

@@ -1,5 +1,5 @@
 function brant_draw_rois(jobman)
-
+% draw roi in standard space
 
 aio_ind = jobman.aio;
 mask_nii = load_nii(jobman.mask{1});

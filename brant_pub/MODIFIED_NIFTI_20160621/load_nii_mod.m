@@ -63,10 +63,10 @@
 %
 function nii = load_nii_mod(filename, img_idx, tolerance, preferredForm)
 
-if ismac == 1 %strcmp(computer('arch'), 'win64') == 0
-    nii = load_nii(filename, img_idx, [], [], [], [], tolerance, preferredForm);
-    return;
-end
+% if strcmpi(filename(end-2:end), 'img') == 1 %ismac == 1 %strcmp(computer('arch'), 'win64') == 0
+%     nii = load_nii(filename, img_idx, [], [], [], [], tolerance, preferredForm);
+%     return;
+% end
 
 if ~exist('filename','var')
     error('Usage: nii = load_nii_mod(filename, [img_idx], [dim5_idx], [tolerance], [preferredForm])');

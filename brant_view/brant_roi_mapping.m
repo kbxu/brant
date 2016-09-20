@@ -1,10 +1,6 @@
 function brant_roi_mapping(jobman, h_con)
 
-if isempty(jobman.rois)
-    error('An ROI file is expected!')
-else
-    template_file = jobman.rois{1};
-end
+template_file = jobman.rois{1};
 
 disp_legend = jobman.disp_legend;
 
@@ -12,7 +8,10 @@ roi_info_fn = jobman.roi_info{1};
 disp_surface_ind = jobman.disp_surface;
 surface_file = jobman.surface{1};
 alpha_num = jobman.alpha;
-% spin_angle = jobman.spin_angle;
+
+draw_param.material_type = jobman.material_type;
+draw_param.lighting_type = jobman.lighting_type;
+% draw_param.shading_type = jobman.shading_type;
 
 roi_vec = jobman.roi_vec;
 mode_display = jobman.mode_display;
@@ -39,45 +38,25 @@ N_nbr = 2;
 [xx,yy,zz] = ndgrid(-1 * N_nbr:N_nbr);
 nhood = sqrt(xx.^2 + yy.^2 + zz.^2) <= N_nbr;
 
-uni_name_tag = 'ROI Mapping: Draw';
-% uni_name_tag = ['ROI Mapping:console_handle:', num2str(h_con)];
-h_fig = findobj(0, 'Name', uni_name_tag);
-if ~isempty(h_fig)
-    h_axes = findobj(h_fig, 'Type', 'axes');
-    
-    if ~isempty(h_axes)
-        delete(h_axes);
-    end
-    set(0, 'CurrentFigure', h_fig);
-    figure(h_fig);
-else
-    h_fig = figure('Name', uni_name_tag, 'Position', [50, 50, 800, 600]);
-end
+h_fig = brant_create_disp_fig(h_con, 'ROI Mapping: Draw');
 
-if ~isempty(h_con)
-    set(h_con, 'DeleteFcn', {@close_win, h_fig});
-    h_cancel = findobj(h_con, 'Style', 'pushbutton', 'String', 'cancel');
-    set(h_cancel, 'ButtonDownFcn', {@cancel_fun, h_fig});
-end
-
-set(h_fig, 'WindowButtonUpFcn', {@clickfn, h_fig});
-
-% disp_surface_ind = 1;
 if disp_surface_ind == 1
-    [vertices_coord_org, faces] = load_surface_new(surface_file);
-    h_brain = patch('Faces', faces, 'Vertices', vertices_coord_org, 'EdgeColor', 'none');
-    material('shiny');
-    shading('interp');
-    set(h_brain, 'FaceColor', [0.95, 0.9, 0.9]);
-    set(h_brain, 'FaceAlpha', alpha_num); 
-    lighting('gouraud');
+    brant_draw_surface(surface_file, mode_display, alpha_num, draw_param);
 end
-hold('on');
+
+if isempty(template_file)
+    return;
+end
 
 roi_show_msg = 0;
 [rois_inds, rois_str, roi_tags, roi_hdr] = brant_get_rois({template_file}, [], roi_info_fn, roi_show_msg);
 temp_org = [-1 * abs(roi_hdr.hist.srow_x(4)), -1 * abs(roi_hdr.hist.srow_y(4)), -1 * abs(roi_hdr.hist.srow_z(4))]; % RPI
 pixdim = roi_hdr.dime.pixdim(2:4);
+
+if isempty(roi_vec)
+    % empty then draw all ROIs
+    roi_vec = roi_tags;
+end
 
 roi_uniq_vals = setdiff(roi_vec, roi_tags);
 if ~isempty(roi_uniq_vals)
@@ -101,10 +80,10 @@ if ~isempty(roi_vec)
     roi_vec_ind = arrayfun(@(x) find(x == roi_tags), roi_vec);
     for m = 1:num_roi_show
         mask_tmp = smooth3(rois_inds{roi_vec_ind(m)});
-        h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :));
+        h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :), mode_display);
     end
 
-    if disp_legend == 1
+    if disp_legend == 1 && strcmpi(mode_display, 'halves:left and right') == 0
         h_legend = legend(h_roi, rois_str(roi_vec_ind), 'Location', 'SouthEastOutside', 'Interpreter', 'none');
         set(h_legend, 'Box', 'off')
     end
@@ -115,45 +94,29 @@ if ~isempty(roi_vec)
     end
 end
 
-switch(mode_display)
-    case 'sagital left'
-        view([-90, 0]); 
-    case 'sagital right'
-        view([90, 0]); 
-    case 'axial up'
-        view([0, 90]); 
-    case 'axial down'
-        view([180, -90]); 
-    case 'coronal anterior'
-        view([180, 0]); 
-    case 'coronal posterior'
-        view([0, 0]); 
+if disp_surface_ind == 0
+    if strcmpi(mode_display, 'halves:left and right') == 0
+        view_angle = brant_get_view_angle(mode_display);
+        view(view_angle);
+    end
+
+    daspect([1,1,1]);
+    camlight('right');
+    h_light = findobj(h_fig, 'type', 'light');
+    set(h_light, 'Position', campos);
+    lighting('gouraud');
+    axis('vis3d');
+    axis('off');
+
+    whitebg(gcf, [1 1 1]);
+    set(gcf, 'Color', [1 1 1]);
 end
-    
-daspect([1,1,1]);
-camlight('right');
-h_light = findobj(h_fig, 'type', 'light');
-set(h_light, 'Position', campos);
-lighting('gouraud');
-axis('vis3d');
-axis('off');
 
-whitebg(gcf, [1 1 1]);
-set(gcf, 'Color', [1 1 1], 'InvertHardcopy', 'off');
-hold('off')
+set(gcf, 'InvertHardcopy', 'off');
 
 
-% if ~isempty(spin_angle)
-%     view([90, 0]);
-%     set(h_light, 'Position', campos);
-%     for m = 0:spin_angle:360
-%         camorbit(spin_angle, 0, 'camera');
-%         set(h_light, 'Position', campos);
-%         saveas(h_fig, fullfile(outdir, ['brant_roi_', num2str(m), '.png']));
-%     end
-% end
+function h_brain = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp, mode_display)
 
-function h_brain = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp)
 
 V_ero = imerode(mask_tmp, nhood);
 V_edge = mask_tmp - V_ero;
@@ -166,23 +129,26 @@ vertices_coord_org(:,1) = (vertices_coord(:,2) * pixdim(1) + temp_org(1)) * scal
 vertices_coord_org(:,3) = (vertices_coord(:,3) * pixdim(3) + temp_org(3))* scale_param(3);
 
 if ~isempty(color_tmp)
-    h_brain = patch('Faces', faces, 'Vertices', vertices_coord_org, 'FaceColor', color_tmp, 'EdgeColor', 'none');
+    draw_args = {'FaceColor', color_tmp, 'EdgeColor', 'none'};
 else
-    h_brain = patch('Faces', faces, 'Vertices', vertices_coord_org, 'EdgeColor', 'none');
+    draw_args = {'EdgeColor', 'none'};
 end
 
-function clickfn(obj, evd, h_fig) %#ok<*INUSL>
-h_light = findobj(h_fig, 'type', 'light');
-set(h_light, 'Position', campos);
-
-function close_win(obj, evd, h_disp)
-try
-    delete(h_disp);
-end
-
-function cancel_fun(obj, evd, h_disp)
-h_con = get(obj, 'Parent');
-delete(h_con);
-try %#ok<*TRYNC>
-    delete(h_disp);
+if strcmpi(mode_display, 'halves:left and right') == 0
+    center_shift = get(gca, 'Userdata');
+    vertices_coord_shift = bsxfun(@minus, vertices_coord_org, center_shift);
+    hold('on');
+    h_brain = patch('Faces', faces, 'Vertices', vertices_coord_shift, draw_args{:});
+    hold('off');
+else
+    sub_tags = {'upper_l', 'upper_r', 'lower_l', 'lower_r'};
+    for m = 1:4
+        h_sub = findobj(gcf, 'type', 'axes', 'Tag', sub_tags{m});
+        axes(h_sub); %#ok<LAXES>
+        hold('on');
+        center_shift = get(gca, 'Userdata');
+        vertices_coord_shift = bsxfun(@minus, vertices_coord_org, center_shift);
+        h_brain = patch('Faces', faces, 'Vertices', vertices_coord_shift, draw_args{:});
+        hold('off')
+    end
 end

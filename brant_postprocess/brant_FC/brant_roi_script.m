@@ -241,7 +241,7 @@ for mm = 1:numel(split_prefix)
     
     if roi_wise_ind == 1 && sm_ind == 1 && roi2wb_ind == 1
         for n = 1:num_roi
-            brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, 's', 1)
+            brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
         end
     end
 end

@@ -2,15 +2,59 @@ function [process_pars, ui_structs, process_fun] = brant_postprocess_defaults(pr
 
 brant_path = fileparts(which('brant'));
 
+bn_atlas = fullfile(brant_path, 'template', 'BN_Atlas_274_with_cerebellum_without_255.nii.gz');
+bn_atlas_info = fullfile(brant_path, 'template', 'roi_areas_274.txt');
+if exist(bn_atlas, 'file') ~= 2
+    bn_atlas = '';
+    bn_atlas_info = '';
+end
+
 % string, ui_type, structure field.
 switch(lower(process_str))
+    case 'circos'
+        
+        circos_dir = '';
+        if ispc == 1
+            [ret, str] = system('where circos.exe');
+        else
+            [ret, str] = system('which circos');
+        end
+        
+        if ret == 0
+            circos_dir = fileparts(str);
+        end
+        
+        process_pars.circos_dir = {circos_dir};
+        process_pars.conf_dir = {fullfile(brant_path, 'brant_view', 'circos')};
+        process_pars.roi_info = {''};
+        process_pars.edge = {''};
+        process_pars.chromo_units = 100000;
+        process_pars.pos_color = [1, 0, 0];
+        process_pars.neg_color = [0, 1, 1];
+        process_pars.transparent_bkg = 0;
+        process_pars.out_dir = {''};
+        
+        ui_structs = {...
+            {'edit', 'str_dir'},     'circos dir',     {'circos_dir'},      '';...
+            {'edit', 'str_dir'},     'conf dir',    {'conf_dir'},              '';...
+            {'edit', 'str_edge'},    'roi info',    {'roi_info'},              '';...
+            {'edit', 'str_edge'},    'edge',    {'edge'},              '';...
+            {'edit', 'num_short_right'},       'chromosome units',            {'chromo_units'},               '';...
+            {'pushbutton', 'color_hor_dual'},        {'positive edge', 'negative edge'},   {{''}, {'pos_color'}, {''}, {'neg_color'}},                          '';...
+            {'chb', 'num_bin'},          'transparent background',   {'transparent_bkg'},                          '';...
+            {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
+            };
+        
+        process_fun = @brant_circos_conf;
+    
+    
     case 'head motion est'
         
         process_pars.out_dir = {''};
         
         ui_structs = {...
             {'sub_gui', 'disp_2d_txt'},      'input_nifti',       {{'filetype', 'rp*.txt'}, {'nm_pos', 1}},              '';...
-            {'edit', 'str_dir'},     'out dir',     {'out_dir'},      ''
+            {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
             };
         
         process_fun = @brant_hm_est;
@@ -49,21 +93,6 @@ switch(lower(process_str))
         
          process_fun = @brant_dicom2nii;
          
-%     case 'delete timepoints'
-%         process_pars.del = 10;
-%         process_pars.out_ind = 0;
-%         process_pars.out_fn = 'brant_4D';
-%         process_pars.out_dir = {''};
-%         
-%         ui_structs = {...
-%                     {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'mask', '', 'disable'}},              '';...
-%                     {'edit', 'num_short_right'},      'del first timepoints',       {'del'},              '';...
-%                     {'edit', 'str_short_right'}, 'output fn',   {'out_fn'},                 '';...
-%                     {'chb', 'num_bin'},          'output to another directory',   {'out_ind'},                          '';...
-%                     {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
-%                     };
-%         
-%         process_fun = @brant_dicom2nii;
     case 'gzip/gunzip files'    
         process_pars.gzip = 1;
         process_pars.gunzip = 0;
@@ -449,60 +478,44 @@ switch(lower(process_str))
         
         process_pars.alpha = 1.0;
         process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
-        process_pars.vol_map = {''};
+        process_pars.vol_map = {bn_atlas};
         
-        process_pars.color_type_pos = 'hot';
-        process_pars.color_type_neg = 'cool';
         process_pars.material_type = 'dull';
         process_pars.lighting_type = 'gouraud';
-        process_pars.shading_type = 'interp';
-        process_pars.mode_display = 'whole brain:axial up';
+        ...process_pars.shading_type = 'interp';
+        process_pars.mode_display = 'whole brain:axial';
         process_pars.vol_thr = 'vol ~= 0';
         process_pars.colorbar = 1;
-%         process_pars.smooth = 1;
         process_pars.discrete = 0;
-        process_pars.zero_color = [0.95,0.95,0.95];
-        ...process_pars.spin_angle = '';
-        ...process_pars.out_dir = {'.'};
         
         ui_structs = {...
             {'chb', 'num_bin'},       'show colorbar',         {'colorbar'},             '';...
-            ...{'chb', 'num_bin'},       'smooth volume',         {'smooth'},             '';...
             {'chb', 'num_bin'},       'discrete value',         {'discrete'},             '';...
-            {'edit', 'num_longest'},       'zero color',    {'zero_color'},              '';...
             {'edit', 'num_short_left'},      'alpha',    {'alpha'},              '';...
-            {'popupmenu', 'disp_view_opts'},      'pos color',    {{{'color_type_pos'};'hsv';'jet';'hot';'cool';'spring';'summer';'autumn';'winter';'gray';'bone';'copper';'pink';'lines'}},              '';...
-            {'popupmenu', 'disp_view_opts'},      'neg color',    {{{'color_type_neg'};'hsv';'jet';'hot';'cool';'spring';'summer';'autumn';'winter';'gray';'bone';'copper';'pink';'lines'}},              '';...
-            {'popupmenu', 'disp_view_opts'},      'display',    {{{'mode_display'};'halves:left lateral';'halves:left medial';'halves:right lateral';'halves:right medial';'halves:left and right';'whole brain:sagital left';'whole brain:sagital right';'whole brain:axial up';'whole brain:axial down';'whole brain:coronal anterior';'whole brain:coronal posterior'}},              '';...
+            {'popupmenu', 'disp_view_opts'},      'display',    {{{'mode_display'};'halves:left lateral';'halves:left medial';'halves:right lateral';'halves:right medial';'halves:left and right';'whole brain:sagital left';'whole brain:sagital right';'whole brain:axial';'whole brain:coronal'}},              '';... 
             {'popupmenu', 'disp_view_opts'},      'material',    {{{'material_type'};'shiny';'dull';'metal'}},              '';...
             {'popupmenu', 'disp_view_opts'},      'lighting',    {{{'lighting_type'};'flat';'gouraud';'phong';'none'}},              '';...
-            {'popupmenu', 'disp_view_opts'},      'shading',    {{{'shading_type'};'flat';'faceted';'interp'}},              '';...
+            ...{'popupmenu', 'disp_view_opts'},      'shading',    {{{'shading_type'};'flat';'faceted';'interp'}},              '';...
             {'edit', 'str_surf'},      'surface',    {'surface'},              '';...
             {'edit', 'str_nifti'},       'brain vol',         {'vol_map'},             '';...
             {'edit', 'str_thr_parse'},     'threshold',      {'vol_thr'},                          '';...
-            ...{'chb', 'num_bin_num_edit'},       'spin&save',         {'spin_angle'},             '';...
-            ...{'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
             };
         
         process_fun = @brant_surface_mapping;
         
     case 'roi mapping'
         
-        bn_atlas = fullfile(brant_path, 'template', 'BN_Atlas_274_with_cerebellum_without_255.nii.gz');
-        bn_atlas_info = fullfile(brant_path, 'template', 'roi_areas_274.txt');
-        if exist(bn_atlas, 'file') ~= 2
-            bn_atlas = '';
-            bn_atlas_info = '';
-        end
-        
         process_pars.alpha = 0.3;
         process_pars.disp_surface = 1;
         process_pars.disp_legend = 0;
         process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
         process_pars.rois = {bn_atlas};
-        process_pars.roi_vec = [23,30,31,32];
+        process_pars.roi_vec = [31,32];
         process_pars.roi_info = {bn_atlas_info};
-        process_pars.mode_display = 'axial down';
+        process_pars.mode_display = 'halves:left and right';
+        process_pars.material_type = 'dull';
+        process_pars.lighting_type = 'gouraud';
+        ...process_pars.shading_type = 'interp';
         process_pars.random = 1;
         process_pars.input = 0;
         process_pars.color_input = {''};
@@ -511,7 +524,10 @@ switch(lower(process_str))
         
         ui_structs = {...
             {'edit', 'num_short_left'},      'alpha',    {'alpha'},              '';...
-            {'popupmenu', 'disp_view_opts'},      'display',    {{{'mode_display'};'sagital left';'sagital right';'axial up';'axial down';'coronal anterior';'coronal posterior'}},              '';...
+            {'popupmenu', 'disp_view_opts'},      'display',    {{{'mode_display'};'halves:left lateral';'halves:left medial';'halves:right lateral';'halves:right medial';'halves:left and right';'whole brain:sagital left';'whole brain:sagital right';'whole brain:axial';'whole brain:coronal'}},              '';... 
+            {'popupmenu', 'disp_view_opts'},      'material',    {{{'material_type'};'shiny';'dull';'metal'}},              '';...
+            {'popupmenu', 'disp_view_opts'},      'lighting',    {{{'lighting_type'};'flat';'gouraud';'phong';'none'}},              '';...
+            ...{'popupmenu', 'disp_view_opts'},      'shading',    {{{'shading_type'};'flat';'faceted';'interp'}},              '';...
             {'chb', 'num_bin'},        'display surface',   {'disp_surface'},                          '';...
             {'edit', 'str_surf'},      'surface',    {'surface'},              '';...
             {'chb', 'num_bin'},        'display legend',   {'disp_legend'},                          '';...

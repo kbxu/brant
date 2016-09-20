@@ -12,9 +12,11 @@ node_x = arrayfun(@(x) x_sph .* r(x) + coords_part(x, 1), 1:num_node, 'UniformOu
 node_y = arrayfun(@(x) y_sph .* r(x) + coords_part(x, 2), 1:num_node, 'UniformOutput', false);
 node_z = arrayfun(@(x) z_sph .* r(x) + coords_part(x, 3), 1:num_node, 'UniformOutput', false);
 
-h_node = cellfun(@(x, y, z, o) mesh(x, y, z, 'DisplayName', node_info.module{o}, 'Edgecolor', 'none', 'Facecolor', node_color(o, :), 'EdgeAlpha', 0),...
+h_node = cellfun(@(x, y, z, o) mesh(x, y, z, 'DisplayName', node_info.module{o},...
+                                             'Edgecolor', 'none',...
+                                             'Facecolor', node_color(o, :),...
+                                             'EdgeAlpha', 0),...
                                node_x, node_y, node_z, num2cell(1:num_node), 'UniformOutput', false);
-material('shiny');
 
 % arrayfun(@(x) set(node_mesh{x}, 'Facecolor', node_color(x, :)), 1:num_node);
 % cellfun(@(x) set(x, 'EdgeAlpha', 0), node_mesh);
@@ -37,5 +39,5 @@ else
     h_text = [];
 end  
     
-axis('tight');
-lighting('phong');
+% axis('tight');
+% lighting('phong');

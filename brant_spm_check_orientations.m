@@ -22,6 +22,8 @@ V_info = struct;
 for m = 1:numel(V)
     V_info(m).dim = V(m).dime.dim(2:4);
     V_info(m).pixdim = V(m).dime.pixdim(2:4);
+    
+    V_info(m).smat = [V(m).hist.srow_x; V(m).hist.srow_y; V(m).hist.srow_z];
 end
 
 
@@ -54,29 +56,14 @@ if any(any(diff(pixdims,1,1),1))
     if ~nargout, error('The bounding box must be identical for this procedure.'); end
 end
 
-
-
-
-
-
-
-
-% matx = reshape(cat(3,V.mat),[16,numel(V)]);
-% if any(any(abs(diff(matx,1,2))>1e-4))
-%     sts = false;
-%     fprintf('\n** The images do not all have same orientation and/or voxel sizes. **\n');
-%     fprintf('The function assumes that a voxel in one image  corresponds exactly\n');
-%     fprintf('with  the same voxel in another.   This is not a safe assumption if\n');
-%     fprintf('the orientation information  in the headers or .mat files says that\n');
-%     fprintf('the images are oriented differently. Please ensure that you process\n');
-%     fprintf('all data correctly. For example, you may have realigned the images,\n');
-%     fprintf('but not actually resliced them to be in voxel-wise alignment.\n');
-%     fprintf('Here are the orientation matrices of the image volumes.   This list\n');
-%     fprintf('can be used to determine which file(s) are causing the problem.\n\n');
-%     for i=1:numel(V)
-%         fprintf('[%g %g %g %g; %g %g %g %g; %g %g %g %g]  %s\n',...
-%                 V(i).mat(1:3,:)', V(i).fname);
-%     end
-%     fprintf('\n');
-%     if ~nargout, error('The orientations etc must be identical for this procedure.'); end
-% end
+% compare s matrices
+matx = reshape(cat(3, V_info.smat), [12, numel(V_info)]);
+if any(any(abs(diff(matx,1,2))>1e-4))
+    sts = false;
+    fprintf('\n    ** The images do not all have the same smat. **\n');
+    for i=1:numel(V)
+        disp(V_info(i).smat);
+    end
+    fprintf('\n');
+    if ~nargout, error('The orientations etc must be identical for this procedure.'); end
+end

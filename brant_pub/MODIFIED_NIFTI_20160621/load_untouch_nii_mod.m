@@ -61,10 +61,10 @@
 %
 function nii = load_untouch_nii_mod(filename, img_idx)
 
-if ismac == 1
-    nii = load_untouch_nii(filename, img_idx);
-    return;
-end
+% if strcmpi(filename(end-2:end), 'img') == 1 %ismac == 1
+%     nii = load_untouch_nii(filename, img_idx);
+%     return;
+% end
 
 if ~exist('filename','var')
     error('Usage: nii = load_untouch_nii_mod(filename, [img_idx])');

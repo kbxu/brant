@@ -80,4 +80,4 @@ end
 cellfun(@(x) set(x, 'EdgeColor', 'none'), cyl_stick);
 cellfun(@(x) set(x, 'FaceAlpha', 1), cyl_stick);
 cellfun(@(x) set(x, 'EdgeAlpha', 0), cyl_stick);
-lighting('phong');
+% lighting('phong');

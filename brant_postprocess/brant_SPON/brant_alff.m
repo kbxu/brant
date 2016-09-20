@@ -1,5 +1,34 @@
 function brant_alff(jobman)
-
+% Help information for ALFF/fALFF:
+%
+% GUI parameters:
+% mask: could be whole brain mask or gray matter mask.
+% id index: identifier to find unique string for each subject
+% filetype: files in the filetype will be searched in input directories.
+% 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+% input dirs: directories can be input either using a .txt file or spm select window.
+% 
+% TR: repetition time, used as sample frequency 1/TR to estimate width of frequency band.
+% lower cutoff (Hz): lower cutoff for band pass filter.
+% upper cutoff (Hz): upper cutoff for band pass filter.
+% normalize transform: in output file, a suffix of '_m' means the output is divided by mean intensity in the mask; a suffix of '_z' means the output is subtracted by mean intensity and divided by standard deviation.
+% smooth results: whether or not to smooth results using a gaussian kernel.
+% smooth kernel size: fwhm of smooth kernel
+% out dir: output directory for saving results.
+%
+% Script parameters: (-> refers to explainations in GUI parameters)
+% jobman.input_nifti.mask -> mask
+% jobman.input_nifti.nm_pos -> id index
+% jobman.input_nifti.filetype -> filetype
+% jobman.input_nifti.is4d -> 4D nifti files
+% jobman.input_nifti.dirs -> input dirs
+% jobman.tr -> TR
+% jobman.lower_thr -> lower cutoff (Hz)
+% jobman.upper_thr -> upper cutoff (Hz)
+% jobman.nor -> normalize transform
+% jobman.sm_ind -> smooth results
+% jobman.fwhm -> smooth kernel size
+% jobman.out_dir -> out dir
 
 brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
@@ -74,7 +103,8 @@ for mm = 1:numel(split_prefix)
     end
     
     if sm_ind == 1
-        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
+        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
+%         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end      
 end
 % if any(tc_pts ~= subj_tps)

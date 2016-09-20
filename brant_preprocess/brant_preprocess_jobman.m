@@ -83,30 +83,6 @@ if any(process_ind)
         output_dirs = cell(numel(dirs), 1);
     end
     
-    %     gzip_ind = [0, 0];
-    %     denoise_ind = strcmpi(processes_curr, 'denoise');
-    %     filter_ind = strcmpi(processes_curr, 'filter');
-    %     if any(denoise_ind) && any(filter_ind)
-    %         processes_curr{denoise_ind} = 'denoise_filter';
-    %     	processes_curr(filter_ind) = '';
-    %     end
-    
-    %     if any(denoise_ind)
-    %         gzip_ind(1) = run_data.denoise.subj.gzip;
-    %
-    %         if jobman.ind.smooth == 1 && jobman.ind.filter == 0
-    %             gzip_ind(1) = 0;
-    %         end
-    %     end
-    %
-    %     if any(filter_ind)
-    %         gzip_ind(2) = run_data.filter.gzip;
-    %
-    %         if jobman.ind.smooth == 1
-    %             gzip_ind(2) = 0;
-    %         end
-    %     end
-    
     if strcmp(jobman.pref.parallel, 'on')
         par_on = 1;
         try
@@ -183,22 +159,16 @@ if any(process_ind)
                             end
                         end
                         
-                        if ismac == 1
-                            load_hdr_func = @load_nii_hdr;
-                            mask_all_uni_new_hdr = cellfun(@load_nii_hdr, mask_all_uni_new);
-                        else
-                            load_hdr_func = @load_nii_hdr_img_raw_c;
-                            mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
-                        end
+                        load_hdr_func = @load_nii_hdr_img_raw_c; % support nii, nii.gz, img, img.gz, hdr, hdr.gz
+                        mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
                         
                         if data_input.is4d == 1
                             sample_file = run_data.subjs.files{1};
-                            data_sample_hdr = load_hdr_func(sample_file);
                         else
                             sample_file = run_data.subjs.files{1}{1};
-                            data_sample_hdr = load_hdr_func(sample_file);
                         end
                         
+                        data_sample_hdr = load_hdr_func(sample_file);
                         sts = brant_spm_check_orientations([mask_all_uni_new_hdr; data_sample_hdr]);
                         
                         % reslice if mask's size doesn't match with data

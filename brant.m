@@ -1,6 +1,6 @@
 function varargout = brant(Action)
 % BRANT   BRAinNetome Toolkit
-%   Authors: XU Kaibin, ZHAN Yafeng, HU Yong, LIU Yong
+%   Progammers: XU Kaibin, ZHAN Yafeng, HU Yong, LIU Yong
 %   Usages: brant(Action)
 %         Actions: { ''(empty)| 'fMRI' | 
 %         'Path' | 'Preprocess' | 'Net' | 'Spon' | 'FC' | 'Stat'   | 
@@ -12,8 +12,8 @@ function varargout = brant(Action)
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 2.93;
-% $Release = 20160908;
+% $Version = 2.95;
+% $Release = 20160919;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles

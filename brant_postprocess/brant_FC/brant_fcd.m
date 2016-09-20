@@ -66,9 +66,10 @@ for mm = 1:numel(split_prefix)
 %         fprintf('dos command line:\n%s\n', cmd_str);
         if numel(split_prefix) > 1
             fprintf('\n\tFCD is running... logs will be output when finished.\n');
-            system(bat_file);
+            system(['cmd /C', 32, '"', bat_file, '"']);
+%             system(bat_file);
         else
-            system(['start', 32, '"brant fcd" cmd.exe /K', 32, bat_file]);
+            system(['start', 32, '"brant fcd" cmd.exe /K', 32, '"', bat_file, '"']);
         end
     elseif isunix == 1
         fprintf('\n\tRunning FCD in command windows...\n');

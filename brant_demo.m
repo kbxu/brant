@@ -1,11 +1,11 @@
-function brant_demo
+function brant_demo(outdir)
 
-brant_path = fileparts(which('brant'));
+% brant_path = fileparts(which('brant'));
 
 brant; 
 set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
-% export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant.png'), '-nocrop');
-saveas(gcf, fullfile(brant_path, 'brant_gui_pics', 'brant.png'));
+% export_fig(fullfile(outdir, 'brant.png'), '-nocrop');
+saveas(gcf, fullfile(outdir, 'brant.png'));
 
 pause(0.5)
 brant_preprocess('init'); pause(0.5)
@@ -13,13 +13,14 @@ brant_preprocess('init'); pause(0.5)
 h_prep = findobj(0, 'Name', 'brant_Preprocessing');
 figure(h_prep);
 set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
-export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant_preprocess.png'), '-nocrop');
-% saveas(gcf, fullfile(brant_path, 'brant_gui_pics', 'brant_preprocess.png'));
+print(fullfile(outdir, 'brant_preprocess.png'), '-dpng', '-r0')
+% export_fig(fullfile(outdir, 'brant_preprocess.png'), '-nocrop');
+% saveas(gcf, fullfile(outdir, 'brant_preprocess.png'));
 
 % h_board = findobj(0, 'Name', 'brant_CheckBoard');
 % figure(h_board);
 % set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
-% export_fig(fullfile(brant_path, 'brant_gui_pics', 'brant_preprocess_info.png'), '-nocrop');
+% export_fig(fullfile(outdir, 'brant_preprocess_info.png'), '-nocrop');
 
 brant_preprocess('quit'); pause(1)
 
@@ -33,8 +34,8 @@ for m = 1:numel(functypes)
         brant_gui(prompt{n}); pos = update_pos(pos);
         fn = regexprep(prompt{n}, '[\\\/ ]', '_');
         set(gcf, 'PaperPositionMode', 'auto', 'InvertHardcopy', 'off');
-        export_fig(fullfile(brant_path, 'brant_gui_pics', [fn, '.png']), '-nocrop');
-%         saveas(gcf, fullfile(brant_path, 'brant_gui_pics', [fn, '.png']));
+        export_fig(fullfile(outdir, [fn, '.png']), '-nocrop');
+%         saveas(gcf, fullfile(outdir, [fn, '.png']));
     end
     pause(1.5);
     delete(h_parent);

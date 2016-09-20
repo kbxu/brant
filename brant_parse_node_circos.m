@@ -1,12 +1,12 @@
-function node_out = brant_parse_node(node_file)
+function node_out = brant_parse_node_circos(node_file)
 
 % expected title in an excel table
-all_fns = {'x', 'y', 'z', 'size', 'module', 'r', 'g', 'b', 'label'};
+all_fns = {'label', 'module', 'index_module', 'index_node'};
 tbl_raw = brant_read_csv(node_file);
 titles = tbl_raw(1, :);
 tbl_data_cell = tbl_raw(2:end, :);
 
-num_node = size(tbl_data_cell, 1);
+% num_node = size(tbl_data_cell, 1);
 fn_inds = cellfun(@(x) find(strcmpi(x, titles), 1, 'first'), all_fns, 'UniformOutput', false);
 fn_ept = cellfun(@isempty, fn_inds);
 
@@ -16,20 +16,6 @@ for m = 1:numel(all_fns)
             node_out.(all_fns{m}) = tbl_data_cell(:, fn_inds{m});
         else
             node_out.(all_fns{m}) = cellfun(@str2double, tbl_data_cell(:, fn_inds{m}));
-        end
-    end
-end
-
-% check input
-for m = 1:numel(all_fns)
-    if ~isfield(node_out, all_fns{m})
-        switch all_fns{m}
-            case {'x', 'y', 'z'}
-                error('Column of %s is missing!', all_fns{m});
-            case 'module'
-                node_out.module = repmat({'module 1'}, num_node, 1);
-            otherwise
-                % never mind
         end
     end
 end

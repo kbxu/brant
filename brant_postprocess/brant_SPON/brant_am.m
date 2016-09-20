@@ -73,7 +73,8 @@ for mm = 1:numel(split_prefix)
     end
     
     if sm_ind == 1
-        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
+        brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
+%         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end
 end
 

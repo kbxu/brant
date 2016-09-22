@@ -83,9 +83,16 @@ if ~isempty(roi_vec)
         h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :), mode_display);
     end
 
-    if disp_legend == 1 && strcmpi(mode_display, 'halves:left and right') == 0
+    if disp_legend == 1% && strcmpi(mode_display, 'halves:left and right') == 0
         h_legend = legend(h_roi, rois_str(roi_vec_ind), 'Location', 'SouthEastOutside', 'Interpreter', 'none');
-        set(h_legend, 'Box', 'off')
+        pos = get(h_legend, 'Position');
+        if strcmpi(mode_display, 'halves:left and right') == 1
+            set(h_legend, 'Position', [0.45, 0.05, 0.1, pos(4)],...
+                          'Box', 'off');
+        else
+            set(h_legend, 'Position', [0.85, 0.05, 0.1, pos(4)],...
+                          'Box', 'off');
+        end
     end
 
     if output_color == 1

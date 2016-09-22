@@ -26,7 +26,11 @@ node_2 = node_coord_part(node_2_ind, :);
 num_edge = numel(fc_strength);
 
 % % hack starts
+% fcInd = fc_strength;
 % fc_strength = sign(fc_strength) .* ones(num_edge, 1);
+% uniqFcColor = unique(fcInd);
+% numColor = numel(uniqFcColor);
+% clrEdge = rand(numColor, 3);
 % % hack ends
 
 
@@ -49,6 +53,15 @@ arrayfun(@(x) rotate(cyl_stick{x}, rot_aix(:, x), rot_angle(x), [0 0 0]), 1:num_
 arrayfun(@(x) set(cyl_stick{x}, 'XData', get(cyl_stick{x}, 'XData') + node_2(x, 1)), 1:num_edge)
 arrayfun(@(x) set(cyl_stick{x}, 'YData', get(cyl_stick{x}, 'YData') + node_2(x, 2)), 1:num_edge)
 arrayfun(@(x) set(cyl_stick{x}, 'ZData', get(cyl_stick{x}, 'ZData') + node_2(x, 3)), 1:num_edge)
+
+% % hack starts
+% for m = 1:numColor
+%     tmpInd = fcInd == uniqFcColor(m);
+%     cellfun(@(x) set(x, 'FaceColor', clrEdge(m, :)), cyl_stick(tmpInd));
+% end
+% return;
+% % hack ends
+
 
 if edge_info.adjust_edge_color == 1
     fc_neg = fc_strength < 0;

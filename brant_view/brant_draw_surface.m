@@ -76,7 +76,7 @@ if strcmpi(mode_display, 'halves:left and right') == 0
     if nargin > 3
         material(varargin{1}.material_type);
         lighting(varargin{1}.lighting_type);
-        shading(varargin{1}.shading_type);
+%         shading(varargin{1}.shading_type);
     end
 
     if nargin > 4

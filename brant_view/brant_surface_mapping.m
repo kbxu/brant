@@ -1,4 +1,4 @@
-function brant_surface_mapping_new(jobman, h_con)
+function brant_surface_mapping(jobman, h_con)
 
 if isempty(jobman.vol_map{1})
     vol_file = [];
@@ -23,7 +23,7 @@ brant_draw_surface(surface_file, mode_display, draw_param.alpha_num, draw_param,
 
 material(draw_param.material_type);
 lighting(draw_param.lighting_type);
-shading(draw_param.shading_type);
+% shading(draw_param.shading_type);
 
 
 

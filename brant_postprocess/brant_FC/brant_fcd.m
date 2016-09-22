@@ -32,11 +32,11 @@ for mm = 1:numel(split_prefix)
     nifti_list = brant_get_subjs(jobman.input_nifti);
     nmpos = jobman.input_nifti.nm_pos;
 
-    [mask_hdr, mask_ind, size_mask, mask_fn] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp); %#ok<ASGLU>
+    [mask_hdr, mask_ind, size_mask, new_mask_fn] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp); %#ok<ASGLU>
     
-    mask_tmp = load_nii(mask_fn);
-    new_mask_fn = fullfile(out_dir_tmp, 'brant_mask_for_fcd.nii');
-    save_nii(mask_tmp, new_mask_fn);
+%     mask_tmp = load_nii(mask_fn);
+%     new_mask_fn = fullfile(out_dir_tmp, 'brant_mask_for_fcd.nii');
+%     save_nii(mask_tmp, new_mask_fn);
 
     text_out = fullfile(out_dir_tmp, 'fcd_subject_list.txt');
     fid = fopen(text_out, 'wt');

@@ -15,9 +15,13 @@ switch mode_brain{1}
                 view_angle = [-90, 0];
             case 'sagital right'
                 view_angle = [90, 0];
-            case 'axial'
+            case 'axial superior'
                 view_angle = [0, 90];
-            case 'coronal'
+            case 'axial inferior'
+                view_angle = [180, -90];
+            case 'coronal anterior'
                 view_angle = [180, 0];
+            case 'coronal posterior'
+                view_angle = [0, 0];
         end
 end

@@ -147,8 +147,8 @@ else
     
     min_pos_vq = min(vq(vq > 0));
     tick_cbr = interp1([0; uniq_color], 1:(color_N+1), [0, min_pos_vq, max_vq], 'Nearest');
-    c_map(tick_cbr(3):end, :) = 1;
-    c_map(1:tick_cbr(2), :) = 1;
+    c_map(min(tick_cbr(3)+1,color_N):end, :) = 1;
+    c_map(1:max(tick_cbr(2)-1, 1), :) = 1;
     
     thr = max_abs / color_N * 8;
     

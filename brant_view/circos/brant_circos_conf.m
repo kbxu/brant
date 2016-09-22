@@ -68,7 +68,7 @@ end
 diag_ind = eye(num_node) == 1;
 fc_mat(diag_ind) = 0;
 
-if issymmetric(fc_mat) == 0
+if isequal(fc_mat, fc_mat') == 0
     error('FC matrix must be symmetric!');
 end
 

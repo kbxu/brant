@@ -112,7 +112,7 @@ if delete_ind == 1 && del_tps > 0
         for m = 1:num_subj
             if nifti_tps(m) > del_tps
                 fprintf('\tDeleting first %d timepoints for data %s\n', del_tps, nifti_list{m});
-                nifti_tmp = load_untouch_nii(nifti_list{m}, del_tps + 1:nifti_tps(m));
+                nifti_tmp = load_untouch_nii_mod(nifti_list{m}, del_tps + 1:nifti_tps(m));
                 save_untouch_nii(nifti_tmp, fullfile(outdirs_subj{m}, [out_fn, '.nii']));
             else
                 warning('First %d timepoints will not be discarded for %s, please check!\n', del_tps, nifti_list{m});

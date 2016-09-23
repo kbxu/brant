@@ -22,28 +22,24 @@ b_box = [s_mat(:, 4), s_mat(:, 4) + step_len .* (size_data - 1)']';
 [X, Y, Z] = meshgrid(b_box(1, 1):step_len(1):b_box(2, 1), b_box(1, 2):step_len(2):b_box(2, 2), b_box(1, 3):step_len(3):b_box(2, 3));
 
 vol_int = permute(vol_int, [2, 1, 3]);
+vol_int(~isfinite(vol_int)) = 0;
 if colorinfo.discrete == 0
     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3));
 else
     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3), 'Nearest');
 end
 
-vq(~isfinite(vq)) = 0;
 max_abs = max(abs(vq(:)));
-
 thres_str = strrep(colorinfo.vol_exp, 'vol', 'vq');
 vol_3d_mask = eval(thres_str);
 vq(~vol_3d_mask) = 0;
     
-
 min_vq = min(setdiff(vq, 0));
 max_vq = max(setdiff(vq, 0));
     
 
 
 if colorinfo.discrete == 0
-    
-    
     
     color_N = 129;
     c_map = jet(color_N);
@@ -137,14 +133,6 @@ else
     
     CData = interp1([0; uniq_color], 1:(color_N+1), vq, 'Nearest');
     
-    if color_N == 1
-        cbr.xtick = 2;
-        cbr.xlabel = {num2str(uniq_color(end))};
-    else
-        cbr.xtick = [2, color_N+1];
-        cbr.xlabel = {num2str(uniq_color(1)), num2str(uniq_color(end))};
-    end
-    
     min_pos_vq = min(vq(vq > 0));
     tick_cbr = interp1([0; uniq_color], 1:(color_N+1), [0, min_pos_vq, max_vq], 'Nearest');
     c_map(min(tick_cbr(3)+1,color_N):end, :) = 1;
@@ -152,11 +140,15 @@ else
     
     thr = max_abs / color_N * 8;
     
-    if abs(min_pos_vq) > thr
+    if abs(min_pos_vq) > thr && (max_vq - min_pos_vq) > thr
         tick_vec = [0, min_pos_vq, max_vq];
     else
         tick_vec = [0, max_vq];
     end
+    
+    
+    
+    
     cbr.xtick = interp1([0; uniq_color], 1:(color_N+1), tick_vec, 'Nearest');
     cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
     

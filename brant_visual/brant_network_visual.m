@@ -1,7 +1,11 @@
 function brant_network_visual(jobman, h_con)
 
 surface_fn = jobman.surface{1};
-surf_alpha = jobman.alpha;
+% surf_alpha = jobman.alpha;
+draw_param.material_type = 'dull';
+draw_param.lighting_type = 'gouraud';
+draw_param.shading_type = 'interp';
+draw_param.alpha = jobman.alpha;
 
 if isempty(surface_fn)
     error('Please select surface file.')
@@ -77,26 +81,34 @@ surface_brain = surface_fn;
 
 brant_create_disp_fig(h_con, 'brant:network visualization');
 
-brant_draw_surface(surface_brain, mode_display, surf_alpha);
+brant_draw_surface(surface_brain, mode_display, draw_param, []);
 
-if strcmpi(mode_display, 'halves:left and right') == 0
-    center_shift = get(gca, 'Userdata');
-    node_info.coords = bsxfun(@minus, node_info.coords, center_shift);
-    node_info.x = node_info.x - center_shift(1);
-    node_info.y = node_info.y - center_shift(2);
-    node_info.z = node_info.z - center_shift(3);
-    brant_draw_brain(node_info, edge_info);
-else
-    sub_tags = {'upper_l', 'upper_r', 'lower_l', 'lower_r'};
-    coord_org = node_info.coords;
-    for m = 1:4
-        h_sub = findobj(gcf, 'Tag', sub_tags{m}, 'type', 'axes');
-        axes(h_sub); %#ok<LAXES>
+if ~isempty(node_info)
+    if strcmpi(mode_display, 'halves:left and right') == 0
         center_shift = get(gca, 'Userdata');
-        node_info.coords = bsxfun(@minus, coord_org, center_shift);
-        node_info.x = node_info.coords(:, 1);
-        node_info.y = node_info.coords(:, 2);
-        node_info.z = node_info.coords(:, 3);
+        node_info.coords = bsxfun(@minus, node_info.coords, center_shift);
+        node_info.x = node_info.x - center_shift(1);
+        node_info.y = node_info.y - center_shift(2);
+        node_info.z = node_info.z - center_shift(3);
         brant_draw_brain(node_info, edge_info);
+        set(gca, 'XLim', [-70, 70],...
+                 'YLim', [-100, 100],...
+                 'ZLim', [-75, 75]);
+    else
+        sub_tags = {'upper_l', 'upper_r', 'lower_l', 'lower_r'};
+        coord_org = node_info.coords;
+        for m = 1:4
+            h_sub = findobj(gcf, 'Tag', sub_tags{m}, 'type', 'axes');
+            set(gcf, 'CurrentAxes', h_sub);
+            set(gca, 'XLim', [-70, 70],...
+                     'YLim', [-100, 100],...
+                     'ZLim', [-75, 75]);
+            center_shift = get(gca, 'Userdata');
+            node_info.coords = bsxfun(@minus, coord_org, center_shift);
+            node_info.x = node_info.coords(:, 1);
+            node_info.y = node_info.coords(:, 2);
+            node_info.z = node_info.coords(:, 3);
+            brant_draw_brain(node_info, edge_info);
+        end
     end
 end

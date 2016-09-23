@@ -31,8 +31,7 @@ if ~isempty(node_info)
                 cellfun(@delete, h_text(node_ind_show == 0));
             end
         end
-    end
-    
+    end    
     lighting('phong');
 end
 hold('off');

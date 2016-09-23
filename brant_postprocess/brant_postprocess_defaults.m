@@ -162,8 +162,8 @@ switch(lower(process_str))
     case 'merge/extract rois'
         process_pars.merge = 1;
         process_pars.extract = 0;
-        process_pars.rois = {''};
-        process_pars.roi_info = {''};
+        process_pars.rois = {bn_atlas};
+        process_pars.roi_info = {bn_atlas_info};
         process_pars.roi_vec = [];
         process_pars.out_fn = 'brant_merge_roi';
         process_pars.out_dir = {''};
@@ -213,8 +213,8 @@ switch(lower(process_str))
         process_pars.roi2wb = 1;
         process_pars.partialcorr = 0;
         ...process_pars.pearsoncorr = 1;
-        process_pars.rois = {''};
-        process_pars.roi_info = {''};
+        process_pars.rois = {bn_atlas};
+        process_pars.roi_info = {bn_atlas_info};
         process_pars.roi_thres = 0;
         process_pars.sm_ind = 1;
         process_pars.fwhm = [6, 6, 6];
@@ -225,7 +225,7 @@ switch(lower(process_str))
             {'edit', 'str_nifti'},       'roi file',   {'rois'},                 '';...
             {'edit', 'str_edge'},       'roi info*',    {'roi_info'},              '';...
             {'edit', 'num_short_right'},       'clustersize thr*',            {'roi_thres'},               '';...
-            {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       '',              '';...
+            {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'filetype', 'f*.nii'}},              '';...
             {'seperator', 'str'}, '========================================', '', '';...
             {'chb', 'num_bin'},       'extract mean',          {'ext_mean'},              '';...
             {'chb', 'num_bin'},       'roi to roi correlation',         {'roi2roi'},             '';...

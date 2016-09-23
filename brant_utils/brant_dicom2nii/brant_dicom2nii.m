@@ -108,7 +108,7 @@ if delete_ind == 1 && del_tps > 0
         nifti_list = brant_get_subjs(output_cvt);
     end
     if is4d_ind == 1
-        nifti_tps = cellfun(@get_nii_frame, nifti_list);
+        nifti_tps = cellfun(@brant_get_nii_frame, nifti_list);
         for m = 1:num_subj
             if nifti_tps(m) > del_tps
                 fprintf('\tDeleting first %d timepoints for data %s\n', del_tps, nifti_list{m});

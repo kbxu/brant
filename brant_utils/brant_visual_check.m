@@ -15,9 +15,9 @@ if num_subj < num_chk
 end
 
 if jobman.input_nifti.is4d == 1
-    all_tps = cellfun(@get_nii_frame, nifti_list);
+    all_tps = cellfun(@brant_get_nii_frame, nifti_list);
 else
-    all_tps = cellfun(@(x) get_nii_frame(x{1}), nifti_list);
+    all_tps = cellfun(@(x) brant_get_nii_frame(x{1}), nifti_list);
 end
 curr_tps = all_tps(1);
 

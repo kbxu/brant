@@ -93,7 +93,7 @@ if one_samp_ind == 1
             case 'stat volume'
                 contr_str = sprintf('SPM{T_[%.1f]} - Contrast: %s', df_stu, group_est_one{m});
                 save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
-                                 test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R);
+                                 test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R, df_stu);
             case 'stat matrix'
                 save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                  test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est_one{m}, df_stu, subjs);
@@ -341,7 +341,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
             switch(out_info.data_type)
                 case 'stat volume'
                     save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
-                                     test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R);
+                                     test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R, df_stu);
                 case 'stat matrix'
                     save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                      test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est, df_stu, subjs);
@@ -384,7 +384,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
     diary('off');
 end
 
-function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val, test_fn, mask_hdr, contr_str, multi_use, thr, p_vec_R)
+function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val, test_fn, mask_hdr, contr_str, multi_use, thr, p_vec_R, df_stu)
 
 contrs = {'gt', 'st', 'diff'};
 contrs_tail = {'right', 'left', 'both'};
@@ -402,7 +402,7 @@ if ~isempty(multi_use)
     p_vec_L = 1 - p_vec_R;
 
     for n = 1:numel(multi_use)
-        stat_val_thres = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_use{n}, stat_val);
+        stat_val_thres = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, stat_val, df_stu);
         if ~isempty(stat_val_thres)
             result_3d_mul = zeros(size_mask, 'double');
             result_3d_mul(mask_ind_new) = stat_val_thres;
@@ -468,7 +468,7 @@ if ~isempty(multi_use)
     stat_val_thres = [];
 
     for n = 1:numel(multi_use)
-        t_mat_thres_tmp = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_use{n}, t_rst_vec);
+        t_mat_thres_tmp = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, t_rst_vec, df);
 
         if ~isempty(t_mat_thres_tmp)
             t_mat_thres_mat = zeros(mat_size, 'double');

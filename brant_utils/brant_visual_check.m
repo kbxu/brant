@@ -23,7 +23,8 @@ curr_tps = all_tps(1);
 
 current_img = strcat(nifti_list{num_chk}, ',0001');
 fprintf('\nCurrent file %d/%d %s\n\n', num_chk, num_subj, current_img);
-spm_check_registration(char(current_img));
+% spm_check_registration(char(current_img));
+spm_image('display', char(current_img));
 
 % user_name = java.lang.System.getProperty('user.name');
 h_chk_fig = findobj(0, '-regexp', 'Name', sprintf('%s (.*): Graphics', spm('ver')));
@@ -87,6 +88,7 @@ curr_tp_str = sprintf(',%.3d', img_info(2));
 current_img = strcat(nifti_list{img_info(1)}, curr_tp_str);
 % current_label = strcat(nifti_list{img_info(1)}, curr_tp_str);
 
-spm_check_registration(char(current_img));
+spm_image('display', char(current_img));
+% spm_check_registration(char(current_img));
 fprintf('Current file %d/%d %s\n\n', img_info(1), img_info(3), current_img);
 set(obj, 'KeyReleaseFcn', {@brant_spm_figure_KeyFun, img_info, subj_ids, nifti_list});

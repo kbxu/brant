@@ -461,7 +461,7 @@ save(out_fn_unc, 'group_est', 'tail_rst', 'p_rst_unc', 'h_rst_unc', 't_rst', 'df
 
 dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_pval.txt', test_fn)]), p_rst_unc{1}); % group1 > group2
 dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_tval.txt', test_fn)]), t_rst);
-dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_h_unc.txt', test_fn)]), h_rst_unc{1});
+dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_h_unc.txt', test_fn)]), h_rst_unc{3});
 clear('p_rst_unc', 'h_rst_unc', 't_rst');
 
 if ~isempty(multi_use)

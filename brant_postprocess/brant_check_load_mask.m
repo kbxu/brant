@@ -36,9 +36,21 @@ else
     mask_new = mask_fn;
 end
 
+% good_sample_ind = isfinite(sample_nii.img) & (sample_nii.img ~= 0);
+% if ~all(good_sample_ind(:))
+%     mask_nii.img(~good_sample_ind) = 0;
+%     res_prefix = 'nozero_';
+%     [pth, mask_fn_raw, ext] = fileparts(mask_new);
+%     mask_new = fullfile(outdir, [res_prefix, mask_fn_raw, ext]);
+%     save_nii(mask_nii, mask_new);
+% end
+
 mask_hdr = mask_nii.hdr;
 mask_ind = find(mask_nii.img > 0.5);
 size_mask = mask_nii.hdr.dime.dim(2:4);
+
+
+
 
 function sample_out = brant_get_sample(sample_raw, outdir)
 % sample fn could be either multiple 3D files or one 4D file

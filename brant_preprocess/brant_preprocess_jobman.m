@@ -105,6 +105,7 @@ if any(process_ind)
     if jobman.subj.out.selected == 1
         data_input.dirs = output_dirs;
     end
+    spm('defaults', 'FMRI');
     
     for m = 1:numel(processes_curr)
         

@@ -234,7 +234,7 @@ switch(out_info.data_type)
         if isempty(field_strs), return; end
         
         field_strs_good = setdiff(field_strs, '');
-        n_field = size(field_strs_good, 1);
+        n_field = numel(field_strs_good);
         
         subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
 %         % parse data

@@ -93,10 +93,11 @@ nii.machine = 'ieee-le';
 [pth, fileprefix] = brant_fileparts(filename);
 nii.fileprefix = fullfile(pth, fileprefix);
 
-if ~strcmp(nii.hdr.hist.magic, 'n+1') && ~strcmp(nii.hdr.hist.magic, 'ni1')
-    nii.hdr.hist.qform_code = 0;
-    nii.hdr.hist.sform_code = 0;
-end
+nii.hdr.dime.dim = double(nii.hdr.dime.dim);
+% if ~strcmp(nii.hdr.hist.magic, 'n+1') && ~strcmp(nii.hdr.hist.magic, 'ni1')
+%     nii.hdr.hist.qform_code = 0;
+%     nii.hdr.hist.sform_code = 0;
+% end
 
 if strcmp(nii.hdr.hist.magic, 'n+1')
     nii.filetype = 2;

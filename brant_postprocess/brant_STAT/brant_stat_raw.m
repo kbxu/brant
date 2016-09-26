@@ -452,16 +452,18 @@ for n_contr = 1:numel(contrs)
         p_rst_unc{n_contr} = p_rst_unc{n_contr} + p_rst_unc{n_contr}'; %#ok<*NASGU>
     end
 
-    h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
+%     h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
+    h_rst_unc{n_contr} = (p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0);
     tail_rst{n_contr} = contrs_tail{n_contr};
 end
 
 out_fn_unc = fullfile(outdir, [out_prefix, sprintf('%s.mat', test_fn)]);
 save(out_fn_unc, 'group_est', 'tail_rst', 'p_rst_unc', 'h_rst_unc', 't_rst', 'df', 'subjs');
 
-dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_pval.txt', test_fn)]), p_rst_unc{1}); % group1 > group2
+dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_pval_right_unc.txt', test_fn)]), p_rst_unc{1}); % group1 > group2
+dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_pval_left_unc.txt', test_fn)]), p_rst_unc{2}); % group1 < group2
 dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_tval.txt', test_fn)]), t_rst);
-dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_h_unc.txt', test_fn)]), h_rst_unc{3});
+dlmwrite(fullfile(outdir, [out_prefix, sprintf('%s_h_unc.txt', test_fn)]), h_rst_unc{1} - h_rst_unc{2});
 clear('p_rst_unc', 'h_rst_unc', 't_rst');
 
 if ~isempty(multi_use)
@@ -477,11 +479,11 @@ if ~isempty(multi_use)
                 t_mat_thres_mat = t_mat_thres_mat + t_mat_thres_mat';
             end
 
-            h_rst.(multi_use{n}) = t_mat_thres_mat;
-            h_rst.(multi_use{n})(t_mat_thres_mat > 0) = 1;
-            h_rst.(multi_use{n})(t_mat_thres_mat < 0) = -1;
+            h_rst.(multi_use{n}) = sign(t_mat_thres_mat);
+%             h_rst.(multi_use{n})(t_mat_thres_mat > 0) = 1;
+%             h_rst.(multi_use{n})(t_mat_thres_mat < 0) = -1;
         else
-            h_rst.(multi_use{n}) = t_mat_thres_tmp;
+            h_rst.(multi_use{n}) = [];
         end
     end
     save(out_fn_unc, 'h_rst', '-append');

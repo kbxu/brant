@@ -63,10 +63,10 @@ brant_pps.coregister.eoptions.cost_fun = 'nmi';
 brant_pps.coregister.eoptions.sep = [4 2];
 brant_pps.coregister.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
 brant_pps.coregister.eoptions.fwhm = [7 7];
-brant_pps.coregister.roptions.interp = 0;
-brant_pps.coregister.roptions.wrap = [0 0 0];
-brant_pps.coregister.roptions.mask = 0;
-brant_pps.coregister.roptions.prefix = 'r';
+% brant_pps.coregister.roptions.interp = 0;
+% brant_pps.coregister.roptions.wrap = [0 0 0];
+% brant_pps.coregister.roptions.mask = 0;
+% brant_pps.coregister.roptions.prefix = 'r';
 
 % normalise
 % subject infomations

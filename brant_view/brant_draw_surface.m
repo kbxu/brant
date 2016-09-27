@@ -1,6 +1,8 @@
 function brant_draw_surface(surface_brain, mode_display, draw_param, vol)
 % varargin{2}: 3D volume of intensities
 % varargin{1}: color info
+% if input is a nifti mask, the current programm only works for standard
+% space -- mean zeroed image
 
 % load surface
 [vertices_coord, faces] = load_surface_new(surface_brain);

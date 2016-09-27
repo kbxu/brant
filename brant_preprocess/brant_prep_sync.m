@@ -1,11 +1,13 @@
 function data_fig = brant_prep_sync(brant_preps, prep_type)
 
-brant_path = fileparts(which('brant'));
+% brant_path = fileparts(which('brant'));
 switch(prep_type)
     case 'slicetiming'
         brant_preps.denoise.filter.tr = brant_preps.slicetiming.tr;
     case 'coregister'
-        brant_preps.normalise.subj.filetype_src = [brant_preps.coregister.roptions.prefix, brant_preps.coregister.subj.filetype_src];
+        brant_preps.normalise.subj.filetype_src = brant_preps.coregister.subj.filetype_src;
+        brant_preps.normalise12.subj.filetype_src = brant_preps.coregister.subj.filetype_src;
+%         brant_preps.normalise.subj.filetype_src = [brant_preps.coregister.roptions.prefix, brant_preps.coregister.subj.filetype_src];
     case 'denoise'
 %         brant_preps.normalise.roptions.vox = brant_preps.denoise.subj.voxelsize;
     case 'normalise'

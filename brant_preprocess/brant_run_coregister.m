@@ -16,7 +16,7 @@ else
     end
 end
 
-coreg_prefix = coreg_infos.roptions.prefix;
+coreg_prefix = [];coreg_infos.roptions.prefix;
 fprintf('\n*\tCoregister finished!*\n');
 
 function loop_coregister(file_src, file_ref, coreg_infos, file_dirs)

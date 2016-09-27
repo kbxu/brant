@@ -172,7 +172,7 @@ end
 
 if net_measure_option.fault_tolerance == 1
     fprintf('%s: fault tolerance of network based on global perspective.\n', subj_id);
-    [net.faulttol.global, net.faulttol.nodal] = CCM_FaultTol(gMatrix);
+    [net.fault_tolerance.global, net.fault_tolerance.nodal] = CCM_FaultTol(gMatrix);
 end
 
 if any([net_measure_option.local_efficiency,...

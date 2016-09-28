@@ -66,7 +66,7 @@ filter_tr = den_fil_infos.filter.tr;
 
 wb_mask_bin = true;
 if ~isempty(wb_mask)
-    wb_mask_tmp = load_nii(wb_mask);
+    wb_mask_tmp = load_nii_mod(wb_mask);
     wb_mask_bin_tmp = wb_mask_tmp.img > 0.5;
     mask_hdrs = wb_mask_tmp.hdr;
 else
@@ -140,12 +140,12 @@ reg_strs_good = reg_strs(tissue_ext_ind);
 if any(tissue_ext_ind)
     reg_masks_good = reg_masks(tissue_ext_ind);
 %     reg_masks_good_bin = cell(sum(tissue_ext_ind), 1);
-    mask_tmp = cellfun(@load_nii, reg_masks_good);
+    mask_tmp = cellfun(@load_nii_mod, reg_masks_good);
     reg_masks_good_bin = arrayfun(@(x) x.img > 0.5, mask_tmp, 'UniformOutput', false);
     reg_mask_hdrs = arrayfun(@(x) x.hdr, mask_tmp);
     clear('mask_tmp');
 %     for m = 1:numel(reg_masks_good)
-%         mask_tmp = load_nii(reg_masks_good{m});
+%         mask_tmp = load_nii_mod(reg_masks_good{m});
 %         reg_masks_good_bin{m} = mask_tmp.img > 0.5;
 %         reg_mask_hdrs(m) = mask_tmp.hdr; %#ok<AGROW>
 %     end
@@ -176,12 +176,15 @@ for m = 1:num_subj
     % yes load all the data here!
     [nii_2d, data_size, nii_hdr] = brant_load_nifti_mask(data_files{m}, []);
     
+    sum_nii_2d = sum(nii_2d, 1);
+    nii_2d_mask = isfinite(sum_nii_2d) & (sum_nii_2d ~= 0); %individual mask
+    
     size_input = size(nii_2d);
     
     if numel(wb_mask_final) == 1
         nii_2d_calc = nii_2d;
     else
-        nii_2d_calc = nii_2d(:, wb_mask_final(:));
+        nii_2d_calc = nii_2d(:, wb_mask_final(:)); % do not use individual mask here
     end
     
     num_tps = size(nii_2d_calc, 1);
@@ -198,7 +201,7 @@ for m = 1:num_subj
         end
         
         if ~isempty(reg_masks_good_bin)
-            reg_tissue = cellfun(@(x) nanmean(nii_2d(:, x(:)), 2), reg_masks_good_bin, 'UniformOutput', false);
+            reg_tissue = cellfun(@(x) nanmean(nii_2d(:, x(:)' & nii_2d_mask), 2), reg_masks_good_bin, 'UniformOutput', false);
             reg_tissue = cat(2, reg_tissue{:});
             if tissue_deriv == 1
                 diff_tissue = [zeros(1, size(reg_tissue, 2)); diff(reg_tissue)];

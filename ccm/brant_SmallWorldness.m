@@ -9,7 +9,7 @@ cp_real = CCM_ClusteringCoef(G, gType);
 
 lp_rand = zeros(simT, 1);   cp_rand = zeros(simT, 1);
 
-if par_ind == 1
+if (par_ind == 1)
     parfor i = 1:simT       
         newg = brant_randomizeGraph(G, kc);
         lp_rand(i) = brant_GlobalEfficiency(newg);

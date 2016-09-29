@@ -33,7 +33,7 @@ sm_fwhm = jobman.fwhm;
 
 % if roi_wise_ind == 0
 if any([roi2roi_ind, roi2wb_ind])
-    if partial_ind == 1
+    if (partial_ind == 1)
         corr_type = 'partial_correlation';
         corrfun = @partialcorr;
     else % if pearson_ind == 1
@@ -47,7 +47,7 @@ if any([roi2roi_ind, roi2wb_ind])
 end
 % end
 
-if roi_wise_ind == 1
+if (roi_wise_ind == 1)
     brant_check_empty(jobman.rois{1}, '\tPlease input one roi file!\n');
     
     if all([ext_mean_ind, roi2roi_ind, roi2wb_ind] == 0)
@@ -56,7 +56,7 @@ if roi_wise_ind == 1
     end
 end
 
-if exist(outdir, 'dir') ~= 7
+if (exist(outdir, 'dir') ~= 7)
     mkdir(outdir);
 end
 
@@ -68,7 +68,7 @@ nifti_list = brant_get_subjs(jobman.input_nifti);
 [unused1, unused2, unused3, rois_resliced] = brant_check_load_mask(rois{1}, nifti_list{1}, outdir); %#ok<ASGLU>
 [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir);
 
-if roi_wise_ind == 1
+if (roi_wise_ind == 1)
     % call external functoin
     jobman_tmp.lab_c = 1;
     jobman_tmp.sep_c = 0;
@@ -102,7 +102,7 @@ if roi_wise_ind == 1
     
     
     corr_ind = triu(true(num_roi, num_roi), 1);
-    if num_roi == 0
+    if (num_roi == 0)
         error('No matched roi can be found for the following calculation!');
     end
 else
@@ -127,18 +127,18 @@ for mm = 1:numel(split_prefix)
     [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
     num_subj = numel(nifti_list);
         
-    if roi_wise_ind == 1
+    if (roi_wise_ind == 1)
         % roi-wise correlation
-        if ext_mean_ind == 1
+        if (ext_mean_ind == 1)
             out_ts = brant_make_outdir(out_dir_tmp, {'mean_ts'});
         end
         
-        if roi2roi_ind == 1
+        if (roi2roi_ind == 1)
             out_mat_r = brant_make_outdir(out_dir_tmp, {['roi2roi_r_', corr_type]});
             out_mat_z = brant_make_outdir(out_dir_tmp, {['roi2roi_z_', corr_type]});
         end
         
-        if roi2wb_ind == 1
+        if (roi2wb_ind == 1)
             out_roi_dirs_r = brant_make_outdir(fullfile(out_dir_tmp, ['roi2wb_r_', corr_type]), rois_str);
             out_roi_dirs_z = brant_make_outdir(fullfile(out_dir_tmp, ['roi2wb_z_', corr_type]), rois_str);
         end
@@ -154,7 +154,7 @@ for mm = 1:numel(split_prefix)
         end
         
         [data_2d_mat, data_tps] = brant_4D_to_mat_new(nifti_list{m}, mask_ind, 'mat', subj_ids{m});        
-        if roi_wise_ind == 0
+        if (roi_wise_ind == 0)
             fprintf('\tCalculating voxel - voxel correlation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             
             tic
@@ -166,7 +166,7 @@ for mm = 1:numel(split_prefix)
             
             fprintf('\tVoxel-wise correlation finished in %.2f s\n', toc);% toc
             out_mat_tmp = fullfile(out_mat{1}, subj_ids{m});
-            if exist(out_mat_tmp, 'dir') ~= 7, mkdir(out_mat_tmp); end
+            if (exist(out_mat_tmp, 'dir') ~= 7), mkdir(out_mat_tmp); end
             
             save_pos.num_pieces = num_pieces;
             for n = 1:num_pieces
@@ -184,11 +184,11 @@ for mm = 1:numel(split_prefix)
                 ts_rois(:, n) = nanmean(data_2d_mat(:, rois_inds_new{n}), 2);
             end
             
-            if ext_mean_ind == 1
+            if (ext_mean_ind == 1)
                 brant_write_csv(fullfile(out_ts{1}, [subj_ids{m}, '_ts.csv']), num2cell(ts_rois));
             end
             
-            if roi2roi_ind == 1                
+            if (roi2roi_ind == 1)                
                 fprintf('\tCalculating roi - roi correlation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
                 corr_r = corrfun(ts_rois);
                 corr_z = 0.5 .* log((1 + corr_r) ./ (1 - corr_r));                
@@ -198,12 +198,12 @@ for mm = 1:numel(split_prefix)
             end
             
             mask_wb_by_p = 0; % use in certain cases
-            if roi2wb_ind == 1
+            if (roi2wb_ind == 1)
                 for n = 1:num_roi
                     fprintf('\tCalculating roi - whole brain correlation for subject %d/%d %s, roi %s\n', m, num_subj, subj_ids{m}, rois_str{n});
                     
-                    if mask_wb_by_p == 1
-                        if partial_ind == 1
+                    if (mask_wb_by_p == 1)
+                        if (partial_ind == 1)
                             [corr_r_wb, corr_p_wb] = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
                         else % if pearson_ind == 1
                             [corr_r_wb, corr_p_wb] = corr(ts_rois(:, n), data_2d_mat);
@@ -211,7 +211,7 @@ for mm = 1:numel(split_prefix)
                         
                         corr_r_wb(corr_p_wb > 0.001) = 0;
                     else
-                        if partial_ind == 1
+                        if (partial_ind == 1)
                             corr_r_wb = partialcorr(ts_rois(:, n), data_2d_mat, ts_rois(:, 1:n-1,n+1:end));
                         else % if pearson_ind == 1
                             corr_r_wb = corr(ts_rois(:, n), data_2d_mat);
@@ -239,7 +239,7 @@ for mm = 1:numel(split_prefix)
         clear('data_2d_mat');
     end
     
-    if roi_wise_ind == 1 && sm_ind == 1 && roi2wb_ind == 1
+    if ((roi_wise_ind == 1) && (sm_ind == 1) && (roi2wb_ind == 1))
         for n = 1:num_roi
             brant_smooth_rst({out_roi_dirs_r{n}; out_roi_dirs_z{n}}, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
         end

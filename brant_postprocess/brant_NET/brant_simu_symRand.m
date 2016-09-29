@@ -45,7 +45,7 @@ while Time<1
     v2=j1(e1);
     v3=i1(e2);
     v4=j1(e2);
-    if sum(SymMatrix(v1,:))==1 || sum(SymMatrix(v3,:)) == 1  || sum(SymMatrix(:,v2)) == 1  || sum(SymMatrix(:,v4))==1 
+    if (sum(SymMatrix(v1,:))==1) || (sum(SymMatrix(v3,:)) == 1)  || (sum(SymMatrix(:,v2)) == 1)  || (sum(SymMatrix(:,v4))==1)
         %% do nothing
     else
         if (v1<v3)&(v1<v4)&(v2<v4)&(v2>v3)&((v1~=v3))&((v2~=v4))

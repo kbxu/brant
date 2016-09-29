@@ -13,14 +13,14 @@ if isfield(jobman, 'matrix') && isfield(jobman, 'volume')
     
     vox2vox_ind = jobman.mat_vox2vox;
     
-    if jobman.matrix == 1
-        if vox2vox_ind == 1
+    if (jobman.matrix == 1)
+        if (vox2vox_ind == 1)
             out_info.data_type = 'stat matrix - voxel to voxel';
         else
             out_info.data_type = 'stat matrix';
         end
         out_info.out_prefix = ''; %jobman.out_prefix;
-    elseif jobman.volume == 1
+    elseif (jobman.volume == 1)
         out_info.data_type = 'stat volume';
         out_info.out_prefix = ''; %jobman.out_prefix;
     else
@@ -71,7 +71,7 @@ regressors_nm = regexp(grp_regr_strs, '[,;]', 'split'); %#ok<NASGU>
 
 grp_filter = jobman.grp_filter;
 
-if exist(out_info.outdir, 'dir') ~= 7
+if (exist(out_info.outdir, 'dir') ~= 7)
     mkdir(out_info.outdir);
 end
 
@@ -100,7 +100,7 @@ switch(out_info.data_type)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
         
-        if strcmpi(stat_type, 'paired t-test') == 1
+        if (strcmpi(stat_type, 'paired t-test') == 1)
             [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
             reg_good_subj = '';
             fprintf('\n\tLoading nifti images...\n');
@@ -129,7 +129,7 @@ switch(out_info.data_type)
         
         subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
         
-        if strcmpi(stat_type, 'paired t-test') == 1
+        if (strcmpi(stat_type, 'paired t-test') == 1)
             [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
             reg_good_subj = '';
         else
@@ -165,7 +165,7 @@ switch(out_info.data_type)
         fprintf('\tIn total %d blocks, %d correlations/block...\n', tot_pieces, mat_sample.num_roi);
         
         out_info_file = fullfile(out_info.outdir, 'output_fns.mat');
-        if exist(out_info_file, 'file') == 2
+        if (exist(out_info_file, 'file') == 2)
             delete(out_info_file);
         end
         
@@ -257,7 +257,7 @@ switch(out_info.data_type)
         size_two_thres = zeros(2, 1);
         for n = 1:numel(ind_strs)
             size_two_thres(n) = sample_mat.(ind_strs{n});
-            if sample_mat.(ind_strs{n}) == 1
+            if (sample_mat.(ind_strs{n}) == 1)
                 data_load = cellfun(@(x) load(x, data_strs{n}), net_files(subj_ind));
                 data_load_all{n} = cat(2, data_load.(data_strs{n}));
                 thres_use{n} = sample_mat.(thres_strs{n});

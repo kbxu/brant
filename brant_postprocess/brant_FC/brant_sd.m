@@ -9,7 +9,7 @@ else
     rec_str = [32, '-rec', 32, num2str(jobman.nm_pos - 1), 32];
 end
 
-if jobman.gpu == 1 && jobman.cpu == 1
+if (jobman.gpu == 1) && (jobman.cpu == 1)
     mode_str = 'all';
 elseif jobman.gpu == 1
     mode_str = 'gpu';

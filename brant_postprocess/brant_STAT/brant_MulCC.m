@@ -35,7 +35,7 @@ if nargin < 1,
 end
 
 [I, J] = size(p_vector);
-if (I == 1 && J == 1)
+if ((I == 1) && (J == 1))
     error('Requires matrix first  inputs.');
 end
 
@@ -51,7 +51,7 @@ if (numel(alpha) > 1)
     error('ALPHA must be a scalar.');
 end
 
-if (alpha <= 0 || alpha >= 1)
+if ((alpha <= 0) || (alpha >= 1))
     error('ALPHA must be between 0 and 1.');
 end
 

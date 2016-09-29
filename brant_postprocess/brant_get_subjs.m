@@ -91,6 +91,15 @@ if any(empt_ind)
            sprintf('No %s files were found in\n', filetype)]);
 end
 
+if (strcmpi(input_type, 'single3d') && (numel(input_dirs) > 1))
+    num_match = cellfun(@numel, data_match);
+    bad_ind = num_match ~= 1;
+    if any(bad_ind)
+        error([sprintf('%s\n', input_dirs{bad_ind}),...
+           sprintf('No or more than one %s files were found in\n', filetype)]);
+    end
+end
+
 nifti_list_tmp = cell(numel(input_dirs), 1);
 for m = 1:numel(input_dirs)
     nifti_list_tmp{m} = arrayfun(@(x) fullfile(input_dirs{m}, x.name), data_match{m}, 'UniformOutput', false);

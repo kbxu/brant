@@ -65,7 +65,7 @@ for i = 1:T
         end
     end
     
-    if kc == 1 && (~brant_isconnected(G))
+    if ((kc == 1) && (~brant_isconnected(G)))
         G = bu_G;
     else
         I(edges) = node_x_new;

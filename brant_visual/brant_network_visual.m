@@ -28,7 +28,7 @@ if ~isempty(jobman.node_txt{1})
     else
         node_info.label = cell(num_node, 1);
         
-        if node_info.show_label == 1
+        if (node_info.show_label == 1)
             node_info.show_label = 0;
             warning('No input label can be found!');
         end
@@ -36,7 +36,7 @@ if ~isempty(jobman.node_txt{1})
 %     node_info.label = regexprep(node_info.label, '[\s\W_]+', '\\_');
 
     if ~isempty(jobman.node_size)
-        if jobman.node_size > 0
+        if (jobman.node_size > 0)
             node_info.size = repmat(jobman.node_size, num_node, 1);
         else
             node_info.size = repmat(3, num_node, 1);
@@ -45,9 +45,9 @@ if ~isempty(jobman.node_txt{1})
         node_info.size = jobman.node.size;  % repmat(3, num_node, 1);
     end
 
-    if jobman.user_color == 1
+    if (jobman.user_color == 1)
         node_info.color = jobman.color_nodes;
-    elseif jobman.same_color == 1
+    elseif (jobman.same_color == 1)
         node_info.color = repmat(jobman.color_same, num_node, 1);
     else
         module_str = node_info.module;
@@ -84,7 +84,7 @@ brant_create_disp_fig(h_con, 'brant:network visualization');
 brant_draw_surface(surface_brain, mode_display, draw_param, []);
 
 if ~isempty(node_info)
-    if strcmpi(mode_display, 'halves:left and right') == 0
+    if (strcmpi(mode_display, 'halves:left and right') == 0)
         center_shift = get(gca, 'Userdata');
         node_info.coords = bsxfun(@minus, node_info.coords, center_shift);
         node_info.x = node_info.x - center_shift(1);

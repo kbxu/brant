@@ -543,7 +543,7 @@ switch(obj_type)
                 h_bothgsr = findobj(h_fig, 'Style', 'radio', 'Tag', 'bothgsr');
                 
                 val_nogsr = get(h_nogsr, 'Value');
-                if val == 1 && val_nogsr == 1
+                if (val == 1) && (val_nogsr == 1)
                     set(h_gsr, 'Value', 1);
                     set(h_nogsr, 'Value', 0);
                     set(h_bothgsr, 'Value', 0);

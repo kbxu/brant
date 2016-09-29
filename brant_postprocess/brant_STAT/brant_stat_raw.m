@@ -15,7 +15,7 @@ one_samp_ind = test_ind.one_samp_ind;
 two_samp_ind = test_ind.two_samp_ind;
 paired_t_ind = test_ind.paired_t_ind;
 
-if paired_t_ind == 1
+if (paired_t_ind == 1)
     subj_ids = data_infos(2:end, :);
     tbl_groups = unique(data_infos(1, :));
 else
@@ -32,7 +32,7 @@ end
 num_fil = numel(fil_inds);
 
 % check group information for one same t test
-if one_samp_ind == 1
+if (one_samp_ind == 1)
     
     group_est_one = unique(parse_strs(grp_stat, 'group', 1));
     
@@ -63,7 +63,7 @@ if one_samp_ind == 1
             end
             
             
-            if student_t_ind == 1
+            if (student_t_ind == 1)
                 if isempty(filter_est)
                     fprintf('\tRunning one sample t-test for %s\n', group_est_one{m});
                 else
@@ -111,7 +111,7 @@ if one_samp_ind == 1
 end
 
 % check group information for two same t test
-if two_samp_ind == 1 || paired_t_ind == 1
+if (two_samp_ind == 1) || (paired_t_ind == 1)
     
     diary(fullfile(out_info.outdir, 'ttest2_diary.txt'));
     all_ttest2_grps = regexp(grp_stat, '[;,]', 'split');
@@ -152,7 +152,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
             
             group_est = ttest2_groups{m};
             
-            if paired_t_ind == 1
+            if (paired_t_ind == 1)
                 group_inds = true(size(subj_ids, 1), 1) & fil_tmp;
                 grp_ind_tmp = cellfun(@(x) find(strcmpi(group_est, x)), data_infos(1, :));
                 if iscell(data_2d_raw)
@@ -179,7 +179,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                 num_grp2 = sum(group_inds_2);
             end
 
-            if paired_t_ind == 1
+            if (paired_t_ind == 1)
                 grp_reg_m = [];
                 data_mat_2d = corr_2d_tmp;
             else
@@ -228,7 +228,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                                         group_est{1}, num_grp1,...
                                         group_est{2}, num_grp2);
             
-            if num_grp1 == 0 || num_grp2 == 0
+            if (num_grp1 == 0) || (num_grp2 == 0)
                 warning(sprintf('Insufficient subjects of group %s, it will be skipped!', grp_csts{m})); %#ok<*SPWRN>
                 continue;
             end
@@ -242,7 +242,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                 reg_title = 'subject';
             end
                 
-            if paired_t_ind == 1
+            if (paired_t_ind == 1)
                 brant_print_cell([tbl_groups; subjs]);
             else
                 if isempty(filter_est)
@@ -265,7 +265,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
             
             clear('stat_info');
             
-            if paired_t_ind == 1
+            if (paired_t_ind == 1)
                 stat_info.mean_grp_1_vec = mean(data_mat_2d{1}, 1);
                 stat_info.mean_grp_2_vec = mean(data_mat_2d{2}, 1);
                 stat_info.std_grp_1_vec = std(data_mat_2d{1}, [], 1);
@@ -281,9 +281,9 @@ if two_samp_ind == 1 || paired_t_ind == 1
                 stat_info.num_grp_2 = sum(group_inds_2);
             end
             
-            if student_t_ind == 1
+            if (student_t_ind == 1)
                 
-                if paired_t_ind == 1
+                if (paired_t_ind == 1)
                     if isempty(filter_est)
                         fprintf('\tRunning paired t-test for %s\n', grp_csts{m});
                     else
@@ -318,7 +318,7 @@ if two_samp_ind == 1 || paired_t_ind == 1
                 end
             end
             
-            if ranksum_ind == 1
+            if (ranksum_ind == 1)
                 if isempty(filter_est)
                     fprintf('\n\tRunning two sample ranksum test for %s\n', grp_csts{m});
                 else
@@ -365,13 +365,13 @@ if two_samp_ind == 1 || paired_t_ind == 1
         end
     end
     
-    if strcmpi(out_info.data_type, 'stat matrix - voxel to voxel') == 1
+    if (strcmpi(out_info.data_type, 'stat matrix - voxel to voxel') == 1)
         out_file = fullfile(out_info.outdir, 'output_fns.mat');
         if exist(out_file, 'file') ~= 2
             save(out_file, 'cen_strs');
         end
     else
-        if numel(ttest2_groups) == 1 && isempty(stat_out)
+        if ((numel(ttest2_groups) == 1) && isempty(stat_out))
             for m = 1:num_csts
                 A = [[{'center'}, {'group1'}, {'group2'}]; [cen_strs{m}, num2cell(num_grp_all{m})]];
                 save(fullfile(out_info.outdir, [out_info.out_prefix, 'group_info.mat']), 'A');
@@ -424,7 +424,7 @@ contrs_tail = {'right', 'left', 'both'};
 t_rst = zeros(mat_size, 'double');
 t_rst_vec = stat_val;
 t_rst(corr_ind) = t_rst_vec;
-if sym_ind == 1
+if (sym_ind == 1)
     t_rst = t_rst + t_rst';
 end
 
@@ -448,7 +448,7 @@ for n_contr = 1:numel(contrs)
 
     p_rst_unc{n_contr} = zeros(mat_size, 'double');
     p_rst_unc{n_contr}(corr_ind) = p_vec;
-    if sym_ind == 1
+    if (sym_ind == 1)
         p_rst_unc{n_contr} = p_rst_unc{n_contr} + p_rst_unc{n_contr}'; %#ok<*NASGU>
     end
 
@@ -475,7 +475,7 @@ if ~isempty(multi_use)
         if ~isempty(t_mat_thres_tmp)
             t_mat_thres_mat = zeros(mat_size, 'double');
             t_mat_thres_mat(corr_ind) = t_mat_thres_tmp;
-            if sym_ind == 1
+            if (sym_ind == 1)
                 t_mat_thres_mat = t_mat_thres_mat + t_mat_thres_mat';
             end
 
@@ -505,7 +505,7 @@ print_format = '\t';
 for m = 1:num_col
     max_tmp = max(cellfun(@length, cell_data(:, m)));
     width_col(m) = ceil(max_tmp / 7) * 7;
-    if rem(max_tmp, 7) == 0
+    if (rem(max_tmp, 7) == 0)
         width_col(m) = width_col(m) + 7;
     end
     print_format = [print_format, '%-', num2str(width_col(m)), 's'];

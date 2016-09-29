@@ -12,17 +12,17 @@ function varargout = brant(Action)
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 2.96;
-% $Release = 20160923;
+% $Version = 2.97;
+% $Release = 20160929;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles
-if(nargin < 1 || isempty(Action)),  Action = 'fmri';  end	% first start
+if((nargin < 1) || isempty(Action)),  Action = 'fmri';  end	% first start
 switch upper(Action)
     case 'FMRI' % initialization  
         if isempty(Hbrant)% || ~ishandle(Hbrant) % check valid 
             % Version check
-            if str2double(strtok(version, '.')) < 7
+            if (str2double(strtok(version, '.')) < 7)
                 error('The version of MATLAT isn''t lower than 7.0');
             end
             

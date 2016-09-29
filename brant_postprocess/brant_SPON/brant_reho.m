@@ -20,7 +20,7 @@ for mm = 1:numel(split_prefix)
     fprintf('\n\tCurrent indexing filetype: %s\n', split_prefix{mm});
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
 
-    if nor_ind == 1
+    if (nor_ind == 1)
         outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', 'ReHo_Normalised_m'});
     else
         outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', ''});
@@ -102,7 +102,7 @@ for mm = 1:numel(split_prefix)
     clear('ind_out');
     
     
-    if sm_ind == 1
+    if (sm_ind == 1)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
     end
 end

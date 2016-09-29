@@ -71,7 +71,7 @@ current_pos.y = fig.height - 60;
 
 % logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn_resize.png');
 logo_fn = fullfile(fileparts(which('brant')), 'logo_resize.png');
-if exist(logo_fn, 'file') == 2
+if (exist(logo_fn, 'file') == 2)
     create_logo(hfig_inputdlg, current_pos, logo_fn);
 end
 
@@ -103,7 +103,7 @@ exp_col_ind = 1;
 switch(lw_uiname)
     case 'roi calculation'
         h_roi = findobj(hfig_inputdlg, 'String', 'check: roi-wise | uncheck: voxel-wise'); % add {} to checkbox ui elements!
-        if get(h_roi, 'Value') == 1
+        if (get(h_roi, 'Value') == 1)
             obj_strs{1} = {''}; % dual
             obj_strs{2} = {'rois', 'roi_info', 'roi_thres', 'ext_mean', 'roi2roi', 'roi2wb', 'sm_ind', 'fwhm'}; % self
         else
@@ -112,7 +112,7 @@ switch(lw_uiname)
         end
     case 'roi coordinates'
         h_sep_c = findobj(hfig_inputdlg, 'String', 'seperated binary clusters');
-        if get(h_sep_c, 'Value') == 1
+        if (get(h_sep_c, 'Value') == 1)
             obj_strs{1} = {'template_info'}; % dual
             obj_strs{2} = {''}; % self
         else
@@ -124,7 +124,7 @@ switch(lw_uiname)
         h_del = findobj(hfig_inputdlg, 'style', 'radiobutton', 'string', 'delete');
         val_del = get(h_del, 'Value');
         
-        if val_del == 1
+        if (val_del == 1)
             obj_strs{1} = {'_cvt:', '_cvt.'}; % dual
             obj_strs{2} = {'_del:', '_del.'}; % self
         else
@@ -134,7 +134,7 @@ switch(lw_uiname)
     case 'gzip/gunzip files'
         h_gzip = findobj(hfig_inputdlg, 'tag', 'gzip:radio');
         val_gzip = get(h_gzip, 'Value');
-        if val_gzip == 1
+        if (val_gzip == 1)
             obj_strs{1} = {'input_gunzip'}; % dual
             obj_strs{2} = {'input_gzip'}; % self
         else
@@ -145,7 +145,7 @@ switch(lw_uiname)
     case {'delete timepoints'}
         h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
         val_out = get(h_out, 'Value');
-        if val_out == 1
+        if (val_out == 1)
             obj_strs{1} = {''}; % dual
             obj_strs{2} = {'out_dir'}; % self
         else
@@ -155,7 +155,7 @@ switch(lw_uiname)
     case 't-tests' %'statistics'
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
-        if val_mat == 1
+        if (val_mat == 1)
             obj_strs{1} = {'input_nifti'}; % dual
             obj_strs{2} = {'sym_ind', 'mat_vox2vox', 'input_matrix'}; % self
         else
@@ -165,7 +165,7 @@ switch(lw_uiname)
     case 'draw roi'
         h_maual = findobj(hfig_inputdlg, 'string', 'manual');
         val_maual = get(h_maual, 'Value');
-        if val_maual == 1
+        if (val_maual == 1)
             obj_strs{1} = {'coords_file:'}; % dual
             obj_strs{2} = {'coords:'}; % self
         else
@@ -175,7 +175,7 @@ switch(lw_uiname)
     case 'merge/extract rois'
         h_merge = findobj(hfig_inputdlg, 'string', 'merge');
         val_merge = get(h_merge, 'Value');
-        if val_merge == 1
+        if (val_merge == 1)
             obj_strs{1} = {'rois:', 'roi_info:', 'roi_vec', 'out2single'}; % dual
             obj_strs{2} = {'input_nifti.', 'out_fn'}; % self
         else
@@ -185,7 +185,7 @@ switch(lw_uiname)
     case 'ibma'
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
-        if val_mat == 1
+        if (val_mat == 1)
             obj_strs{1} = {'num_subjs_tbl', 'input_nifti'}; % dual
             obj_strs{2} = {'input_matrix'}; % self
         else
@@ -195,7 +195,7 @@ switch(lw_uiname)
     case {'extract value'}
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
-        if val_mat == 1
+        if (val_mat == 1)
             obj_strs{1} = {'input_nifti.', 'rois:', 'mask'}; % dual
             obj_strs{2} = {'input_matrix.', 'sym_ind'}; % self
         else
@@ -205,7 +205,7 @@ switch(lw_uiname)
     case 'roi mapping'
         h_rand = findobj(hfig_inputdlg, 'string', 'random');
         val_rand = get(h_rand, 'Value');
-        if val_rand == 1
+        if (val_rand == 1)
             obj_strs{1} = {'color_input'}; % dual
             obj_strs{2} = {'output_color', 'out_dir'}; % self
         else
@@ -220,7 +220,7 @@ end
 h_objs = get(hfig_inputdlg, 'Children');
 tag_objs = arrayfun(@(x) get(x,'tag'), h_objs, 'UniformOutput', false);
     
-if exp_col_ind == 1
+if (exp_col_ind == 1)
     brant_config_figure(hfig_inputdlg, 'pixel');
     vis_states = {'on', 'off'};
     vis_set_states = {'off', 'on'};
@@ -297,7 +297,7 @@ switch(lw_uiname)
            obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
         end
         val_vox2vox = get(h_vox2vox_ind, 'Value');
-        if val_vox2vox == 1
+        if (val_vox2vox == 1)
             arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
         else
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
@@ -313,7 +313,7 @@ switch(lw_uiname)
         if strcmpi(lw_uiname, 'roi calculation')
             val_sm_ind = val_sm_ind && get(h_roi, 'Value');
         end
-        if val_sm_ind == 1
+        if (val_sm_ind == 1)
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
         else
             arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
@@ -328,7 +328,7 @@ switch(lw_uiname)
             obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
         end
         
-        if val_out == 1
+        if (val_out == 1)
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
         else
             arrayfun(@(x) set(x, 'Enable', 'off'), h_objs(obj_ind));
@@ -336,7 +336,7 @@ switch(lw_uiname)
         
     case 'dicom convert'
         h_cvt_ind = findobj(hfig_inputdlg, 'tag', 'convert:radio');
-        if get(h_cvt_ind, 'Value') == 1
+        if (get(h_cvt_ind, 'Value') == 1)
             obj_strs = {'del_N_cvt', 'filetype_cvt'};
             obj_ind = false;
         else
@@ -348,7 +348,7 @@ switch(lw_uiname)
             obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
         end
             
-        if get(h_cvt_ind, 'Value') == 1
+        if (get(h_cvt_ind, 'Value') == 1)
             h_del_ind_cvt_ind = findobj(hfig_inputdlg, 'tag', 'del_ind_cvt:checkbox');
             if get(h_del_ind_cvt_ind, 'Value') == 1
                 arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
@@ -411,7 +411,7 @@ function [sub_eles, pos_shift, block_shift, ui_tags, ui_ctrls, ui_strs, ui_color
 [text_size, edit_size, info_size, numeric_size, pushbtn_size, disp_size] = macro_size; %#ok<ASGLU>
 popupmenu_height = 23; % in pixel
 
-if numel(ui_fields) == 1
+if (numel(ui_fields) == 1)
     tag_str = ui_fields{1};
 elseif numel(ui_fields) == 2
     tag_str = strcat(ui_fields{1}, '.', ui_fields{2});
@@ -591,10 +591,10 @@ switch(ui_types{1})
                 ui_tags = {[tag_str{1}, '_', tag_str{2}, ':text'],...
                            [tag_str{1}, ':radio'],...
                            [tag_str{2}, ':radio']};
-               if numel(ui_fields) == 1
+               if (numel(ui_fields) == 1)
                     ui_ctrls = {'', {'get_val', ui_tags{2}, ui_fields{1}(1);'set_val', ui_tags{3}, ui_fields{1}(2)},...
                                     {'get_val', ui_tags{3}, ui_fields{1}(2);'set_val', ui_tags{2}, ui_fields{1}(1)}};
-               elseif numel(ui_fields) == 2
+               elseif (numel(ui_fields) == 2)
                     ui_ctrls = {'', {'get_val', ui_tags{2}, {ui_fields{1}, ui_fields{2}{1}};'set_val', ui_tags{3}, {ui_fields{1}, ui_fields{2}{2}}},...
                                     {'get_val', ui_tags{3}, {ui_fields{1}, ui_fields{2}{2}};'set_val', ui_tags{2}, {ui_fields{1}, ui_fields{2}{1}}}};
                end
@@ -706,8 +706,8 @@ if strcmp(edit_type, 'num_coords')
     end
     edit_str_out = edit_str_tmp;
 else
-    if length(edit_str) > 1
-        if all(edit_str == fix(edit_str))
+    if (length(edit_str) > 1)
+        if (all(edit_str == fix(edit_str)))
             edit_str_out = num2str(edit_str, '%d,');
             edit_str_out(end) = '';
         else
@@ -769,14 +769,14 @@ for m = 1:size(prompt, 1)
             
             case {'edit', 'disp'}
                 
-                if numel(prompt{m, 3}) == 1
+                if (numel(prompt{m, 3}) == 1)
                     edit_str = jobman.(prompt{m, 3}{1});
-                elseif numel(prompt{m, 3}) == 2
+                elseif (numel(prompt{m, 3}) == 2)
                     edit_str = jobman.(prompt{m, 3}{1}).(prompt{m, 3}{2});
                 end
 
                 edit_enable = 'on';
-                if any(strcmp(ele_pps{2}, {'num_bin_num_edit'})) && isempty(edit_str)
+                if (any(strcmp(ele_pps{2}, {'num_bin_num_edit'})) && isempty(edit_str))
                     edit_enable = 'off';
                 end
                 
@@ -850,14 +850,14 @@ for m = 1:size(prompt, 1)
                 if any(strcmpi({'mode_display:popupmenu', 'modules_info:popupmenu',...
                                 'color_type_pos:popupmenu', 'color_type_neg:popupmenu', 'material_type:popupmenu',...
                                 'stat_type:popupmenu', 'shading_type:popupmenu',...
-                                'lighting_type:popupmenu', 'matrix_type:popupmenu'}, ui_tags{m}{n}))
+                                'lighting_type:popupmenu', 'matrix_type:popupmenu', 'mask_color:popupmenu'}, ui_tags{m}{n}))
                     pop_str = prompt_tmp{1}(2:end);
                     pop_val_ind = find(strcmpi(jobman.(prompt_tmp{1}{1}{1}), pop_str));
                 else
-                    if numel(prompt_tmp) == 1
+                    if (numel(prompt_tmp) == 1)
                         pop_val = jobman.(prompt_tmp{1}{1});
                         pop_str = prompt_tmp{1}(2:end);
-                    elseif numel(prompt{m, 3}) == 2
+                    elseif (numel(prompt{m, 3}) == 2)
                         pop_val = jobman.(prompt_tmp{1}).(prompt_tmp{2}{1});
                         pop_str = prompt_tmp{2}{1}(2:end);
                     end
@@ -887,7 +887,7 @@ for m = 1:size(prompt, 1)
             
             case 'checkbox'
                 
-                if strcmpi(prompt{m, 1}{2}, 'num_bin_triple_hor') == 1
+                if (strcmpi(prompt{m, 1}{2}, 'num_bin_triple_hor') == 1)
                     chb_val = field_vals(jobman, {prompt{m, 3}{1}(n)});
                     chb_ctrls = {ui_ctrls{m}{1}(n)};
                     
@@ -998,7 +998,7 @@ val = get(obj, 'Value');
 
 switch(mode)
     case 'num_bin_num_edit'
-        if val == 1
+        if (val == 1)
             for m = 1:size(chb_data)
                 if strcmp(chb_data{m, 1}, 'enable_edit')
                     h_edit = findobj(h_parent, 'Tag', chb_data{m, 2});
@@ -1073,7 +1073,7 @@ for m = 1:size(curr_field, 1)
             
 %             jobman_val = jobman.(curr_field{m, 3}{1});
             
-            if isempty(jobman.node_txt{1}) == 1
+            if (isempty(jobman.node_txt{1}) == 1)
                 pop_str = get(h_get, 'String');
             else
                 pop_str = unique(jobman.node.module);
@@ -1116,7 +1116,7 @@ switch(radio_type)
         val = jobman.(radio_fields{n});
         str = radio_fields{n};
     case {'hor_txt'}
-        if numel(radio_fields) == 1
+        if (numel(radio_fields) == 1)
             val = jobman.(radio_fields{1}{n - 1});
 %             str = radio_fields{1}{n - 1};
         else
@@ -1124,7 +1124,7 @@ switch(radio_type)
 %             str = radio_fields{2}{n - 1};
         end
     case {'vert_node_color', 'vert_node_color_three'}
-        if numel(radio_fields{n}) == 1
+        if (numel(radio_fields{n}) == 1)
             val = jobman.(radio_fields{n}{1});
 %             str = radio_fields{n}{1};
         else
@@ -1139,7 +1139,7 @@ function val = field_vals(jobman, fns)
 %     fns = {fns};
 % end
 
-if numel(fns{1}) == 1
+if (numel(fns{1}) == 1)
     val = jobman.(fns{1}{1});
 else
     val = jobman.(fns{1}{1}).(fns{1}{2});
@@ -1149,7 +1149,7 @@ end
 function jobman = set_field_vals(h_par, jobman, fns, val)
 
 if iscell(fns{1})
-    if numel(fns{1}) == 1
+    if (numel(fns{1}) == 1)
         jobman.(fns{1}{1}) = val;
     else
         jobman.(fns{1}{1}).(fns{1}{2}) = val;
@@ -1175,7 +1175,7 @@ for m = 1:size(ui_ctrl, 1)
 
             jobman = get(h_parent, 'Userdata');
             
-            if exist('module_val', 'var') == 1 && isfield(jobman, 'node')
+            if ((exist('module_val', 'var') == 1) && isfield(jobman, 'node'))
                 old_val = field_vals(jobman, ui_ctrl(m, 3));
                 old_val(module_val, :) = new_color;
                 set_field_vals(h_parent, jobman, ui_ctrl(m, 3), old_val);
@@ -1255,9 +1255,9 @@ switch(mode)
         chb_h = findobj(h_parent, 'Tag', chb_tag);
         if ~isempty(chb_h)
             chb_val = get(chb_h, 'Value');
-            if chb_val == 1
+            if (chb_val == 1)
                 [text_input, sts] = cfg_getfile(1, '^.*\.txt$', '', '', pwd, '.*.txt');
-                if sts == 1
+                if (sts == 1)
                     disp_input = importdata(text_input{1}, '\n');
                 
                     if ~isstruct(disp_input)
@@ -1306,7 +1306,7 @@ switch(mode)
 end
 
 if sts == 1
-    if sel_one_file == 1
+    if (sel_one_file == 1)
         set(h_input, 'String', disp_input);
         set_field_vals(h_parent, jobman, field_nms, disp_input);
     else
@@ -1322,7 +1322,7 @@ function jobman = parse_node_input(h_parent, jobman, node_file)
 jobman.node = brant_parse_node(node_file);                
 
 h_label = findobj(h_parent, 'Tag', 'show_label:checkbox');
-if isfield(jobman.node, 'label') == 0
+if (isfield(jobman.node, 'label') == 0)
     jobman.show_label = 0;
     set(h_label, 'Value', 0);
 else
@@ -1403,7 +1403,7 @@ if ischar(fields)
     fields = regexp(fields, '\.', 'split'); % split into cell array of sub-fields
 end
 
-if length(fields) == 1
+if (length(fields) == 1)
     s.(fields{1}) = val;
 else
     try
@@ -1450,7 +1450,7 @@ switch(mode)
         end
         
         if ~isempty(str{1})
-            if exist(str{1}, 'file') ~= 2
+            if (exist(str{1}, 'file') ~= 2)
                 warning('File %s not found!', str{1});
                 str{1} = '';
                 set(obj, 'String', str{1});
@@ -1464,7 +1464,7 @@ switch(mode)
             str = {str};
         end
         
-        if exist(str{1}, 'file') == 2
+        if (exist(str{1}, 'file') == 2)
             file_ext = regexpi(str{1}, table_support, 'match');
             
             jobman = parse_node_input(h_parent, jobman, str{1});
@@ -1529,7 +1529,7 @@ if isfield(jobman, 'out_dir')
         if isempty(jobman.out_dir{1}), error('Please input a directory for output!'); end
         if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
     else
-        if jobman.out_ind == 1
+        if (jobman.out_ind == 1)
             if isempty(jobman.out_dir{1}), error('Please input a directory for output!'); end
             if exist(jobman.out_dir{1}, 'dir') ~= 7, mkdir(jobman.out_dir{1}); end
         end

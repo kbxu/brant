@@ -20,7 +20,7 @@ rand_color_ind = jobman.random;
 input_color_ind = jobman.input;
 color_input_file = jobman.color_input{1};
 
-if input_color_ind == 1
+if (input_color_ind == 1)
     if isempty(color_input_file)
         error('A *.txt file of color indices is expected!');
     else
@@ -40,7 +40,7 @@ nhood = sqrt(xx.^2 + yy.^2 + zz.^2) <= N_nbr;
 
 h_fig = brant_create_disp_fig(h_con, 'ROI Mapping: Draw');
 
-if disp_surface_ind == 1
+if (disp_surface_ind == 1)
     brant_draw_surface(surface_file, mode_display, draw_param, []);
 end
 
@@ -66,9 +66,9 @@ end
 
 if ~isempty(roi_vec)
     num_roi_show = numel(roi_vec);
-    if rand_color_ind == 1
+    if (rand_color_ind == 1)
         color_tmp = rand(num_roi_show, 3);
-    elseif input_color_ind == 1
+    elseif (input_color_ind == 1)
         try
             roi_vec_in_color = arrayfun(@(x) find(x == roi_ind), roi_vec);
         catch
@@ -83,7 +83,7 @@ if ~isempty(roi_vec)
         h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :), mode_display);
     end
 
-    if disp_legend == 1
+    if (disp_legend == 1)
         h_legend = legend(h_roi, rois_str(roi_vec_ind), 'Location', 'SouthEastOutside', 'Interpreter', 'none');
         pos = get(h_legend, 'Position');
         if strcmpi(mode_display, 'halves:left and right') == 1
@@ -95,14 +95,14 @@ if ~isempty(roi_vec)
         end
     end
 
-    if output_color == 1
+    if (output_color == 1)
         A = [roi_vec', color_tmp];
         dlmwrite(fullfile(outdir, 'brant_random_color.txt'), A);
     end
 end
 
-if disp_surface_ind == 0
-    if strcmpi(mode_display, 'halves:left and right') == 0
+if (disp_surface_ind == 0)
+    if (strcmpi(mode_display, 'halves:left and right') == 0)
         
         view_angle = brant_get_view_angle(mode_display);
         set_axes(gca, [], '', view_angle, draw_param);
@@ -166,7 +166,7 @@ else
     draw_args = {'EdgeColor', 'none'};
 end
 
-if strcmpi(mode_display, 'halves:left and right') == 0
+if (strcmpi(mode_display, 'halves:left and right') == 0)
     center_shift = get(gca, 'Userdata');
     if isempty(center_shift)
         center_shift = [0, -23.9696, 8.6108]; % by default

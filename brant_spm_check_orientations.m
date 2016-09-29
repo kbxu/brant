@@ -16,7 +16,7 @@ function sts = brant_spm_check_orientations(V)
 
 sts = true;
 
-if numel(V) <= 1 || isa(V,'gifti'), return; end
+if ((numel(V) <= 1) || isa(V,'gifti')), return; end
 
 V_info = struct;
 for m = 1:numel(V)

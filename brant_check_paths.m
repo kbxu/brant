@@ -42,7 +42,7 @@ paths_tmp_prop = cellfun(@(x) regexprep(x, '[\\\/]', filesep), paths_tmp, 'Unifo
 paths_tmp_prop_full = cellfun(@(x) fullfile(root_path, x), paths_tmp_prop, 'UniformOutput', false);
 
 if strcmp(opt, 'add')
-    nexist_ind = cellfun(@(x) ~any(strcmpi(searpaths, x)) && exist(x, 'dir') == 7, paths_tmp_prop_full);
+    nexist_ind = cellfun(@(x) (~any(strcmpi(searpaths, x)) && (exist(x, 'dir') == 7)), paths_tmp_prop_full);
     if any(nexist_ind)
         arrayfun(@(x) addpath(paths_tmp_prop_full{x}), find(nexist_ind));
     end

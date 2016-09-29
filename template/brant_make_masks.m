@@ -13,7 +13,7 @@ make_csf = 1;
 make_gm = 1;
 
 % white matter mask
-if make_wm == 1
+if (make_wm == 1)
     wm_vol = tpm_vol(2);
     wm_data = spm_read_vols(wm_vol);
     wm_data_mask = wm_data > 0.95;
@@ -52,7 +52,7 @@ end
 
 
 % CSF mask
-if make_csf == 1
+if (make_csf == 1)
     csf_vol = tpm_vol(3);
     csf_data = spm_read_vols(csf_vol);
     csf_data_mask = csf_data > 0.95;
@@ -66,7 +66,7 @@ end
 
 % use GM masks in spm12_masks folder
 % gray matter mask
-if make_gm == 1
+if (make_gm == 1)
     gm_vol = tpm_vol(1);
     gm_data = spm_read_vols(gm_vol);
     gm_data = gm_data > 0.4;

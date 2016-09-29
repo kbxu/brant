@@ -24,12 +24,12 @@ h_node = cellfun(@(x, y, z, o) mesh(x, y, z, 'DisplayName', node_info.module{o},
 brain_halves_ind = 1;
 select_view = 3;
 
-if node_info.show_label == 1 && all(cellfun(@isempty, label_part) == 0)
-    if (brain_halves_ind == 1 && any(select_view == [2, 5])) || (brain_halves_ind == 0 && any(select_view == [2, 4]))
+if ((node_info.show_label == 1) && all(cellfun(@isempty, label_part) == 0))
+    if ((brain_halves_ind == 1) && any(select_view == [2, 5])) || ((brain_halves_ind == 0) && any(select_view == [2, 4]))
         text_xyz = coords_part + [-2 - r, 2 + r, 2 + r];
-    elseif (brain_halves_ind == 1 && any(select_view == [3, 4]) || (brain_halves_ind == 0 && select_view == 3))
+    elseif (((brain_halves_ind == 1) && any(select_view == [3, 4]) || (brain_halves_ind == 0 && select_view == 3)))
         text_xyz = coords_part + [-2 - r, 2 - r, 2 + r];
-    elseif brain_halves_ind == 0 && select_view == 5
+    elseif ((brain_halves_ind == 0) && (select_view == 5))
         text_xyz = coords_part + [2 + r, -2 - r, 2 + r];
     else
         text_xyz = coords_part + [2 + r, -r, 3 + r];

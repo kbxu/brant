@@ -274,7 +274,7 @@ obj_val = get(obj, 'Value');
 fig_opts = get(h_fig, 'Userdata');
 
 str = obj_tag(1:end-4);
-if (strcmp(str, 'normalise') || strcmp(str, 'normalise12')) && obj_val == 0
+if ((strcmp(str, 'normalise') || strcmp(str, 'normalise12')) && (obj_val == 0))
     fig_opts.ind.normalise = 0;
     fig_opts.ind.normalise12 = 0;
 else
@@ -336,7 +336,7 @@ curr_tag = get(obj, 'Tag');
 curr_val = get(obj, 'Value');
 fig_opts.pref.(strrep(curr_tag, '_chb', '')) = curr_val;
 
-if strcmpi(curr_tag, 'sync') && fig_opts.pref.sync == 1
+if (strcmpi(curr_tag, 'sync') && (fig_opts.pref.sync == 1))
     fig_opts = brant_prep_sync(fig_opts, 'initial');
     brant_update_pre_disp;
 end
@@ -531,7 +531,7 @@ panel_path_simple(h.fig_Preprocess, uipColor, btn_bkgColor);
 
 h_out = findobj(h.fig_Preprocess, 'Tag', 'output_sel_chb');
 set(h_out, 'Value', brant_pps.subj.out.selected);
-if brant_pps.subj.out.selected ~= 0
+if (brant_pps.subj.out.selected ~= 0)
     output_select_cb(h_out, '');
     %     set(findobj(h.fig_Preprocess, 'Tag', 'dir_out_text_edit'), 'String', brant_pps.subj.out.dir);
     set(findobj(h.fig_Preprocess, 'Tag', 'name_pos_out_text_edit'), 'String', num2str(brant_pps.subj.out.nmpos));

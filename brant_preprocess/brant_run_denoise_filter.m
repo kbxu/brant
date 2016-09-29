@@ -10,20 +10,20 @@ gsr_ind = den_fil_infos.subj.gsr;
 nogsr_ind = den_fil_infos.subj.nogsr;
 bothgsr_ind = den_fil_infos.subj.bothgsr;
 
-if bothgsr_ind == 1
+if (bothgsr_ind == 1)
     gr_prefix = {'GR', 'noGR'};
     gr_str_out = '[GR+noGR]';
-elseif nogsr_ind == 1
+elseif (nogsr_ind == 1)
     gr_prefix = {'noGR'};
     gr_str_out = 'noGR';
-elseif gsr_ind == 1
+elseif (gsr_ind == 1)
     gr_prefix = {'GR'};
     gr_str_out = 'GR';
 else
     error('Unknown Option!');
 end
 
-if nogsr_ind == 0 && isempty(den_fil_infos.detrend_mask.gs)
+if ((nogsr_ind == 0) && isempty(den_fil_infos.detrend_mask.gs))
     error('Mask of global signal regression is missing!');
 end
 
@@ -34,10 +34,10 @@ work_filter = den_fil_infos.filter.filter_ind;
 
 work_denoise = any([work_tissue, work_motion]);
 den_fil_prefix = [];
-if work_denoise == 1
+if (work_denoise == 1)
     den_fil_prefix = [denoise_prefix, gr_str_out];
 end
-if work_filter == 1
+if (work_filter == 1)
     den_fil_prefix = [filter_prefix, den_fil_prefix];
 end
 
@@ -76,7 +76,7 @@ wb_mask_bin = wb_mask_bin & wb_mask_bin_tmp;
 
 
 num_subj = numel(data_files);
-if numel(wb_mask_bin) == 1
+if (numel(wb_mask_bin) == 1)
     mask_ind_notsnr = [];
 else
     mask_ind_notsnr = find(wb_mask_bin);
@@ -87,7 +87,7 @@ end
 % create mask for tsnr
 mask_tsnr_ind = 'none';
 thres_tsnr = 0; % mask this function
-if strcmpi(mask_tsnr_ind, 'none') == 0
+if (strcmpi(mask_tsnr_ind, 'none') == 0)
        
     tsnr_mean = 0;
     for m = 1:numel(data_files)
@@ -155,13 +155,13 @@ else
 end
 brant_spm_check_orientations([mask_hdrs, reg_mask_hdrs]);
 
-if is4d_ind == 1
+if (is4d_ind == 1)
     data_dirs = cellfun(@fileparts, data_files, 'UniformOutput', false);
 else
     data_dirs = cellfun(@(x) fileparts(x{1}), data_files, 'UniformOutput', false);
 end
 
-if work_motion == 1
+if (work_motion == 1)
     data_input_hm.dirs = data_dirs;
     data_input_hm.single_3d = 1;
     data_input_hm.filetype = motion_filetype;
@@ -181,7 +181,7 @@ for m = 1:num_subj
     
     size_input = size(nii_2d);
     
-    if numel(wb_mask_final) == 1
+    if (numel(wb_mask_final) == 1)
         nii_2d_calc = nii_2d;
     else
         nii_2d_calc = nii_2d(:, wb_mask_final(:)); % do not use individual mask here
@@ -192,9 +192,9 @@ for m = 1:num_subj
     
     reg_tissue = [];
     diff_tissue = [];
-    if work_tissue == 1
+    if (work_tissue == 1)
         % tissue regressors
-        if detrend_ind == 1
+        if (detrend_ind == 1)
             detrend_reg = (1:num_tps)';
         else
             detrend_reg = [];
@@ -203,7 +203,7 @@ for m = 1:num_subj
         if ~isempty(reg_masks_good_bin)
             reg_tissue = cellfun(@(x) nanmean(nii_2d(:, x(:)' & nii_2d_mask), 2), reg_masks_good_bin, 'UniformOutput', false);
             reg_tissue = cat(2, reg_tissue{:});
-            if tissue_deriv == 1
+            if (tissue_deriv == 1)
                 diff_tissue = [zeros(1, size(reg_tissue, 2)); diff(reg_tissue)];
             end
         end
@@ -212,7 +212,7 @@ for m = 1:num_subj
 
     temp_mask = true(num_tps, 1);
     motion_reg = [];
-    if work_motion == 1
+    if (work_motion == 1)
         head_motion_6 = load(file_hm{m});
         
         col_hm = size(head_motion_6, 2);
@@ -227,7 +227,7 @@ for m = 1:num_subj
                 motion_reg = [head_motion_6, head_motion_6.^2, motion_pre, motion_pre.^2];
         end
 
-        if motion_scrub > 0
+        if (motion_scrub > 0)
             motion_diff = diff(head_motion_6);
             FD = [0; sum([abs(motion_diff(:, 1:3)), 50 * abs(motion_diff(:, 4:6))], 2)];
             temp_mask = FD < motion_scrub;
@@ -246,7 +246,7 @@ for m = 1:num_subj
                 if strcmpi(gr_prefix{mm}, 'GR')
                     reg_gr = [reg_tissue, diff_tissue];
                 elseif strcmpi(gr_prefix{mm}, 'noGR')
-                    if tissue_deriv == 1
+                    if (tissue_deriv == 1)
                         reg_gr = [reg_tissue(:, ~gsr_ind), diff_tissue(:, ~gsr_ind)];
                     else
                         reg_gr = reg_tissue(:, ~gsr_ind);
@@ -257,7 +257,7 @@ for m = 1:num_subj
             end
             
             reg_mat = [ones(num_tps, 1), detrend_reg, reg_gr, motion_reg];
-            if size(reg_mat, 2) > 1
+            if (size(reg_mat, 2) > 1)
                 reg_mat_nor = bsxfun(@rdivide, reg_mat, max(abs(reg_mat), [], 1));
                 beta_reg = reg_mat_nor(temp_mask, :) \ nii_2d_calc(temp_mask, :);
                 res_data = nii_2d_calc - reg_mat_nor * beta_reg;
@@ -273,7 +273,7 @@ for m = 1:num_subj
 
             prefix_calc = [denoise_prefix, gr_prefix{mm}];
             
-            if apply_temp_mask == 1
+            if (apply_temp_mask == 1)
                 brant_save_nii(is4d_ind, data_files{m}, prefix_calc, nii_hdr, denoise_vol(:, :, :, temp_mask), outdirs{m}, gzip_ind(1));
             else
                 brant_save_nii(is4d_ind, data_files{m}, prefix_calc, nii_hdr, denoise_vol, outdirs{m}, gzip_ind(1));
@@ -288,7 +288,7 @@ for m = 1:num_subj
             prefix_calc = '';
         end
 
-        if work_filter == 1
+        if (work_filter == 1)
 
             fprintf('\tFilter: %.3f-%.3f Hz, TR:%.2f s, subject: %s %d/%d\n', filter_lower, filter_upper, filter_tr, subj_fns{m}, m, num_subj);
 
@@ -307,7 +307,7 @@ for m = 1:num_subj
 
             filter_prefix_calc = [filter_prefix, prefix_calc];
             
-            if apply_temp_mask == 1
+            if (apply_temp_mask == 1)
                 brant_save_nii(is4d_ind, data_files{m}, filter_prefix_calc, nii_hdr, filter_vol(:, :, :, temp_mask), outdirs{m}, gzip_ind(2));
             else
                 brant_save_nii(is4d_ind, data_files{m}, filter_prefix_calc, nii_hdr, filter_vol, outdirs{m}, gzip_ind(2));

@@ -27,7 +27,7 @@ else
     CData = [];
 end
 
-if strcmpi(mode_display, 'halves:left and right') == 0
+if (strcmpi(mode_display, 'halves:left and right') == 0)
     draw_param.angle = brant_get_view_angle(mode_display);
     
     switch mode_brain{1}
@@ -52,7 +52,7 @@ if strcmpi(mode_display, 'halves:left and right') == 0
     
     if ~isempty(vol)
         colormap(c_map_wb);
-        if draw_param.colorbar_ind == 1
+        if (draw_param.colorbar_ind == 1)
             caxis(cbr.caxis);
         end
     end
@@ -85,7 +85,7 @@ else
         
         if ~isempty(vol)
             colormap(c_map_wb);
-            if draw_param.colorbar_ind == 1
+            if (draw_param.colorbar_ind == 1)
                 caxis(cbr.caxis);
             end
         end
@@ -93,7 +93,7 @@ else
 end
 
 if ~isempty(vol)
-    if draw_param.colorbar_ind == 1
+    if (draw_param.colorbar_ind == 1)
         cbar_h = colorbar('Location', 'SouthOutside');
         set(cbar_h, 'Position', [0.35, 0.05, 0.3, 0.03],...
                     'FontSize', 14,...

@@ -113,7 +113,7 @@ nii = orderfields(nii, fields_org);
 % cut off support for RGB and dimension higher than 4
 function [img,hdr] = load_nii_img_mod(hdr,img,img_idx)
 
-if ~exist('img_idx','var') || isempty(img_idx) || hdr.dime.dim(5)<1
+if ~exist('img_idx','var') || isempty(img_idx) || (hdr.dime.dim(5)<1)
     img_idx = [];
 end
 
@@ -125,7 +125,7 @@ if length(unique(img_idx)) ~= length(img_idx)
     error('Duplicate image index in "img_idx"');
 end
 
-if ~isempty(img_idx) && (min(img_idx) < 1 || max(img_idx) > hdr.dime.dim(5))
+if ~isempty(img_idx) && (min(img_idx) < 1 || (max(img_idx) > hdr.dime.dim(5)))
     max_range = hdr.dime.dim(5);
     
     if max_range == 1

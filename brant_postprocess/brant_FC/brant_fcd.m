@@ -18,7 +18,7 @@ switch(computer('arch'))
 end
 
 is4d_ind = jobman.input_nifti.is4d;
-if is4d_ind == 0
+if (is4d_ind == 0)
     error('Current C++ excutable only works on 4-D data.');
 end
 
@@ -28,6 +28,10 @@ for mm = 1:numel(split_prefix)
     fprintf('\n\tCurrent indexing filetype: %s\n', split_prefix{mm});
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
 
+    if exist(out_dir_tmp, 'dir') ~= 7
+        mkdir(out_dir_tmp);
+    end
+    
     jobman.input_nifti.filetype = split_prefix{mm};
     nifti_list = brant_get_subjs(jobman.input_nifti);
     nmpos = jobman.input_nifti.nm_pos;
@@ -43,15 +47,15 @@ for mm = 1:numel(split_prefix)
     cellfun(@(x) fprintf(fid, '%s\n', x), nifti_list);
     fclose(fid);
 
-    if jobman.cpu == 1
+    if (jobman.cpu == 1)
         mode_str = '-mode cpu -cpub 256';
     else
         mode_str = '-mode gpu -gpub 256';
     end
 
-    outdir = regexprep(outdir, '[\/\\]+$', '');
+    out_dir_tmp = regexprep(out_dir_tmp, '[\/\\]+$', '');
 
-    if ispc == 1
+    if (ispc == 1)
         fprintf('\n\tRunning FCD in new command windows...\n');
         bat_file = fullfile(out_dir_tmp, 'fcd.bat');
         
@@ -59,7 +63,7 @@ for mm = 1:numel(split_prefix)
         fprintf(fid, 'set BN="%s"\n', ba_full);
         fprintf(fid, 'set INFILE="%s"\n', text_out);
         fprintf(fid, 'set MASK="%s"\n', new_mask_fn);
-        fprintf(fid, 'set OUTDIR="%s"\n', outdir);
+        fprintf(fid, 'set OUTDIR="%s"\n', out_dir_tmp);
         fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr 0.6 -mask %%MASK%% -nmpos %d -out %%OUTDIR%% %s', nmpos, mode_str);
         fclose(fid);
         
@@ -71,7 +75,7 @@ for mm = 1:numel(split_prefix)
         else
             system(['start', 32, '"brant fcd" cmd.exe /K', 32, '"', bat_file, '"']);
         end
-    elseif isunix == 1
+    elseif (isunix == 1)
         fprintf('\n\tRunning FCD in command windows...\n');
         bat_file = fullfile(out_dir_tmp, 'fcd.sh');
         
@@ -80,7 +84,7 @@ for mm = 1:numel(split_prefix)
         fprintf(fid, 'BN="%s"\n', ba_full);
         fprintf(fid, 'INFILE="%s"\n', text_out);
         fprintf(fid, 'MASK="%s"\n', new_mask_fn);
-        fprintf(fid, 'OUTDIR="%s"\n', outdir);
+        fprintf(fid, 'OUTDIR="%s"\n', out_dir_tmp);
         fprintf(fid, 'chmod u+x ${BN}\n');
         fprintf(fid, '${BN} -infile ${INFILE} -coef fcd -thres_corr 0.6 -mask ${MASK} -nmpos %d -out ${OUTDIR} %s', nmpos, mode_str);
         fclose(fid);

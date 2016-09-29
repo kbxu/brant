@@ -63,7 +63,7 @@ arrayfun(@(x) set(cyl_stick{x}, 'ZData', get(cyl_stick{x}, 'ZData') + node_2(x, 
 % % hack ends
 
 
-if edge_info.adjust_edge_color == 1
+if (edge_info.adjust_edge_color == 1)
     fc_neg = fc_strength < 0;
     if any(fc_neg)
         cellfun(@(x) set(x, 'FaceColor', edge_info.neg_color), cyl_stick(fc_neg));

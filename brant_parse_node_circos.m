@@ -11,7 +11,7 @@ fn_inds = cellfun(@(x) find(strcmpi(x, titles), 1, 'first'), all_fns, 'UniformOu
 fn_ept = cellfun(@isempty, fn_inds);
 
 for m = 1:numel(all_fns)
-    if fn_ept(m) == 0
+    if (fn_ept(m) == 0)
         if any(strcmpi(all_fns{m}, {'module', 'label'}))
             node_out.(all_fns{m}) = tbl_data_cell(:, fn_inds{m});
         else

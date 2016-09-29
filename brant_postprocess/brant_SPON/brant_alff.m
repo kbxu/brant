@@ -53,7 +53,7 @@ for mm = 1:numel(split_prefix)
     fprintf('\n\tCurrent indexing filetype: %s\n', split_prefix{mm});
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
     
-    if nor_z_ind == 1
+    if (nor_z_ind == 1)
         outdir_mk = brant_make_outdir(out_dir_tmp, {'ALFF_raw', 'fALFF_raw', 'ALFF_Normalised_z', 'fALFF_Normalised_z'});
     else
         outdir_mk = brant_make_outdir(out_dir_tmp, {'ALFF_raw', 'fALFF_raw', '', ''});
@@ -102,7 +102,7 @@ for mm = 1:numel(split_prefix)
         clear('fALFF', 'ALFF_BP_sum', 'ALFF_AP_sum');
     end
     
-    if sm_ind == 1
+    if (sm_ind == 1)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
 %         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end      

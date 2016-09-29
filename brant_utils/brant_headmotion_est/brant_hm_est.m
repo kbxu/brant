@@ -20,7 +20,7 @@ function brant_hm_est(jobman)
 jobman.input_nifti.is_txt = 1;
 [HeadMotionList, subj_ids] = brant_get_subjs(jobman.input_nifti);
 outdir = jobman.out_dir{1};
-if exist(outdir, 'dir') ~= 7
+if (exist(outdir, 'dir') ~= 7)
     mkdir(outdir)
 end
 

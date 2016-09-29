@@ -13,7 +13,7 @@ vol_data = load_nii_mod(vol);
 vol_int = vol_data.img;
 % from brant_get_XYZ
 s_mat = [vol_data.hdr.hist.srow_x; vol_data.hdr.hist.srow_y; vol_data.hdr.hist.srow_z];
-if s_mat(1, 1) < 0
+if (s_mat(1, 1) < 0)
     s_mat(1, :) = s_mat(1, :) * -1;
 end
 size_data = size(vol_data.img);
@@ -23,7 +23,7 @@ b_box = [s_mat(:, 4), s_mat(:, 4) + step_len .* (size_data - 1)']';
 
 vol_int = permute(vol_int, [2, 1, 3]);
 vol_int(~isfinite(vol_int)) = 0;
-if colorinfo.discrete == 0
+if (colorinfo.discrete == 0)
     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3));
 else
     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3), 'Nearest');
@@ -39,7 +39,7 @@ max_vq = max(setdiff(vq, 0));
     
 
 
-if colorinfo.discrete == 0
+if (colorinfo.discrete == 0)
     
     color_N = 129;
     c_map = jet(color_N);
@@ -54,7 +54,7 @@ if colorinfo.discrete == 0
     
     thr = max_abs / color_N * 8;
     
-    if min_vq > 0
+    if (min_vq > 0)
 %         c_map = c_map_tmp(65:end, :);
         CData = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, vq, 'Nearest');
         
@@ -63,7 +63,7 @@ if colorinfo.discrete == 0
         c_map(1:tick_cbr(1), :) = 1;
         c_map(tick_cbr(3):end, :) = 1;
         
-        if abs(min_vq) > thr
+        if (abs(min_vq) > thr)
             tick_vec = [0, min_vq, max_vq];
         else
             tick_vec = [0, max_vq];
@@ -71,7 +71,7 @@ if colorinfo.discrete == 0
         
         cbr.xtick = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, tick_vec, 'Nearest');
         cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
-    elseif max_vq < 0
+    elseif (max_vq < 0)
 %         c_map = c_map_tmp(1:65, :);
         CData = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, vq, 'Nearest');
         
@@ -80,7 +80,7 @@ if colorinfo.discrete == 0
         c_map(tick_cbr(3):end, :) = 1;
         c_map(1:tick_cbr(1), :) = 1;
         
-        if abs(max_vq) > thr
+        if (abs(max_vq) > thr)
             tick_vec = [min_vq, max_vq, 0];
         else
             tick_vec = [max_vq, 0];
@@ -103,19 +103,19 @@ if colorinfo.discrete == 0
         tick_neg = [min_vq, max_neg_vq];
         tick_pos = [min_pos_vq, max_vq];
         
-        if abs(max_neg_vq) > thr
+        if (abs(max_neg_vq) > thr)
             tick_vec = [max_neg_vq, tick_vec];
         end
         
-        if abs(diff(tick_neg)) > thr
+        if (abs(diff(tick_neg)) > thr)
             tick_vec = [min_vq, tick_vec];
         end
         
-        if abs(min_pos_vq) > thr
+        if (abs(min_pos_vq) > thr)
             tick_vec = [tick_vec, min_pos_vq];
         end
         
-        if abs(diff(tick_pos)) > thr
+        if (abs(diff(tick_pos)) > thr)
             tick_vec = [tick_vec, max_vq];
         end
         
@@ -140,7 +140,7 @@ else
     
     thr = max_abs / color_N * 8;
     
-    if abs(min_pos_vq) > thr && (max_vq - min_pos_vq) > thr
+    if ((abs(min_pos_vq) > thr) && ((max_vq - min_pos_vq) > thr))
         tick_vec = [0, min_pos_vq, max_vq];
     else
         tick_vec = [0, max_vq];

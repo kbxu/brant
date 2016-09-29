@@ -23,11 +23,11 @@ end
 N = size(gMatrix, 1);
 gMatrix(1:(N+1):end) = 0;
 
-if CC_ind == 1
+if (CC_ind == 1)
     CC.nodal = zeros(N, 1);
 end
 
-if LE_ind == 1
+if (LE_ind == 1)
     LE.nodal = zeros(N, 1);
 end
 
@@ -38,11 +38,11 @@ for m = 1:N
     if(Num > 1),
         num_tot = Num * (Num - 1);
         
-        if CC_ind == 1
+        if (CC_ind == 1)
             CC.nodal(m) = sum(temp(:)) / num_tot;
         end
         
-        if LE_ind == 1
+        if (LE_ind == 1)
             effi = 1./graphallshortestpaths(sparse(temp));
             LE.nodal(m) = sum(effi(:)) / num_tot;
         end

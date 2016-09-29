@@ -4,7 +4,7 @@ brant_path = fileparts(which('brant'));
 
 bn_atlas = fullfile(brant_path, 'template', 'BN_Atlas_274_with_cerebellum_without_255.nii.gz');
 bn_atlas_info = fullfile(brant_path, 'template', 'roi_areas_274.txt');
-if exist(bn_atlas, 'file') ~= 2
+if (exist(bn_atlas, 'file') ~= 2)
     bn_atlas = '';
     bn_atlas_info = '';
 end
@@ -14,13 +14,13 @@ switch(lower(process_str))
     case 'circos'
         
         circos_dir = '';
-        if ispc == 1
+        if (ispc == 1)
             [ret, str] = system('where circos.exe');
         else
             [ret, str] = system('which circos');
         end
         
-        if ret == 0
+        if (ret == 0)
             circos_dir = fileparts(str);
         end
         
@@ -112,9 +112,11 @@ switch(lower(process_str))
         
     case 'visual check'
         process_pars.num_chk = 1;
+        process_pars.mask_color = 'Red blobs';
         ui_structs = {...
                     {'edit', 'num_short_right'},      'start subject',       {'num_chk'},              '';...
-                    {'sub_gui', 'disp_dirs_nii_mask'},'input_nifti',       {{'filetype', 'w*.nii'}, {'mask', '', 'disable'}},'';...
+                    {'sub_gui', 'disp_dirs_nii_mask'},'input_nifti',       {{'filetype', 'w*.nii'}},'';...
+                    {'popupmenu', 'disp_view_opts'},'mask color',             {{{'mask_color'};'Red blobs';'Yellow blobs';'Green blobs';'Cyan blobs';'Blue blobs';'Magenta blobs'}},        	'';...
                     };
         
         process_fun = @brant_visual_check;
@@ -636,7 +638,7 @@ if(any(ui_issub))
             for n = 1:numel(sub_field_val)
                 process_pars.(struc_1).(sub_field_val{n}{1}) = sub_field_val{n}{2};
                 
-                if size(sub_field_val{n}, 2) == 3
+                if (size(sub_field_val{n}, 2) == 3)
                     if strcmpi(sub_field_val{n}{3}, 'disable')
                         % hide relative element
                         ind_tmp = cellfun(@(x) strcmpi(sub_field_val{n}{1}, x{2}), ui_structs_tmp(:, 3));

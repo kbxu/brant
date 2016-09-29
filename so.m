@@ -10,12 +10,12 @@ linux_f_browser = {'caja',...   %Mate
                    'KDE',...    %dolphin
                    'nautilus'}; %ubuntu and mac maybe?
 
-if exist(cmd, 'file') == 2
+if (exist(cmd, 'file') == 2)
     pth = fileparts(which(cmd));
-    if exist(pth, 'dir') ~= 7
+    if (exist(pth, 'dir') ~= 7)
         error('Path not found!');
     end
-elseif (any(cmd == '.') && length(cmd) <= 2) || exist(cmd, 'dir') == 7
+elseif ((any(cmd == '.') && (length(cmd) <= 2)) || (exist(cmd, 'dir') == 7))
     pth = cmd;
 end
 

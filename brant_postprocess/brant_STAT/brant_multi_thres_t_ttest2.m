@@ -9,10 +9,10 @@ if all([sts_l, sts_r] ~= -1)
     t_thr_l = tinv(p_tmp_l, df);
     t_thr_r = -1 * tinv(p_tmp_r, df);
     t_mask = t_mat >= t_thr_r | t_mat <= t_thr_l;
-elseif sts_l ~= -1
+elseif (sts_l ~= -1)
     t_thr_l = tinv(p_tmp_l, df);
     t_mask = t_mat <= t_thr_l;
-elseif sts_r ~= -1
+elseif (sts_r ~= -1)
     t_thr_r = -1 * tinv(p_tmp_r, df);
     t_mask = t_mat >= t_thr_r;
 else

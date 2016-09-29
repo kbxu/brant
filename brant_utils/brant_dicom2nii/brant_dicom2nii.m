@@ -1,6 +1,6 @@
 function brant_dicom2nii(jobman)
 
-if jobman.convert == 1
+if (jobman.convert == 1)
     convert_ind = jobman.convert;
     par_workers = jobman.par_workers_cvt;
     is4d_ind = jobman.cvt4d_cvt;
@@ -21,9 +21,9 @@ else
     outdir = jobman.out_dir_del{1};
 end
 
-if convert_ind == 1
+if (convert_ind == 1)
     
-    if is4d_ind == 1
+    if (is4d_ind == 1)
         cvt_mode = '-4 Y';
     else
         cvt_mode = '-4 N';
@@ -63,7 +63,7 @@ if convert_ind == 1
                                     '-o', 32, '"', y, '"', 32, '"', x, '"'],...
                                     dicom_dirs, outdirs_subj, 'UniformOutput', false);
 
-    if par_workers > 0
+    if (par_workers > 0)
         par_sts = 1;
         brant_parpool('open', par_workers);
     else
@@ -71,7 +71,7 @@ if convert_ind == 1
     end
 
     num_subj = numel(subj_ids);
-    if par_sts == 1
+    if (par_sts == 1)
         parfor m = 1:num_subj
             system(command_strs{m});
         end
@@ -79,7 +79,7 @@ if convert_ind == 1
         cellfun(@system, command_strs);
     end
 
-    if par_workers > 0
+    if (par_workers > 0)
         brant_parpool('close');
     end
     
@@ -92,10 +92,10 @@ else
     % delete timepoint settings
     [nifti_list, subj_ids] = brant_get_subjs(input_nifti_del);
     num_subj = numel(subj_ids);
-    if out_ind_del == 1
+    if (out_ind_del == 1)
         outdirs_subj = cellfun(@(x) fullfile(outdir, x), subj_ids, 'UniformOutput', false);
     else
-        if is4d_ind == 1
+        if (is4d_ind == 1)
             outdirs_subj = cellfun(@fileparts, nifti_list, 'UniformOutput', false);
         else
             outdirs_subj = cellfun(@(x) fileparts(x{1}), nifti_list, 'UniformOutput', false);
@@ -103,14 +103,14 @@ else
     end
 end
 
-if delete_ind == 1 && del_tps > 0
-    if convert_ind == 1
+if ((delete_ind == 1) && (del_tps > 0))
+    if (convert_ind == 1)
         nifti_list = brant_get_subjs(output_cvt);
     end
-    if is4d_ind == 1
+    if (is4d_ind == 1)
         nifti_tps = cellfun(@brant_get_nii_frame, nifti_list);
         for m = 1:num_subj
-            if nifti_tps(m) > del_tps
+            if (nifti_tps(m) > del_tps)
                 fprintf('\tDeleting first %d timepoints for data %s\n', del_tps, nifti_list{m});
                 nifti_tmp = load_untouch_nii_mod(nifti_list{m}, del_tps + 1:nifti_tps(m));
                 save_untouch_nii(nifti_tmp, fullfile(outdirs_subj{m}, [out_fn, '.nii']));
@@ -121,7 +121,7 @@ if delete_ind == 1 && del_tps > 0
     else
         nifti_tps = cellfun(@numel, nifti_list);
         for m = 1:num_subj
-            if nifti_tps(m) > del_tps
+            if (nifti_tps(m) > del_tps)
                 for n = (del_tps + 1):nifti_tps(m)
                     copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n - del_tps, '_%04d'), '.nii']))
                 end

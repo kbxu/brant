@@ -2,14 +2,14 @@ function num_niis = brant_check_tps(is4d_ind, process_str, nifti_list, working_d
 % check and output time points
 % works only for unzipped files!
 
-if is4d_ind == 1
+if (is4d_ind == 1)
     num_niis = cellfun(@brant_get_nii_frame, nifti_list);
     if numel(unique(num_niis)) ~= 1
         print_diff_vols_msg(working_dir, process_str, num_niis, nifti_list);
     end
 else
     num_niis = cellfun(@numel, nifti_list);
-    if numel(unique(num_niis)) ~= 1
+    if (numel(unique(num_niis)) ~= 1)
         print_diff_vols_msg(working_dir, process_str, num_niis, nifti_list);
     end
 end

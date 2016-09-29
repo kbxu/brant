@@ -6,9 +6,9 @@ function [imgID] = brant_mni2imgID(Coordinate, V_mat)
 %     BB=1;
 % end
 [m, n] = size(Coordinate);
-if m == 3 && n ~= 3
+if (m == 3) && (n ~= 3)
     Coordinate = Coordinate';
-elseif m ~= 3 && n ~= 3
+elseif (m ~= 3) && (n ~= 3)
     error('wrong matrix of Coordinate');
 end
 

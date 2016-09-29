@@ -51,7 +51,7 @@ elseif ext_ind == 1
     all_roi_inds = setdiff(roi_full.img(:), [0, NaN]);
     all_roi_inds = all_roi_inds(isfinite(all_roi_inds));
     
-    if isa(all_roi_inds, 'float') && numel(all_roi_inds) > 2000
+    if isa(all_roi_inds, 'float') && (numel(all_roi_inds) > 2000)
         error(sprintf(['Brant support at most 2000 roi indexes!\n',...
                        'Please check the data type of the input file and make sure it''s integer instead of float!\n',...
                        'Float file type may generate unwanted float numbers in the roi!'])); %#ok<SPERR>

@@ -16,7 +16,7 @@ if any(mask_vox_size_diff > 0.001)
 end
 mask_roi_ind = jobman.mask_roi;
 
-if jobman.cube == 1
+if (jobman.cube == 1)
     radius_type = 'cube';
     sphere_ind = 0;
     cube_ind = 1;
@@ -26,28 +26,28 @@ else
     cube_ind = 0;
 end
 
-if jobman.voxel == 1
+if (jobman.voxel == 1)
     radius_vox = fix(jobman.radius);
     radius_mm = jobman.radius * dim_mask(1);
-elseif jobman.mm == 1
+elseif (jobman.mm == 1)
     radius_mm = jobman.radius;
     radius_vox = fix(jobman.radius / dim_mask(1));
 end
 
-if aio_ind == 0
+if (aio_ind == 0)
     outdir = fullfile(jobman.out_dir{1}, sprintf('ROIs_radius_%03d_mm_%s', radius_mm, radius_type));
 else
     outdir = jobman.out_dir{1};
 end
 
-if exist(outdir, 'dir') ~= 7
+if (exist(outdir, 'dir') ~= 7)
     mkdir(outdir);
 end
 
-if jobman.manual == 1
+if (jobman.manual == 1)
     coords = jobman.coords;
     
-    if size(coords, 2) ~= 3
+    if (size(coords, 2) ~= 3)
         error('Input coordinates must have 3 columns!');
     end
     
@@ -88,7 +88,7 @@ vox_ind = round(vox_ind_tmp);
 temp_nii_aio = zeros(size_mask, 'double'); % all in one
 roi_overlap = 0;
 
-if cube_ind == 1
+if (cube_ind == 1)
     vox_ind_cube_low = vox_ind - radius_vox;
     vox_ind_cube_up = vox_ind + radius_vox;
     vox_ind_cube_low(vox_ind_cube_low < 1) = 1;
@@ -99,24 +99,24 @@ if cube_ind == 1
     for m = 1:num_coords
         temp_nii = false(size_mask);
         temp_nii(vox_ind_cube_low(m, 1):vox_ind_cube_up(m, 1), vox_ind_cube_low(m, 2):vox_ind_cube_up(m, 2), vox_ind_cube_low(m, 3):vox_ind_cube_up(m, 3)) = true;
-        if mask_roi_ind == 1
+        if (mask_roi_ind == 1)
             temp_nii(~mask_ind_all) = false;
         end
         
-        if roi_overlap == 0
+        if (roi_overlap == 0)
             if any(temp_nii_aio(temp_nii))
                 roi_overlap = 1;
             end
         end
         temp_nii_aio(temp_nii > 0.5) = m;
         
-        if aio_ind == 0
+        if (aio_ind == 0)
             filename = fullfile(outdir, [roi_strs{m}, '.nii']);
             nii = make_nii(double(temp_nii), mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
             save_nii(nii, filename);
         end
     end
-elseif sphere_ind == 1
+elseif (sphere_ind == 1)
     num_mask = size(mask_XYZ, 1);
     for m = 1:num_coords
         temp_nii = false(size_mask);
@@ -125,18 +125,18 @@ elseif sphere_ind == 1
         
         mask_dist = dist_radius <= radius_mm;
         temp_nii(mask_dist) = true;
-        if mask_roi_ind == 1
+        if (mask_roi_ind == 1)
             temp_nii(~mask_ind_all) = false;
         end
         
-        if roi_overlap == 0
+        if (roi_overlap == 0)
             if any(temp_nii_aio(temp_nii))
                 roi_overlap = 1;
             end
         end
         temp_nii_aio(temp_nii) = m;
         
-        if aio_ind == 0
+        if (aio_ind == 0)
             filename = fullfile(outdir, [roi_strs{m}, '.nii']);
             nii = make_nii(double(temp_nii), mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
             save_nii(nii, filename);
@@ -144,7 +144,7 @@ elseif sphere_ind == 1
     end
 end
 
-if roi_overlap == 1
+if (roi_overlap == 1)
     warning('ROI overlaped in %s.nii!', num2str(num_coords, 'rois_%d'));
 end
 

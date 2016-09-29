@@ -10,7 +10,7 @@ if any(process_ind)
     end
     %     run_data = jobmna.
     
-    if jobman.pref.dirs_in_text == 1
+    if (jobman.pref.dirs_in_text == 1)
         dirs = jobman.subj.text.dirs;
     else
         dirs = jobman.subj.spm.dirs;
@@ -26,7 +26,7 @@ if any(process_ind)
     
     working_dir = jobman.subj.out.dir;
     
-    if jobman.subj.out.selected == 1
+    if (jobman.subj.out.selected == 1)
         
         data_input_tmp.dirs = dirs;
         data_input_tmp.nm_pos = jobman.subj.out.nmpos;
@@ -51,7 +51,7 @@ if any(process_ind)
         [old_pth, fn] = cellfun(@fileparts, nifti_list_tmp, 'UniformOutput', false);
         nifti_list_tmp_mat = cellfun(@(x, y) fullfile(x, y, '.mat'), old_pth, fn, 'UniformOutput', false);
         for m = 1:numel(output_dirs)
-            if exist(output_dirs{m}, 'dir') ~= 7
+            if (exist(output_dirs{m}, 'dir') ~= 7)
                 mkdir(output_dirs{m});
                 fprintf('Copy %s to %s.\n', nifti_list_tmp{m}, output_dirs{m});
                 copyfile(nifti_list_tmp{m}, output_dirs{m});
@@ -64,7 +64,7 @@ if any(process_ind)
             end
         end
         
-        if ismember('realign', processes_curr) == 0
+        if (ismember('realign', processes_curr) == 0)
             if any(strcmpi(processes_curr, 'denoise'))
                 if all(cellfun(@exist, nifti_list_rp))
                     cellfun(@copyfile, nifti_list_rp, output_dirs);
@@ -72,7 +72,7 @@ if any(process_ind)
             end
             
             % copy mean*.nii files for normalise
-            if any(strcmpi(processes_curr, 'normalise')) || any(strcmpi(processes_curr, 'normalise12'))
+            if (any(strcmpi(processes_curr, 'normalise')) || any(strcmpi(processes_curr, 'normalise12')))
                 if all(cellfun(@exist, nifti_list_mean))
                     fprintf('Copying source files...\n');
                     cellfun(@copyfile, nifti_list_mean, output_dirs);
@@ -91,7 +91,7 @@ if any(process_ind)
                 parpool(par_info, jobman.pref.parallel_workers);
             end
         catch
-            if matlabpool('size') == 0
+            if (matlabpool('size') == 0)
                 matlabpool('open', jobman.pref.parallel_workers);
             end
         end
@@ -102,7 +102,7 @@ if any(process_ind)
     data_input.dirs = dirs;
     data_input.nm_pos = jobman.subj.out.nmpos;
     data_input.is4d = jobman.subj.is4d;
-    if jobman.subj.out.selected == 1
+    if (jobman.subj.out.selected == 1)
         data_input.dirs = output_dirs;
     end
     spm('defaults', 'FMRI');
@@ -133,7 +133,7 @@ if any(process_ind)
                 case 'denoise'
                     
                     % reslice masks to the first data's first timepoint
-                    if run_data.denoise.subj.reslice_mask_ind == 1
+                    if (run_data.denoise.subj.reslice_mask_ind == 1)
                         mask_all{1, 1} = run_data.denoise.subj.wb_mask;
                         mask_all{2, 1} = run_data.denoise.detrend_mask.gs;
                         mask_all{3, 1} = run_data.denoise.detrend_mask.wm;
@@ -154,7 +154,7 @@ if any(process_ind)
                                 
                                 mask_all_uni_new{n} = fullfile(working_dir, [fn_tmp, ext]);
                                 
-                                if exist(mask_all_uni_new{n}, 'file') ~= 2
+                                if (exist(mask_all_uni_new{n}, 'file') ~= 2)
                                     copyfile(mask_all_uni{n}, working_dir);
                                 end
                             end
@@ -163,7 +163,7 @@ if any(process_ind)
                         load_hdr_func = @load_nii_hdr_img_raw_c; % support nii, nii.gz, img, img.gz, hdr, hdr.gz
                         mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
                         
-                        if data_input.is4d == 1
+                        if (data_input.is4d == 1)
                             sample_file = run_data.subjs.files{1};
                         else
                             sample_file = run_data.subjs.files{1}{1};
@@ -173,7 +173,7 @@ if any(process_ind)
                         sts = brant_spm_check_orientations([mask_all_uni_new_hdr; data_sample_hdr]);
                         
                         % reslice if mask's size doesn't match with data
-                        if sts == 0
+                        if (sts == 0)
                             img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
 
                             mask_all_new = cell(size(mask_all));
@@ -221,7 +221,7 @@ if any(process_ind)
                 delete(curr_pool);
             end
         catch
-            if matlabpool('size') ~= 0 %#ok<*DPOOL>
+            if (matlabpool('size') ~= 0) %#ok<*DPOOL>
                 matlabpool('close');
             end
         end

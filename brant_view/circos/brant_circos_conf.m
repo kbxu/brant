@@ -14,7 +14,7 @@ neg_color = jobman.neg_color;
 chromo_units = jobman.chromo_units;
 out_dir = jobman.out_dir{1};
 
-if jobman.transparent_bkg == 0
+if (jobman.transparent_bkg == 0)
     bkg_str = 'white';
 else
     bkg_str = 'transparent';
@@ -25,7 +25,7 @@ band_fn = fullfile(out_dir, 'brant_band.txt');
 link_fn = fullfile(out_dir, 'brant_links.txt');
 
 
-if ispc == 1
+if (ispc == 1)
     bat_fn = fullfile(out_dir, 'brant_circos_cmd.bat');
     fid = fopen(bat_fn, 'wt');
     fprintf(fid, 'set circosbin="%s"\n', fullfile(circos_dir, 'circos'));
@@ -61,14 +61,14 @@ node_in.module = cellfun(@(x) regexprep(x, '\W', '_'), node_in.module, 'UniformO
 fc_mat = load(link_file);
 
 num_node = size(node_in.label, 1);
-if num_node ~= size(fc_mat, 1)
+if (num_node ~= size(fc_mat, 1))
     error('The number of roi must equal the size of edge matrix!');
 end
 
 diag_ind = eye(num_node) == 1;
 fc_mat(diag_ind) = 0;
 
-if isequal(fc_mat, fc_mat') == 0
+if (isequal(fc_mat, fc_mat') == 0)
     error('FC matrix must be symmetric!');
 end
 
@@ -145,7 +145,7 @@ arrayfun(@(x, y, z)  fprintf(fid, 'lobe%d %d %d lobe%d %d %d color=%s\n',...
                      x_ind, y_ind, fc_strs);
 fclose(fid);
 
-if ispc == 1
+if (ispc == 1)
     system(['cmd /C "', bat_fn, '"']);
 else
     system(['sh', 32, bat_fn]);

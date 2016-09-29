@@ -17,6 +17,6 @@ else
     end
 end
 
-if isa(nii_4d, 'double') == 0 && isa(nii_4d, 'single') == 0
+if ((isa(nii_4d, 'double') == 0) && (isa(nii_4d, 'single') == 0))
     nii_4d = single(nii_4d);
 end

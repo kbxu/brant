@@ -149,16 +149,9 @@ else
     if check_tps_ind == 1
         if strcmpi(input_type, 'multi4d')
             fprintf('\tChecking timepoints...\n')
-            if any(strcmpi(ext_ft, {'.nii', '.img', '.hdr', '.gz', '.nii.gz'}))
-                [pth_tmp, fn_tmp] = cellfun(@fileparts, nifti_list, 'UniformOutput', false);
-%                 if all(cellfun(@(x) strcmpi(x, '.nii.gz') == 0 && strcmpi(x, '.gz') == 0, ext))
-                tps_tps = cellfun(@brant_get_nii_frame, nifti_list);
-                input_tps = strcat('Timepoints:', num2str(tps_tps, '%d'), char(7), nifti_list);
-                fprintf('\t%s\n', input_tps{:});
-%                 else
-%                     fprintf('Brant will not check timepoints for gzip files to speed up!\n');
-%                 end
-            end
+            tps_tps = cellfun(@brant_get_nii_frame, nifti_list);
+            input_tps = strcat('Timepoints:', num2str(tps_tps, '%d'), char(7), nifti_list);
+            fprintf('\t%s\n', input_tps{:});
         end
     end
 end

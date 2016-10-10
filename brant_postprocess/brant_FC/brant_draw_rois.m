@@ -19,19 +19,17 @@ mask_roi_ind = jobman.mask_roi;
 if (jobman.cube == 1)
     radius_type = 'cube';
     sphere_ind = 0;
-    cube_ind = 1;
+%     cube_ind = 1;
 else
     radius_type = 'sphere';
     sphere_ind = 1;
-    cube_ind = 0;
+%     cube_ind = 0;
 end
 
 if (jobman.voxel == 1)
-    radius_vox = fix(jobman.radius);
     radius_mm = jobman.radius * dim_mask(1);
 elseif (jobman.mm == 1)
     radius_mm = jobman.radius;
-    radius_vox = fix(jobman.radius / dim_mask(1));
 end
 
 if (aio_ind == 0)
@@ -77,70 +75,78 @@ else
     end
 end
 
-v_mat_shift = reshape(s_mat(1:3, 4), 1, 3);
-v_mat_cen = reshape(diag(s_mat(1:3, 1:3)), 1, 3);
+
+v_res = reshape(diag(s_mat(1:3, 1:3)), 1, 3);
 
 num_coords = size(coords, 1);
-
-vox_ind_tmp = (coords - repmat(v_mat_shift, num_coords, 1)) ./ repmat(v_mat_cen, num_coords, 1) - 1;
-vox_ind = round(vox_ind_tmp);
-
 temp_nii_aio = zeros(size_mask, 'double'); % all in one
 roi_overlap = 0;
 
-if (cube_ind == 1)
-    vox_ind_cube_low = vox_ind - radius_vox;
-    vox_ind_cube_up = vox_ind + radius_vox;
-    vox_ind_cube_low(vox_ind_cube_low < 1) = 1;
-    vox_ind_cube_up(vox_ind_cube_up(:, 1) > size_mask(1), 1) = size_mask(1);
-    vox_ind_cube_up(vox_ind_cube_up(:, 2) > size_mask(2), 2) = size_mask(2);
-    vox_ind_cube_up(vox_ind_cube_up(:, 3) > size_mask(3), 3) = size_mask(3);
+
+coords_bound_l = reshape(s_mat(1:3, 4), 1, 3);
+coords_bound_u = coords_bound_l + v_res .* (size_mask - 1);
+
+% get bounds for input coordinates, and enlarge the bounds before compute.
+coords_low = bsxfun(@minus, coords, radius_mm + v_res);
+coords_upper = bsxfun(@plus, coords, radius_mm + v_res);
+
+% remove voxels outside bounding box
+coords_bound_l_mul = repmat(coords_bound_l, num_coords, 1);
+coords_low_bad = coords_low < coords_bound_l_mul;
+if any(coords_low_bad(:))
+    coords_low(coords_low_bad) = coords_bound_l_mul(coords_low_bad);
+end
+
+coords_bound_r_mul = repmat(coords_bound_u, num_coords, 1);
+coords_upper_bad = coords_upper > coords_bound_r_mul;
+if any(coords_upper_bad(:))
+    coords_upper(coords_upper_bad) = coords_bound_r_mul(coords_upper_bad);
+end
+
+vox_ind_l = brant_mni2vox(coords_low, coords_bound_l, v_res);
+vox_ind_u = brant_mni2vox(coords_upper, coords_bound_l, v_res);
+
+for m = 1:num_coords
+    fprintf('\tDrawing ROI %s of tag %d as %s.\n', roi_strs{m}, m, radius_type);
     
-    for m = 1:num_coords
-        temp_nii = false(size_mask);
-        temp_nii(vox_ind_cube_low(m, 1):vox_ind_cube_up(m, 1), vox_ind_cube_low(m, 2):vox_ind_cube_up(m, 2), vox_ind_cube_low(m, 3):vox_ind_cube_up(m, 3)) = true;
-        if (mask_roi_ind == 1)
-            temp_nii(~mask_ind_all) = false;
-        end
+    [vox_x, vox_y, vox_z] = meshgrid(vox_ind_l(m, 1):vox_ind_u(m, 1),...
+                                     vox_ind_l(m, 2):vox_ind_u(m, 2),...
+                                     vox_ind_l(m, 3):vox_ind_u(m, 3));
+    vox_inds_tmp = [vox_x(:), vox_y(:), vox_z(:)];
         
-        if (roi_overlap == 0)
-            if any(temp_nii_aio(temp_nii))
-                roi_overlap = 1;
-            end
-        end
-        temp_nii_aio(temp_nii > 0.5) = m;
+    temp_img = false(size_mask);
+    coords_ind = brant_vox2mni(vox_inds_tmp, coords_bound_l, v_res);
+    
+    if (sphere_ind == 1)
+        dist_ind = pdist2(coords(m, :), coords_ind) <= radius_mm;
+        vox_inds_good = vox_inds_tmp(dist_ind, :);
+    else
+        cube_dist = abs(bsxfun(@minus, coords_ind, coords(m, :)));
+        cube_dist_ind = sum(cube_dist <= radius_mm, 2) == 3;
+        vox_inds_good = vox_inds_tmp(cube_dist_ind, :);
+    end
+    
+    abs_ind = sub2ind(size_mask, vox_inds_good(:, 1),...
+                                 vox_inds_good(:, 2),...
+                                 vox_inds_good(:, 3));
+
+    temp_img(abs_ind) = true;
         
-        if (aio_ind == 0)
-            filename = fullfile(outdir, [roi_strs{m}, '.nii']);
-            nii = make_nii(double(temp_nii), mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
-            save_nii(nii, filename);
+    if (mask_roi_ind == 1)
+        temp_img(~mask_ind_all) = false;
+    end
+    
+    if (roi_overlap == 0)
+        if any(temp_nii_aio(temp_img))
+            roi_overlap = 1;
         end
     end
-elseif (sphere_ind == 1)
-    num_mask = size(mask_XYZ, 1);
-    for m = 1:num_coords
-        temp_nii = false(size_mask);
-        mask_shift = abs(mask_XYZ - repmat(coords(m, :), num_mask, 1));
-        dist_radius = sqrt(mask_shift(:, 1) .^2 + mask_shift(:, 2) .^2 + mask_shift(:, 3) .^2);
-        
-        mask_dist = dist_radius <= radius_mm;
-        temp_nii(mask_dist) = true;
-        if (mask_roi_ind == 1)
-            temp_nii(~mask_ind_all) = false;
-        end
-        
-        if (roi_overlap == 0)
-            if any(temp_nii_aio(temp_nii))
-                roi_overlap = 1;
-            end
-        end
-        temp_nii_aio(temp_nii) = m;
-        
-        if (aio_ind == 0)
-            filename = fullfile(outdir, [roi_strs{m}, '.nii']);
-            nii = make_nii(double(temp_nii), mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
-            save_nii(nii, filename);
-        end
+    temp_nii_aio(temp_img > 0.5) = m;
+
+    if (aio_ind == 0)
+        filename = fullfile(outdir, [roi_strs{m}, '.nii']);
+        nii = make_nii(double(temp_img), mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
+        save_nii(nii, filename);
     end
 end
 
@@ -154,7 +160,21 @@ filename = fullfile(outdir, sprintf('brant_%d_%s_rois.nii', num_coords, radius_t
 nii = make_nii(temp_nii_aio, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3)); 
 save_nii(nii, filename);
 
-% if ~isempty(roi_strs{1})
-%     save(fullfile(outdir, sprintf('all_%d_rois.mat', num_coords)), 'roi_strs', 'coords', 'radius_mm', 'radius_vox');
-% end
 fprintf('\n\tFinished!\n');
+
+function coords_ind = brant_vox2mni(vox_ind, coord_bound_l, v_res)
+% coord_bound_l: the coordinate of the first voxel in the lower coner
+% v_res: voxel resolution
+% vox_ind: voxel index
+
+coords_shift = bsxfun(@times, (vox_ind - 1), v_res);
+coords_ind = bsxfun(@plus, coords_shift, coord_bound_l);
+
+
+function vox_ind = brant_mni2vox(coords, coord_bound_l, v_res)
+% coord_bound_l: the coordinate of the first voxel in the lower coner
+% v_res: voxel resolution
+% coords: input coordinates
+
+vox_shift = bsxfun(@minus, coords, coord_bound_l);
+vox_ind = ceil(bsxfun(@rdivide, vox_shift, v_res) + 1);

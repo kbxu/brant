@@ -1429,7 +1429,7 @@ nifti_support = '^.*\.(nii|img|nii.gz)$';
 switch(mode)
     case {'num_short_right', 'num_short_left', 'num_coords', 'num_long', 'num_longest', 'num_bin_num_edit'}
         num = str2num(str); %#ok<ST2NM> %do not use str2double! 
-        if ~isempty(num)
+        if (~isempty(num)) || (strcmpi(h_parent_name, 'roi mapping') && isempty(num))
             set_field_vals(h_parent, jobman, field_name, num);
         else
             val = field_vals(jobman, field_name);

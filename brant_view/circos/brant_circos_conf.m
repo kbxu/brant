@@ -9,9 +9,9 @@ circos_dir = jobman.circos_dir{1};
 conf_dir = jobman.conf_dir{1};
 roi_file = jobman.roi_info{1};
 link_file = jobman.edge{1};
-pos_color = jobman.pos_color;
-neg_color = jobman.neg_color;
-chromo_units = jobman.chromo_units;
+pos_color = round(jobman.pos_color * 255);
+neg_color = round(jobman.neg_color * 255);
+% chromo_units = jobman.chromo_units;
 out_dir = jobman.out_dir{1};
 
 if (jobman.transparent_bkg == 0)
@@ -28,14 +28,15 @@ link_fn = fullfile(out_dir, 'brant_links.txt');
 if (ispc == 1)
     bat_fn = fullfile(out_dir, 'brant_circos_cmd.bat');
     fid = fopen(bat_fn, 'wt');
+    fprintf(fid, '@echo off\n');
     fprintf(fid, 'set circosbin="%s"\n', fullfile(circos_dir, 'circos'));
     fprintf(fid, 'set circosconf="%s"\n', fullfile(conf_dir, 'circos.conf'));
     fprintf(fid, 'set labelfile="%s"\n', label_fn);
     fprintf(fid, 'set bandfile="%s"\n', band_fn);
     fprintf(fid, 'set linkfile="%s"\n', link_fn);
     fprintf(fid, 'set outdir="%s"\n', out_dir);
-    fprintf(fid, ['%%circosbin%% -conf %%circosconf%% -param image/background=%s -param chromosomes_units=%d -param karyotype=%%bandfile%%', 32,...
-                  '-param plots/plot/file=%%labelfile%% -param links/link/file=%%linkfile%% -outputdir %%outdir%%'], bkg_str, chromo_units);
+    fprintf(fid, ['%%circosbin%% -conf %%circosconf%% -param image/background=%s -param karyotype=%%bandfile%%', 32,...
+                  '-param plots/plot/file=%%labelfile%% -param links/link/file=%%linkfile%% -outputdir %%outdir%%'], bkg_str);
     fclose(fid);
 else
     bat_fn = fullfile(out_dir, 'brant_circos_cmd.sh');
@@ -47,8 +48,8 @@ else
     fprintf(fid, 'bandfile="%s"\n', band_fn);
     fprintf(fid, 'linkfile="%s"\n', link_fn);
     fprintf(fid, 'outdir="%s"\n', out_dir);
-    fprintf(fid, ['${circosbin} -conf ${circosconf} -param image/background=%s -param chromosomes_units=%d -param karyotype=${bandfile}', 32,...
-                  '-param plots/plot/file=${labelfile} -param links/link/file=${linkfile} -outputdir ${outdir}'], bkg_str, chromo_units);
+    fprintf(fid, ['${circosbin} -conf ${circosconf} -param image/background=%s -param karyotype=${bandfile}', 32,...
+                  '-param plots/plot/file=${labelfile} -param links/link/file=${linkfile} -outputdir ${outdir}'], bkg_str);
     fclose(fid);
 end
 
@@ -134,23 +135,20 @@ link_sign = arrayfun(@(x, y) sign(fc_mat_src(x, y)), x_ind, y_ind);
 % plot link file
 red_ind = link_sign > 0;
 fc_strs = cell(size(red_ind, 1), 1);
-fc_strs(red_ind) = {'red'};
-fc_strs(~red_ind) = {'blue'};
+fc_strs(red_ind) = {num2str(pos_color, '%d,%d,%d')}; %{'red'};
+fc_strs(~red_ind) = {num2str(neg_color, '%d,%d,%d')}; %{'blue'};
 % fc_ind = cellfun(@(x) find(strcmp(x, area_file(:, 1))), fc_strs(:, 1:2));
 fid = fopen(link_fn, 'wt');
 arrayfun(@(x, y, z)  fprintf(fid, 'lobe%d %d %d lobe%d %d %d color=%s\n',...
-                     srt_index_mat(x, 2), (srt_index_mat(x, 3) - 1) * spin_sa, (srt_index_mat(x, 3) - 1) * spin_sa + 9999,...
-                     srt_index_mat(y, 2), (srt_index_mat(y, 3) - 1) * spin_sa, (srt_index_mat(y, 3) - 1) * spin_sa + 9999,...
+                     srt_index_mat(x, 2), (srt_index_mat(x, 3) - 1) * spin_sa, (srt_index_mat(x, 3) - 1) * spin_sa + (spin_sa - 1),...
+                     srt_index_mat(y, 2), (srt_index_mat(y, 3) - 1) * spin_sa, (srt_index_mat(y, 3) - 1) * spin_sa + (spin_sa - 1),...
                      z{1}),...
                      x_ind, y_ind, fc_strs);
 fclose(fid);
 
+fprintf('\nDrawing circos...\n\n');
 if (ispc == 1)
     system(['cmd /C "', bat_fn, '"']);
 else
     system(['sh', 32, bat_fn]);
 end
-
-
-
-

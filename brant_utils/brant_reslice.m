@@ -1,4 +1,4 @@
-function rst_files = brant_reslice(ref_file, src_file, prefix)
+function rst_files = brant_reslice(ref_file, src_file, prefix, varargin)
 % ref_file: reference, cell or string
 % src_file: source files, cell array or string. NOTE: the source files
 % should only be 3D files or cell array of 3D files
@@ -8,6 +8,11 @@ if iscell(ref_file)
     ref_file = ref_file{1};
 end
 
+if nargin == 4
+    is4d_ind = varargin{1};
+else
+    is4d_ind = 0;
+end
 % if strcmpi(ref_file(end-2:end), '.gz')
 %     pth = fileparts(ref_file);
 %     tmp_ref = load_untouch_nii_mod(ref_file, 1);
@@ -45,7 +50,11 @@ for m = 1:numel(src_file)
     end
     
     job.ref = {[ref_file, add_str]};
-    job.source = src_file(m);
+    if is4d_ind == 0
+        job.source = src_file(m);
+    else % for 4d data
+        job.source = src_file{m};
+    end
     job.roptions.interp = 0; % 0 is nearest neighbour, 4 is 4th degree B-spline
     job.roptions.mask = 0;
     job.roptions.wrap = [0, 0, 0];

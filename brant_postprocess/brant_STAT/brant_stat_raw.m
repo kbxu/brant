@@ -432,6 +432,8 @@ p_rst_unc = cell(numel(contrs), 1);
 h_rst_unc = cell(numel(contrs), 1);
 tail_rst = cell(numel(contrs), 1);
 
+fprintf('\n\tUncorrected p threshold is %g\n', thr);
+
 p_vec_L = 1 - p_vec_R;
 for n_contr = 1:numel(contrs)
 

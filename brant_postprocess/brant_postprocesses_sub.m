@@ -142,7 +142,7 @@ switch(lw_uiname)
             obj_strs{2} = {'input_gunzip'}; % self
         end
         
-    case {'delete timepoints'}
+    case {'delete timepoints', 'reslice'}
         h_out = findobj(hfig_inputdlg, 'string', 'output to another directory');
         val_out = get(h_out, 'Value');
         if (val_out == 1)
@@ -235,7 +235,7 @@ if (exp_col_ind == 1)
 
     obj_ind_all = obj_ind{1} | obj_ind{2};
 
-    enb_uis = {'roi calculation', 'roi mapping', 'del timepoints'};
+    enb_uis = {'roi calculation', 'roi mapping', 'del timepoints', 'reslice'};
 
     if any(strcmpi(lw_uiname, enb_uis))
         % disable ui elements

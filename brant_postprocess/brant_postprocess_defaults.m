@@ -10,6 +10,7 @@ if (exist(bn_atlas, 'file') ~= 2)
 end
 
 % string, ui_type, structure field.
+% write cases in lower case
 switch(lower(process_str))
     case 'circos'
         
@@ -28,7 +29,7 @@ switch(lower(process_str))
         process_pars.conf_dir = {fullfile(brant_path, 'brant_view', 'circos')};
         process_pars.roi_info = {''};
         process_pars.edge = {''};
-        process_pars.chromo_units = 100000;
+%         process_pars.chromo_units = 100000;
         process_pars.pos_color = [1, 0, 0];
         process_pars.neg_color = [0, 1, 1];
         process_pars.transparent_bkg = 0;
@@ -39,7 +40,7 @@ switch(lower(process_str))
             {'edit', 'str_dir'},     'conf dir',    {'conf_dir'},              '';...
             {'edit', 'str_edge'},    'roi info',    {'roi_info'},              '';...
             {'edit', 'str_edge'},    'edge',    {'edge'},              '';...
-            {'edit', 'num_short_right'},       'chromosome units',            {'chromo_units'},               '';...
+            ...{'edit', 'num_short_right'},       'chromosome units',            {'chromo_units'},               '';...
             {'pushbutton', 'color_hor_dual'},        {'positive edge', 'negative edge'},   {{''}, {'pos_color'}, {''}, {'neg_color'}},                          '';...
             {'chb', 'num_bin'},          'transparent background',   {'transparent_bkg'},                          '';...
             {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
@@ -47,7 +48,23 @@ switch(lower(process_str))
         
         process_fun = @brant_circos_conf;
     
-    
+    case 'reslice'
+        
+        process_pars.ref = {''};
+        process_pars.out_prefix = 'r';
+        process_pars.out_ind_del = 0;
+        process_pars.out_dir_del = {''};
+        
+        ui_structs = {...
+            {'edit', 'str_nifti'},       'reference',         {'ref'},             '';...
+            {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'mask', '', 'disable'}},              '';...
+            {'edit', 'str_short_right'}, 'output prefix',   {'out_prefix'},                 '';...
+            {'chb', 'num_bin'},          'output to another directory',   {'out_ind_del'},                          '';...
+            {'edit', 'str_dir'},     'out dir',     {'out_dir_del'},      '';...
+            };
+        
+        process_fun = @brant_reslice_batch;
+        
     case 'head motion est'
         
         process_pars.out_dir = {''};

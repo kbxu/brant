@@ -148,7 +148,7 @@ else
 
     if check_tps_ind == 1
         if strcmpi(input_type, 'multi4d')
-            fprintf('\tChecking timepoints...\n')
+            fprintf('\tChecking timepoints...\n');
             tps_tps = cellfun(@brant_get_nii_frame, nifti_list);
             input_tps = strcat('Timepoints:', num2str(tps_tps, '%d'), char(7), nifti_list);
             fprintf('\t%s\n', input_tps{:});

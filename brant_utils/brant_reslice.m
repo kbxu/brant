@@ -1,18 +1,21 @@
 function rst_files = brant_reslice(ref_file, src_file, prefix, varargin)
+% use nearest neighbour to reslice masks
 % ref_file: reference, cell or string
-% src_file: source files, cell array or string. NOTE: the source files
-% should only be 3D files or cell array of 3D files
+% src_file: source files, cell array of 3D or 4D files. NOTE: in each cell
+% can only be one 3D or one 4D. src_file can be cell of cells to store
+% multiple 3D or 4D files, but can't be cell of cells of cells to store
+% more than one files in one sub-cell.
 % prefix: prefix of output files
 
 if iscell(ref_file)
     ref_file = ref_file{1};
 end
 
+interp_ind = 0;  % 0 is nearest neighbour, 4 is 4th degree B-spline
 if nargin == 4
-    is4d_ind = varargin{1};
-else
-    is4d_ind = 0;
+    interp_ind = varargin{1};
 end
+
 % if strcmpi(ref_file(end-2:end), '.gz')
 %     pth = fileparts(ref_file);
 %     tmp_ref = load_untouch_nii_mod(ref_file, 1);
@@ -22,14 +25,18 @@ end
 
 if ischar(src_file)
     src_file = {src_file};
+    string_file_ind = 1;
+else
+    string_file_ind = 0;
 end
 
-tmp_vol = spm_vol(ref_file);
-if numel(tmp_vol) > 1
-    add_str = ',1';
-else
-    add_str = '';
-end
+% tps_tps = brant_get_nii_frame(src_file);
+% if tps_tps == 1
+%     add_str = ',1';
+% else
+%     src_file = brant_file_pre(nifti_list, tps_tps, 1, 'data_cell');
+%     add_str = '';
+% end
 
 rst_files = cell(numel(src_file), 1);
 for m = 1:numel(src_file)
@@ -49,13 +56,15 @@ for m = 1:numel(src_file)
         src_file(m) = gunzip(src_file{m}, tmpDir);
     end
     
-    job.ref = {[ref_file, add_str]};
-    if is4d_ind == 0
-        job.source = src_file(m);
-    else % for 4d data
-        job.source = src_file{m};
-    end
-    job.roptions.interp = 0; % 0 is nearest neighbour, 4 is 4th degree B-spline
+    job.ref = {[ref_file, ',1']};
+    num_frame = brant_get_nii_frame(src_file{m});
+    job.source = arrayfun(@(x) [src_file{m}, num2str(x, ',%04d')], 1:num_frame, 'UniformOutput', false)';
+%     if num_frame == 1
+%         job.source = src_file(m);
+%     else % for 4d data
+%         job.source = src_file{m};
+%     end
+    job.roptions.interp = interp_ind;
     job.roptions.mask = 0;
     job.roptions.wrap = [0, 0, 0];
     job.roptions.prefix = prefix;
@@ -66,19 +75,33 @@ for m = 1:numel(src_file)
         out = spm_run_coreg_reslice(job);
     end
     
+    res_ind = regexp(out.rfiles{1}, ',\d+$');
+    
+    if ~isempty(res_ind)
+        file_resliced = out.rfiles{1}(1:res_ind-1); %unique(cellfun(@(x) x(1:res_ind-1), out.rfiles, 'UniformOutput', false));
+    else
+        file_resliced = out.rfiles{1};
+    end
+    
     if gz_ind == 1
-        if strcmpi(out.rfiles{1}(end-1:end), ',1')
-            tmp = gzip(out.rfiles{1}(1:end-2), pth);
-        else
-            tmp = gzip(out.rfiles{1}, pth);
-        end
+        tmp = gzip(file_resliced, pth);
+%         if strcmpi(out.rfiles{1}(end-1:end), ',1')
+%             tmp = gzip(out.rfiles{1}(1:end-2), pth);
+%         else
+%             tmp = gzip(out.rfiles{1}, pth);
+%         end
         rst_files{m} = tmp{1};
         rmdir(tmpDir, 's');
     else
-        if strcmpi(out.rfiles{1}(end-1:end), ',1')
-            rst_files{m} = out.rfiles{1}(1:end-2);
-        else
-            rst_files{m} = out.rfiles{1};
-        end
+        rst_files{m} = file_resliced;
+%         if strcmpi(out.rfiles{1}(end-1:end), ',1')
+%             rst_files{m} = out.rfiles{1}(1:end-2);
+%         else
+%             rst_files{m} = out.rfiles{1};
+%         end
     end
+end
+
+if string_file_ind == 1
+    rst_files = rst_files{1};
 end

@@ -134,34 +134,14 @@ if any(process_ind)
                     
                     % reslice masks to the first data's first timepoint
                     if (run_data.denoise.subj.reslice_mask_ind == 1)
+                               
+                        mask_all = cell(5, 1);
+                        mask_all_new = cell(5, 1);
                         mask_all{1, 1} = run_data.denoise.subj.wb_mask;
                         mask_all{2, 1} = run_data.denoise.detrend_mask.gs;
                         mask_all{3, 1} = run_data.denoise.detrend_mask.wm;
                         mask_all{4, 1} = run_data.denoise.detrend_mask.csf;
                         mask_all{5, 1} = run_data.denoise.detrend_mask.user_mask;
-                        
-                        mask_all_ept = cellfun(@isempty, mask_all);
-                        mask_all_uni = unique(mask_all(~mask_all_ept));
-                        check_mask_ext = cellfun(@(x) exist(x, 'file') ~= 2, mask_all_uni);
-                        if any(check_mask_ext)
-                            error([sprintf('Mask not exist:\n'), sprintf('%s\n', mask_all_uni{check_mask_ext})]);
-                        end
-                        
-                        mask_all_uni_new = cell(size(mask_all_uni));
-                        for n = 1:numel(mask_all_uni)
-                            if ~isempty(mask_all_uni{n})
-                                [path_tmp, fn_tmp, ext] = fileparts(mask_all_uni{n}); %#ok<*ASGLU>
-                                
-                                mask_all_uni_new{n} = fullfile(working_dir, [fn_tmp, ext]);
-                                
-                                if (exist(mask_all_uni_new{n}, 'file') ~= 2)
-                                    copyfile(mask_all_uni{n}, working_dir);
-                                end
-                            end
-                        end
-                        
-                        load_hdr_func = @load_nii_hdr_img_raw_c; % support nii, nii.gz, img, img.gz, hdr, hdr.gz
-                        mask_all_uni_new_hdr = cellfun(@load_nii_hdr_img_raw_c, mask_all_uni_new);
                         
                         if (data_input.is4d == 1)
                             sample_file = run_data.subjs.files{1};
@@ -169,29 +149,32 @@ if any(process_ind)
                             sample_file = run_data.subjs.files{1}{1};
                         end
                         
-                        data_sample_hdr = load_hdr_func(sample_file);
-                        sts = brant_spm_check_orientations([mask_all_uni_new_hdr; data_sample_hdr]);
-                        
-                        % reslice if mask's size doesn't match with data
-                        if (sts == 0)
-                            img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
-
-                            mask_all_new = cell(size(mask_all));
-                            for n = 1:numel(mask_all)
-                                if ~isempty(mask_all{n})
-                                    [path_tmp, fn_tmp, ext] = fileparts(mask_all{n});
-                                    mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
-                                end
-                            end
-
-                            mask_all_new_resliced = brant_reslice(sample_file, mask_all_new, img_size_str);
+                        data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
+                        img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
                             
-                            run_data.denoise.subj.wb_mask = mask_all_new_resliced{1, 1};
-                            run_data.denoise.detrend_mask.gs = mask_all_new_resliced{2, 1};
-                            run_data.denoise.detrend_mask.wm = mask_all_new_resliced{3, 1};
-                            run_data.denoise.detrend_mask.csf = mask_all_new_resliced{4, 1};
-                            run_data.denoise.detrend_mask.user_mask = mask_all_new_resliced{5, 1};
+                        for n = 1:numel(mask_all)
+                            
+                            if isempty(mask_all{n})
+                                continue;
+                            end
+                            
+                            mask_tmp_hdr = load_nii_hdr_img_raw_c(mask_all{n});
+                                                        
+                            [path_tmp, fn_tmp, ext] = fileparts(mask_all{n}); %#ok<ASGLU>
+                            copyfile(mask_all{n}, working_dir);
+                            mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
+                            
+                            sts = brant_spm_check_orientations([mask_tmp_hdr; data_sample_hdr]);
+                            if sts == false
+                                mask_all_new{n} = brant_reslice(sample_file, mask_all_new{n}, img_size_str);
+                            end
                         end
+                                                
+                        run_data.denoise.subj.wb_mask = mask_all_new{1, 1};
+                        run_data.denoise.detrend_mask.gs = mask_all_new{2, 1};
+                        run_data.denoise.detrend_mask.wm = mask_all_new{3, 1};
+                        run_data.denoise.detrend_mask.csf = mask_all_new{4, 1};
+                        run_data.denoise.detrend_mask.user_mask = mask_all_new{5, 1};
                     end
                     
                     jobman.(processes_curr{m}) = run_data.(processes_curr{m});

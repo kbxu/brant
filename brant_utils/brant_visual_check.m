@@ -19,7 +19,7 @@ if ~isempty(mask_fn)
     [mask_hdr, mask_ind, size_mask, mask_fn] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir); %#ok<ASGLU>
 end
 
-brant_screen_shots_demo(nifti_list, subj_ids, mask_fn, outdir, slices)
+brant_screen_shots_demo(nifti_list, subj_ids, mask_fn, outdir, slices, color_str)
 
 if ortho_view_ind == 1
     if ~isempty(mask_fn)

@@ -1,7 +1,7 @@
 function brant_screen_shots_demo(nifti_list, subj_ids, mask_overlay, outdir, slices, varargin)
 
 img_strs = {'axial', 'coronal', 'sagital'};
-outdir_ss = brant_make_outdir(outdir, [img_strs, {'full'}]);
+outdir_ss = brant_make_outdir(outdir, [img_strs, {'ortho'}]);
 
 if numel(slices) == 4
     n_tp = slices(4);

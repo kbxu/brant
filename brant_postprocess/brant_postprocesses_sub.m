@@ -23,7 +23,9 @@ fig_pos = [pos_par(1) + pos_par(3) + 15, pos_par(4) + pos_par(2) - fig.height, f
 
 h_fig = findobj(0, 'Name', dlg_title, 'Tag', dlg_title);
 if ~isempty(h_fig)
+    brant_config_figure(h_fig, 'pixels');
     set(h_fig, 'Position', fig_pos);
+    brant_config_figure(h_fig, 'normalized');
     figure(h_fig);
     return;
 end
@@ -850,7 +852,7 @@ for m = 1:size(prompt, 1)
                 if any(strcmpi({'mode_display:popupmenu', 'modules_info:popupmenu',...
                                 'color_type_pos:popupmenu', 'color_type_neg:popupmenu', 'material_type:popupmenu',...
                                 'stat_type:popupmenu', 'shading_type:popupmenu',...
-                                'lighting_type:popupmenu', 'matrix_type:popupmenu', 'mask_color:popupmenu'}, ui_tags{m}{n}))
+                                'lighting_type:popupmenu', 'matrix_type:popupmenu', 'mask_color:popupmenu', 'view:popupmenu'}, ui_tags{m}{n}))
                     pop_str = prompt_tmp{1}(2:end);
                     pop_val_ind = find(strcmpi(jobman.(prompt_tmp{1}{1}{1}), pop_str));
                 else

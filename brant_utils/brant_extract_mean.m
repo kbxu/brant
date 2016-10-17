@@ -1,4 +1,5 @@
 function brant_extract_mean(jobman)
+% mask to mask correlation matrix index
 
 outdir = jobman.out_dir{1};
 if exist(outdir, 'dir') ~= 7, mkdir(outdir); end
@@ -9,6 +10,11 @@ roi_info = jobman.roi_info{1};
 
 if jobman.matrix == 1
     matrix_ind = 1;
+    if isempty(jobman.corr_mask{1})
+        corr_mask = true;
+    else
+        corr_mask = load(jobman.corr_mask{1}) ~= 0;
+    end
 else
     volume_ind = 1;
     rois = jobman.rois;
@@ -32,7 +38,7 @@ end
 subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
 
 if matrix_ind == 1
-    [data_2d_mat, corr_ind] = brant_load_matrices_to_2d(mat_list, jobman.sym_ind, 0);
+    [data_2d_mat, corr_ind] = brant_load_matrices_to_2d(mat_list, jobman.sym_ind, 0, corr_mask);
 elseif volume_ind == 1
     
     show_msg = 1;

@@ -42,6 +42,7 @@ else
     bat_fn = fullfile(out_dir, 'brant_circos_cmd.sh');
     fid = fopen(bat_fn, 'wt');
     fprintf(fid, '#!/usr/bin/env bash\n\n');
+    fprintf(fid, 'chmod u+x "%s"\n', fullfile(circos_dir, 'circos'));
     fprintf(fid, 'circosbin="%s"\n', fullfile(circos_dir, 'circos'));
     fprintf(fid, 'circosconf="%s"\n', fullfile(conf_dir, 'circos.conf'));
     fprintf(fid, 'labelfile="%s"\n', label_fn);

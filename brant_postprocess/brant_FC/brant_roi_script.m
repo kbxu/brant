@@ -66,13 +66,13 @@ jobman.input_nifti.filetype = split_prefix{1};
 nifti_list = brant_get_subjs(jobman.input_nifti);
 % check for ROI and mask with one of the data
 [unused1, unused2, unused3, rois_resliced] = brant_check_load_mask(rois{1}, nifti_list{1}, outdir); %#ok<ASGLU>
-[mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir);
+[mask_hdr, mask_ind, size_mask, mask_new] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir);
 
 if (roi_wise_ind == 1)
     % call external functoin
     jobman_tmp.lab_c = 1;
     jobman_tmp.sep_c = 0;
-    jobman_tmp.mask_in{1} = mask_fn;
+    jobman_tmp.mask_in{1} = mask_new;
     jobman_tmp.cs_thr = cs_thr;
     jobman_tmp.template_img{1} = rois_resliced;
     jobman_tmp.template_info{1} = roi_info_fn;

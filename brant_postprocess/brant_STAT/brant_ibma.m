@@ -5,12 +5,13 @@ function brant_ibma(jobman)
 
 brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!\n');
 brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
-brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 if jobman.matrix == 1
     input_type = 'mat';
+    brant_check_empty(jobman.input_matrix.dirs{1}, '\tPlease input data directories!\n');
 elseif jobman.volume == 1
     input_type = 'voxel';
+    brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 else
     error('Unknown datatype for IBMA!');
 end

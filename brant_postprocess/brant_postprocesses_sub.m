@@ -198,11 +198,11 @@ switch(lw_uiname)
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if (val_mat == 1)
-            obj_strs{1} = {'input_nifti.', 'rois:', 'mask'}; % dual
-            obj_strs{2} = {'input_matrix.', 'sym_ind'}; % self
+            obj_strs{1} = {'input_nifti.', 'rois:'}; % dual
+            obj_strs{2} = {'input_matrix.', 'sym_ind', 'corr_mask'}; % self
         else
-            obj_strs{1} = {'input_matrix.', 'sym_ind'}; % dual
-            obj_strs{2} = {'input_nifti.', 'rois:', 'mask'}; % self
+            obj_strs{1} = {'input_matrix.', 'sym_ind', 'corr_mask'}; % dual
+            obj_strs{2} = {'input_nifti.', 'rois:'}; % self
         end
     case 'roi mapping'
         h_rand = findobj(hfig_inputdlg, 'string', 'random');

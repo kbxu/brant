@@ -161,7 +161,10 @@ if any(process_ind)
                             mask_tmp_hdr = load_nii_hdr_img_raw_c(mask_all{n});
                                                         
                             [path_tmp, fn_tmp, ext] = fileparts(mask_all{n}); %#ok<ASGLU>
-                            copyfile(mask_all{n}, working_dir);
+                            
+                            if exist(fullfile(working_dir, [fn_tmp, ext]), 'file') ~= 2
+                                copyfile(mask_all{n}, working_dir);
+                            end
                             mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
                             
                             sts = brant_spm_check_orientations([mask_tmp_hdr; data_sample_hdr]);

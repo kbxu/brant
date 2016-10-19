@@ -4,8 +4,8 @@ data: matrix
     symmetric matrix: check to extract the upper right matrix's elements, uncheck to extract all elements
     filetype: filetype
     data dir: Input directories of matrices.
-	
-	
+	roi info*: a csv with at least one column start with "label"
+	corr mask: e.g. a matrix mask used to find significant links instead of all links
 data: volume
     roi file: ROI file used for extracting mean intensity in each roi tagged by number.
     roi info: labels of tagged ROIs. (optional)

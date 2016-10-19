@@ -256,11 +256,19 @@ for m = 1:num_subj
                 reg_gr = [];
             end
             
-            reg_mat = [ones(num_tps, 1), detrend_reg, reg_gr, motion_reg];
-            if (size(reg_mat, 2) > 1)
-                reg_mat_nor = bsxfun(@rdivide, reg_mat, max(abs(reg_mat), [], 1));
-                beta_reg = reg_mat_nor(temp_mask, :) \ nii_2d_calc(temp_mask, :);
-                res_data = nii_2d_calc - reg_mat_nor * beta_reg;
+            %whitten regressors
+            reg_mat_tmp = [detrend_reg, reg_gr, motion_reg];
+            
+            
+%             reg_mat = [ones(num_tps, 1), detrend_reg, reg_gr, motion_reg];
+            if ~isempty(reg_mat_tmp)
+                reg_mat_demean = bsxfun(@minus, reg_mat_tmp, mean(reg_mat_tmp));
+                reg_mat_nor = bsxfun(@rdivide, reg_mat_demean, max(abs(reg_mat_demean), [], 1));
+                reg_mat = [ones(num_tps, 1), reg_mat_nor];
+                
+%                 reg_mat_nor = bsxfun(@rdivide, reg_mat, max(abs(reg_mat), [], 1));
+                beta_reg = reg_mat(temp_mask, :) \ nii_2d_calc(temp_mask, :);
+                res_data = nii_2d_calc - reg_mat * beta_reg;
             else
                 res_data = nii_2d_calc;
             end

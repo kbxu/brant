@@ -4,10 +4,13 @@ brant_check_empty(jobman.input_nifti.mask{1}, '\tA whole brain mask is expected!
 brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n');
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
+outdir = jobman.out_dir{1};
+save(fullfile(outdir, 'jobman_reho.mat'), 'jobman');
+
 % tc_pts = 1; %jobman.timepoint;
 mask_fn = jobman.input_nifti.mask{1};
 totalvoxel = jobman.neighbour_num + 1;
-outdir = jobman.out_dir{1};
+
 nor_ind = jobman.nor;
 
 sm_ind = jobman.sm_ind;

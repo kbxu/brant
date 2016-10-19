@@ -6,8 +6,8 @@ if exist(outdir, 'dir') ~= 7, mkdir(outdir); end
 
 matrix_ind = 0;
 volume_ind = 0;
+roi_index = jobman.roi_index{1};
 roi_info = jobman.roi_info{1};
-
 if jobman.matrix == 1
     matrix_ind = 1;
     if isempty(jobman.corr_mask{1})
@@ -26,9 +26,11 @@ if volume_ind == 1
     [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir); %#ok<ASGLU>
 elseif matrix_ind == 1
-    roi_mat = importdata(roi_info, '\n');
-    roi_info_tmp = regexpi(roi_mat, '[\s,]+', 'split');
-    rois_str = cellfun(@(x) x{2}, roi_info_tmp, 'UniformOutput', false);
+    node_out = brant_parse_node(roi_info);
+    rois_str = node_out.label;
+%     roi_mat = importdata(roi_info, '\n');
+%     roi_info_tmp = regexpi(roi_mat, '[\s,]+', 'split');
+%     rois_str = cellfun(@(x) x{2}, roi_info_tmp, 'UniformOutput', false);
     [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
 else
     error('Unknown input!');
@@ -42,7 +44,7 @@ if matrix_ind == 1
 elseif volume_ind == 1
     
     show_msg = 1;
-    [rois_inds, rois_str] = brant_get_rois(rois, size_mask, roi_info, show_msg);
+    [rois_inds, rois_str] = brant_get_rois(rois, size_mask, roi_index, show_msg);
 %     num_roi = numel(rois_str);
     mask_good_binary = zeros(size_mask);
     mask_good_binary(mask_ind) = 1:numel(mask_ind);

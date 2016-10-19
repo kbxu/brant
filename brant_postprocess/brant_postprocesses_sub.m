@@ -24,7 +24,8 @@ fig_pos = [pos_par(1) + pos_par(3) + 15, pos_par(4) + pos_par(2) - fig.height, f
 h_fig = findobj(0, 'Name', dlg_title, 'Tag', dlg_title);
 if ~isempty(h_fig)
     brant_config_figure(h_fig, 'pixels');
-    set(h_fig, 'Position', fig_pos);
+    pos_size_fig = get(h_fig, 'Position');
+    set(h_fig, 'Position', [fig_pos(1:2), pos_size_fig(3:4)]);
     brant_config_figure(h_fig, 'normalized');
     figure(h_fig);
     return;
@@ -198,11 +199,11 @@ switch(lw_uiname)
         h_mat = findobj(hfig_inputdlg, 'string', 'matrix');
         val_mat = get(h_mat, 'Value');
         if (val_mat == 1)
-            obj_strs{1} = {'input_nifti.', 'rois:'}; % dual
-            obj_strs{2} = {'input_matrix.', 'sym_ind', 'corr_mask'}; % self
+            obj_strs{1} = {'input_nifti.', 'rois:', 'roi_index'}; % dual
+            obj_strs{2} = {'input_matrix.', 'sym_ind', 'corr_mask', 'roi_info'}; % self
         else
-            obj_strs{1} = {'input_matrix.', 'sym_ind', 'corr_mask'}; % dual
-            obj_strs{2} = {'input_nifti.', 'rois:'}; % self
+            obj_strs{1} = {'input_matrix.', 'sym_ind', 'corr_mask', 'roi_info'}; % dual
+            obj_strs{2} = {'input_nifti.', 'rois:', 'roi_index'}; % self
         end
     case 'roi mapping'
         h_rand = findobj(hfig_inputdlg, 'string', 'random');
@@ -1288,7 +1289,6 @@ switch(mode)
         if isempty(nm_tmp)
             hfig_inputdlg = brant_net_measures_setup(h_parent);
             set(h_parent, 'DeleteFcn', {@delete_figure, hfig_inputdlg});
-%             uiwait(hfig_inputdlg);
         else
             figure(nm_tmp);
         end

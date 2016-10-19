@@ -63,14 +63,17 @@ if strcmp(input_type, 'mat')
     tail_est = tail_tmp{1};
     num_tail = numel(tail_est);
     
-    N1 = arrayfun(@(x) sum(strcmp(group_names{1}, x.subjs(:, 2))), mats_info);
-    N2 = arrayfun(@(x) sum(strcmp(group_names{2}, x.subjs(:, 2))), mats_info);
-        
+    if any([fem_ind, mem_ind])
+        N1 = arrayfun(@(x) sum(strcmp(group_names{1}, x.subjs(:, 2))), mats_info);
+        N2 = arrayfun(@(x) sum(strcmp(group_names{2}, x.subjs(:, 2))), mats_info);
+    end
+    
     t_cell = arrayfun(@(x) x.t_rst, mats_info, 'UniformOutput', false);
     t_mats = cat(3, t_cell{:});
     
-    df_cell = arrayfun(@(x) x.df, mats_info, 'UniformOutput', false); %%
-    df = cat(3, df_cell{:});
+    df = arrayfun(@(x) x.df, mats_info);    
+%     df_cell = arrayfun(@(x) x.df, mats_info, 'UniformOutput', false); %%
+%     df = cat(3, df_cell{:});
     
     for m = 1:num_tail
         p_mats_tmp = arrayfun(@(x) x.p_rst_unc{m}, mats_info, 'UniformOutput', false);
@@ -113,10 +116,11 @@ elseif strcmp(input_type, 'voxel')
     group1_org = cell2mat(tbl_info(2:end, tbl_ind{2}));
     group2_org = cell2mat(tbl_info(2:end, tbl_ind{3}));
     
-    N1 = group1_org(cell2mat(subj_ind));
-    N2 = group2_org(cell2mat(subj_ind));
-    
-    arrayfun(@(x, y, z) fprintf('Center: %s, group1: %d, group2: %d\n', x{1}, y, z), subj_ids_org, N1, N2);
+    if any([fem_ind, mem_ind])
+        N1 = group1_org(cell2mat(subj_ind));
+        N2 = group2_org(cell2mat(subj_ind));
+        arrayfun(@(x, y, z) fprintf('Center: %s, group1: %d, group2: %d\n', x{1}, y, z), subj_ids_org, N1, N2);
+    end
     
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(jobman.input_nifti.mask{1}, nifti_list{1}, outdir);
     
@@ -174,75 +178,41 @@ fprintf('\n');
 size_t_mat = size(t_mats);
 dim_t_mats = length(size_t_mat);
 
-if dim_t_mats == 3
-    upper_ind = triu(ones(size_t_mat(1)), 1) == 1;
-    mat_ind = find(upper_ind);
-end
-diag_ind = eye(size_t_mat(1)) > 0.5;
 rep_size = [ones(1, dim_t_mats - 1), nStudies];
         
 if stouffer_ind == 1
     
-    fprintf('\tCalculating Stourffer''s meta-analysis on %d studies\n', nStudies);
+    fprintf('\tCalculating Stouffer''s meta-analysis on %d studies\n', nStudies);
     if dim_t_mats == 4
         Timgs_sum = 0;
         for m = 1:nStudies
             Timgs_sum = Timgs_sum + spm_t2z(t_mats(:, :, :, m), df(m));
         end
     elseif dim_t_mats == 3
-        Timgs_sum_tmp = 0;
-        if numel(unique(df_cell)) == 1
-            t_sum_tmp = cellfun(@(x, y) spm_t2z(x, y), t_cell, df_cell, 'UniformOutput', false);
-            t_sum_tmp2 = cat(3, t_sum_tmp{:});
-            Timgs_sum = sum(t_sum_tmp2, 3);
-        else
-            t_sum_tmp = 0;
-            for m = 1:nStudies
-                t_sum_tmp = t_sum_tmp + arrayfun(@(x, y) spm_t2z(x, y), t_cell{m}(mat_ind), df_cell{m}(mat_ind));
-            end
-            Timgs_sum = zeros(size_t_mat(1));
-            Timgs_sum(mat_ind) = Timgs_sum_tmp;
-            Timgs_sum = Timgs_sum + Timgs_sum';
-        end
+        t_sum_tmp = arrayfun(@(x, y) spm_t2z(x{1}, y), t_cell, df, 'UniformOutput', false);
+        Timgs_sum = sum(cat(3, t_sum_tmp{:}), 3);
     end
     
-    stouffer.zval = Timgs_sum / sqrt(nStudies);
-    stouffer.pval = cell(num_tail, 1);
+    stouffer_ibma.zval = Timgs_sum / sqrt(nStudies);
+    stouffer_ibma.pval = cell(num_tail, 1);
     for m = 1:num_tail
         switch(tail_est{m})
             case 'left'
-                stouffer.pval{m} = spm_Ncdf(stouffer.zval);
+                stouffer_ibma.pval{m} = spm_Ncdf(stouffer_ibma.zval);
             case 'right'
-                stouffer.pval{m} = spm_Ncdf(-1 * stouffer.zval);
+                stouffer_ibma.pval{m} = spm_Ncdf(-1 * stouffer_ibma.zval);
             case 'both'
-                stouffer.pval{m} = 2 * spm_Ncdf(-1 * abs(stouffer.zval));
-        end
-        
-        if dim_t_mats == 3
-            stouffer.pval{m}(diag_ind) = 0;
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(stouffer.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        stouffer.([multi_type{n}, '_h']){m} = stouffer.pval{m} <= thr_tmp;
-                        stouffer.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                    else
-                        stouffer.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
+                stouffer_ibma.pval{m} = 2 * spm_Ncdf(-1 * abs(stouffer_ibma.zval));
         end
     end
-        
+    
+    if dim_t_mats == 3
+        stouffer_ibma = brant_save_MulCC_results_mat(stouffer_ibma, tail_est, thr, multi_type, multi_ind, 'stouffer_', outdir);
+        save(outfn, 'stouffer_ibma', '-append');
+    end
     
     if dim_t_mats == 4
-        brant_save_t_vals(multi_ind, thr, stouffer.pval, stouffer.zval, outdir, 'stouffers_z', mask_bin, pix_dim, org_mask, nStudies - 1);
-%         for m = 1:num_tail
-%             brant_save_p_vals(multi_ind, thr, stouffer.pval{m}, outdir, ['stouffers_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
-%         end
-    else
-        save(outfn, 'stouffer', '-append');
+        brant_save_t_vals(multi_ind, thr, stouffer_ibma.pval, stouffer_ibma.zval, outdir, 'stouffers_z', mask_bin, pix_dim, org_mask, nStudies - 1);
     end
 end
 
@@ -250,34 +220,21 @@ if fisher_ind == 1
     
     fprintf('\tCalculating Fisher''s meta-analysis on %d studies\n', nStudies);
     
-    fisher.pval = cell(num_tail, 1);
+    fisher_ibma.pval = cell(num_tail, 1);
     for m = 1:num_tail
         Chi_2 = -2 * sum(log(p_mats.(tail_est{m})), dim_t_mats);
-        fisher.pval{m} = 1 - cdf('chi2', Chi_2, 2 * nStudies);
-        
-        if dim_t_mats == 3
-            fisher.pval{m}(diag_ind) = 0;
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(fisher.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        fisher.([multi_type{n}, '_h']){m} = fisher.pval{m} <= thr_tmp;
-                        fisher.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                    else
-                        fisher.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
-        end
+        fisher_ibma.pval{m} = 1 - cdf('chi2', Chi_2, 2 * nStudies);
+    end
+    
+    if dim_t_mats == 3
+        fisher_ibma = brant_save_MulCC_results_mat(fisher_ibma, tail_est, thr, multi_type, multi_ind, 'fisher_', outdir);
+        save(outfn, 'fisher_ibma', '-append');
     end
     
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, thr, fisher.pval{m}, outdir, ['fisher_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+            brant_save_nii_ibma(fullfile(outdir, ['meta_fisher_', tail_est{m}, '_tail', '_p.nii']), fisher_ibma.pval{m} .* mask_bin, pix_dim, org_mask, []);
         end
-    else
-        save(outfn, 'fisher', '-append');
     end
 end
 
@@ -296,53 +253,37 @@ end
 
 if fem_ind == 1
 
-    fprintf('\tCalculating Fixed Effect Model meta-analysis on %d studies\n', nStudies);
+    fprintf('\tCalculating Fixed Effects Model meta-analysis on %d studies\n', nStudies);
 
-    % fixed effect model
-    fix_effect.tval = beta0 ./ sqrt(v);
-    fix_effect.pval = cell(num_tail, 1);
+    % fixed effects model
+    fixed_effects.tval = beta0 ./ sqrt(v);
+    fixed_effects.pval = cell(num_tail, 1);
     for m = 1:num_tail
         switch(tail_est{m})
-            case 'left'
-                fix_effect.pval{m} = spm_Ncdf(fix_effect.tval);
             case 'right'
-                fix_effect.pval{m} = spm_Ncdf(-1 * fix_effect.tval);
+                fixed_effects.pval{m} = spm_Ncdf(-1 * fixed_effects.tval);
+            case 'left'
+                fixed_effects.pval{m} = spm_Ncdf(fixed_effects.tval);
             case 'both'
-                fix_effect.pval{m} = 2 * spm_Ncdf(-1 * abs(fix_effect.tval));
-        end
-        
-        if dim_t_mats == 3
-            fix_effect.pval{m}(diag_ind) = 0;
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(fix_effect.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        fix_effect.([multi_type{n}, '_h']){m} = fix_effect.pval{m} <= thr_tmp;
-                        fix_effect.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                    else
-                        fix_effect.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
+                fixed_effects.pval{m} = 2 * spm_Ncdf(-1 * abs(fixed_effects.tval));
         end
     end
-
+    
+    if dim_t_mats == 3
+        fixed_effects = brant_save_MulCC_results_mat(fixed_effects, tail_est, thr, multi_type, multi_ind, 'fixed_effect_', outdir);
+        save(outfn, 'fixed_effects', '-append');
+    end
+    
     if dim_t_mats == 4
-        brant_save_t_vals(multi_ind, thr, fix_effect.pval, fix_effect.tval, outdir, 'fem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
-%         for m = 1:num_tail
-%             brant_save_p_vals(multi_ind, thr, fix_effect.pval{m}, outdir, ['fem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
-%         end
-    else
-        save(outfn, 'fix_effect', '-append');
+        brant_save_t_vals(multi_ind, thr, fixed_effects.pval, fixed_effects.tval, outdir, 'fem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
     end
 end
 
 if mem_ind == 1
 
-    fprintf('\tCalculating Mixed Effect Model meta-analysis on %d studies\n', nStudies);
+    fprintf('\tCalculating Mixed Effects Model meta-analysis on %d studies\n', nStudies);
 
-    % random effect model
+    % mixed/random effects model
     a = sum(W, dim_t_mats) - sum(W.^2, dim_t_mats) ./ sum(W, dim_t_mats);
     Q = sum((ES - repmat(beta0, rep_size)).^ 2 ./ Va, dim_t_mats);
     tau2 = zeros(size(Q));
@@ -351,55 +292,31 @@ if mem_ind == 1
     beta2 = sum(ES .* W2, dim_t_mats) ./ sum(W2, dim_t_mats);
     v2 = 1 ./ sum(W2, dim_t_mats);
 
-    mix_effect.pval_h = 1 - cdf('chi2', Q, nStudies - 1);
-    mix_effect.tval = beta2 ./ sqrt(v2);
-    mix_effect.esbar = beta2;
-    
-    sign_t = sign(mix_effect.tval);
-    
+    mixed_effects.pval_ES = 1 - cdf('chi2', Q, nStudies - 1);
+    mixed_effects.tval = beta2 ./ sqrt(v2);
+    mixed_effects.esbar = beta2;
+        
     for m = 1:num_tail
         switch(tail_est{m})
-            case 'left'
-                mix_effect.pval{m} = squeeze(spm_Ncdf(mix_effect.tval));
             case 'right'
-                mix_effect.pval{m} = squeeze(spm_Ncdf(-1 * mix_effect.tval));
+                mixed_effects.pval{m} = squeeze(spm_Ncdf(-1 * mixed_effects.tval));
+            case 'left'
+                mixed_effects.pval{m} = squeeze(spm_Ncdf(mixed_effects.tval));
             case 'both'
-                mix_effect.pval{m} = 2 * spm_Ncdf(-1 * abs(mix_effect.tval));
+                mixed_effects.pval{m} = 2 * spm_Ncdf(-1 * abs(mixed_effects.tval));
         end
-        
-        if dim_t_mats == 3
-            mix_effect.pval_h(diag_ind) = 0;
-            mix_effect.pval{m}(diag_ind) = 0;
-            
-%             tmp = load('D:\Circos Practice\BA_atlas_kb\stat_one_sample\siemens_one_t_unc_mask.txt');
-%             upper_ind = upper_ind & (tmp > 0);
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(mix_effect.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        mix_effect.([multi_type{n}, '_h']){m} = (mix_effect.pval{m} <= thr_tmp) .* sign_t;
-                        mix_effect.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                        dlmwrite(fullfile(outdir, ['mixed_effect_', multi_type{n}, num2str(thr, '_%.2e_h'), '.txt']), mix_effect.([multi_type{n}, '_h']){m})
-                    else
-                        mix_effect.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
-        end
+    end
+    
+    if dim_t_mats == 3
+        mixed_effects = brant_save_MulCC_results_mat(mixed_effects, tail_est, thr, multi_type, multi_ind, 'mixed_effect_', outdir);
+        save(outfn, 'mixed_effects', '-append');
+        dlmwrite(fullfile(outdir, 'meta_mem_ES.txt'), mixed_effects.pval_ES);
     end
         
     if dim_t_mats == 4
-        brant_save_p_vals(multi_ind, thr, mix_effect.pval_h, outdir, 'mem_ES_p_h', mask_bin, pix_dim, org_mask);
-        brant_save_t_vals(multi_ind, thr, mix_effect.pval, mix_effect.tval, outdir, 'mem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
-%         for m = 1:num_tail
-        mix_effect = brant_MulCC_tmp(mix_effect, multi_ind);
-%             brant_save_p_vals(multi_ind, thr, mix_effect.pval{m}, outdir, ['mem_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
-%         end
-%     else
-%         
+        brant_save_nii_ibma(fullfile(outdir, 'meta_mem_ES.nii'), mixed_effects.pval_ES .* mask_bin, pix_dim, org_mask, []);
+        brant_save_t_vals(multi_ind, thr, mixed_effects.pval, mixed_effects.tval, outdir, 'mem_t', mask_bin, pix_dim, org_mask, nStudies - 1);
     end
-    save(outfn, 'mix_effect', '-append');
 end
 
 if friston_ind == 1
@@ -408,95 +325,81 @@ if friston_ind == 1
     
     for m = 1:num_tail
         max_p = max(p_mats.(tail_est{m}), [], dim_t_mats);
-        friston.pval{m} = (max_p).^nStudies;
-        
-        if dim_t_mats == 3
-            friston.pval{m}(diag_ind) = 0;
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(friston.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        friston.([multi_type{n}, '_h']){m} = friston.pval{m} <= thr_tmp;
-                        friston.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                    else
-                        friston.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
-        end
+        friston_ibma.pval{m} = (max_p).^nStudies;
     end
     
+    if dim_t_mats == 3
+        friston_ibma = brant_save_MulCC_results_mat(friston_ibma, tail_est, thr, multi_type, multi_ind, 'friston_', outdir);
+        save(outfn, 'friston_ibma', '-append');
+    end
+        
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, thr, friston.pval{m}, outdir, ['friston_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
+            brant_save_nii_ibma(fullfile(outdir, ['meta_friston_', tail_est{m}, '_tail', '_p.nii']), friston_ibma.pval{m} .* mask_bin, pix_dim, org_mask, []);
         end
-    else
-        save(outfn, 'friston', '-append');
     end
 end
 
 if nichols_ind == 1
-    fprintf('\tCalculating nichols''s meta-analysis on %d studies\n', nStudies);
+    fprintf('\tCalculating Nichols''s meta-analysis on %d studies\n', nStudies);
     
     for m = 1:num_tail
-        nichols.pval{m} = max(p_mats.(tail_est{m}), [], dim_t_mats);
-        nichols.pval{m}(diag_ind) = 0;
-        
-        if dim_t_mats == 3
-            nichols.pval{m}(diag_ind) = 0;
-            
-            for n = 1:numel(multi_type)
-                if multi_ind(n) == 1
-                    [thr_tmp, sts] = brant_MulCC(nichols.pval{m}(upper_ind), thr, multi_type{n});
-                    if sts == 1
-                        nichols.([multi_type{n}, '_h']){m} = nichols.pval{m} <= thr_tmp;
-                        nichols.([multi_type{n}, '_h']){m}(diag_ind) = false;
-                    else
-                        nichols.([multi_type{n}, '_h']){m} = false(size_t_mat(1:2));
-                    end
-                end
-            end
-        end
+        nichols_ibma.pval{m} = max(p_mats.(tail_est{m}), [], dim_t_mats);
+    end
+    
+    if dim_t_mats == 3
+        nichols_ibma = brant_save_MulCC_results_mat(nichols_ibma, tail_est, thr, multi_type, multi_ind, 'nichols_', outdir);
+        save(outfn, 'nichols_ibma', '-append');
     end
     
     if dim_t_mats == 4
         for m = 1:num_tail
-            brant_save_p_vals(multi_ind, thr, nichols.pval{m}, outdir, ['nichols_p_', tail_est{m}, '_tail'], mask_bin, pix_dim, org_mask);
-        end
-    else
-        save(outfn, 'nichols', '-append');
-    end
-end
-
-disp([9, 'Finished'])
-
-function mth_struc = brant_MulCC_tmp(mth_struc, multi_ind)
-
-if any(multi_ind)
-    multi_type = {'fdrID', 'fdrN', 'bonf'};
-    for n = 1:numel(multi_type)
-        if multi_ind(n) == 1
-            mth_struc.(multi_type{n}) = 1;
+            brant_save_nii_ibma(fullfile(outdir, ['meta_nichols_', tail_est{m}, '_tail', '_p.nii']), nichols_ibma.pval{m} .* mask_bin, pix_dim, org_mask, []);
         end
     end
 end
 
+fprintf('\tFinished!\n');
+
+function ibma_model = brant_save_MulCC_results_mat(ibma_model, tail_est, thr, multi_type, multi_ind, prefix, outdir)
+% use one tail results as output
+% right - left !
+
+size_mat = size(ibma_model.pval{1});
+upper_ind = triu(true(size_mat), 1);
+
+right_ind = strcmpi(tail_est, 'right');
+left_ind = strcmpi(tail_est, 'left');
+
+h_unc_one_tail = (ibma_model.pval{right_ind} <= thr) - (ibma_model.pval{left_ind} <= thr);
+if any(h_unc_one_tail(:) ~= 0)
+    dlmwrite(fullfile(outdir, [prefix, num2str(thr, '%.2g_h'), '.txt']), h_unc_one_tail);
+end
+
+for m = 1:numel(multi_type)
+    if multi_ind(m) == 1
+        [thr_r, sts_r] = brant_MulCC(ibma_model.pval{right_ind}(upper_ind), thr, multi_type{m});
+        [thr_l, sts_l] = brant_MulCC(ibma_model.pval{left_ind}(upper_ind), thr, multi_type{m});
+        
+        if any([sts_r, sts_l] ~= -1)
+            ibma_model.([multi_type{m}, '_h']) = (ibma_model.pval{right_ind} <= thr_r) - (ibma_model.pval{left_ind} <= thr_l);
+            dlmwrite(fullfile(outdir, [prefix, multi_type{m}, num2str(thr, '_%.2g_h'), '.txt']), ibma_model.([multi_type{m}, '_h']));
+        else
+            ibma_model.([multi_type{m}, '_h']) = [];
+        end
+    end
+end
 
 function brant_save_t_vals(multi_ind, thr, pval, tval, tardir, tok, mask_bin, pix_dim, org_mask, df)
 
 filename = fullfile(tardir, ['meta_', tok, '_t.nii']);
-nii = make_nii(tval .* mask_bin, pix_dim, org_mask, 16, 'SPM_Z[1]');
-save_nii(nii, filename);
+brant_save_nii_ibma(filename, tval, pix_dim, org_mask, 'SPM_Z[1]');
 
-% for m = 1:numel(tails)
 p_mask = (pval{1} > 0 & pval{1} < thr) | (pval{2} > 0 & pval{2} < thr);
 tval_tmp = tval .* p_mask .* mask_bin;
 
 filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', num2str(thr, '%.2e'), '.nii']);
-nii = make_nii(tval_tmp, pix_dim, org_mask, 16, 'SPM_Z[1]');
-save_nii(nii, filename);
-
+brant_save_nii_ibma(filename, tval_tmp, pix_dim, org_mask, 'SPM_Z[1]');
 
 if any(multi_ind)
     multi_type = {'fdrID', 'fdrN', 'bonf'};
@@ -507,18 +410,15 @@ if any(multi_ind)
             t_mat_thres = brant_multi_thres_t(p_vec_L, p_vec_R, thr, multi_type{n}, tval);
             
             if ~isempty(t_mat_thres)
-                filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', multi_type{n}, num2str(thr, '_%.2e'), '.nii']);
-                nii = make_nii(t_mat_thres, pix_dim, org_mask, 16, 'SPM_Z[1]');
-                save_nii(nii, filename);
+                filename = fullfile(tardir, ['meta_', tok, '_t', '_masked_', multi_type{n}, num2str(thr, '_%.2g'), '.nii']);
+                brant_save_nii_ibma(filename, t_mat_thres, pix_dim, org_mask, 'SPM_Z[1]');
             end
         end
     end
 end
-% end
 
+function brant_save_nii_ibma(filename, img, pix_dim, org_mask, imginfo)
 
-function brant_save_p_vals(multi_ind, thr, pval, tardir, tok, mask_bin, pix_dim, org_mask)
-
-filename = fullfile(tardir, ['meta_', tok, '_p.nii']);
-nii = make_nii(pval .* mask_bin, pix_dim, org_mask, 16);
+% filename = fullfile(tardir, ['meta_', tok, '_p.nii']);
+nii = make_nii(img .* mask_bin, pix_dim, org_mask, 16, imginfo);
 save_nii(nii, filename);

@@ -50,13 +50,11 @@ if (one_samp_ind == 1)
             if ~isempty(reg_good_subj)
                 % mean centering covariates
                 reg_tmp = reg_good_subj(group_ind, :);
-                mean_reg = mean(reg_tmp, 1);
-                reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean_reg);
-                
-                
-                grp_reg_m = [reg_good_subj_nm, ones(sum(group_ind), 1)];
+                reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean(reg_tmp, 1));
+                                
+                grp_reg_m = [ones(sum(group_ind), 1), reg_good_subj_nm];
                 glm_beta = grp_reg_m \ data_2d_raw(group_ind, :);
-                data_mat_2d = data_2d_raw(group_ind, :) - grp_reg_m(:, 1:end-1) * glm_beta(1:end-1, :);
+                data_mat_2d = data_2d_raw(group_ind, :) - grp_reg_m(:, 2:end) * glm_beta(2:end, :);
             else
                 grp_reg_m = [];
                 data_mat_2d = data_2d_raw(group_ind, :);
@@ -188,12 +186,11 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 if ~isempty(reg_good_subj)
                     % mean centering covariates
                     reg_tmp = reg_good_subj(group_inds, :);
-                    mean_reg = mean(reg_tmp, 1);
-                    reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean_reg);
+                    reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean(reg_tmp, 1));
 
-                    grp_reg_m = [reg_good_subj_nm, ones(sum(group_inds), 1)];
+                    grp_reg_m = [ones(sum(group_inds), 1), reg_good_subj_nm];
                     glm_beta = grp_reg_m \ corr_2d_tmp;
-                    data_mat_2d = corr_2d_tmp - grp_reg_m(:, 1:end-1) * glm_beta(1:end-1, :);
+                    data_mat_2d = corr_2d_tmp - grp_reg_m(:, 2:end) * glm_beta(2:end, :);
                 else
                     grp_reg_m = [];
                     data_mat_2d = corr_2d_tmp;

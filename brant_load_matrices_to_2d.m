@@ -17,7 +17,7 @@ else
     corr_ind = true(size_sample) & corr_mask;
 end
 
-data_2d_mat = cellfun(@(x) brant_load_single_mat(x, corr_ind), mat_list, 'UniformOutput', false);
+data_2d_mat = arrayfun(@(x, y) brant_load_single_mat(x{1}, corr_ind, y, numel(mat_list)), mat_list, (1:numel(mat_list))', 'UniformOutput', false);
 
 if paired_ind == 0
     data_2d_mat = cat(1, data_2d_mat{:});
@@ -31,8 +31,8 @@ end
 % end
 
 
-function mat_1d = brant_load_single_mat(mat_file, corr_ind)
+function mat_1d = brant_load_single_mat(mat_file, corr_ind, num_ind, num_tot)
 
-fprintf('\tLoading %s\n', mat_file);
+fprintf('\tLoading %d/%d: %s\n', num_ind, num_tot, mat_file);
 mat_tmp = load(mat_file);
 mat_1d = mat_tmp(corr_ind)';

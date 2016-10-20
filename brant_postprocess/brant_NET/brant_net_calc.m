@@ -126,6 +126,8 @@ function net = brant_measure(net_measure_option, subj_id, gMatrix, net_type)
 
 N = size(gMatrix, 1);
 
+corr_ind = triu(true(N, N), 1);
+
 if ~any(gMatrix(:))
     net = [];
     return;
@@ -188,10 +190,10 @@ if any([net_measure_option.local_efficiency,...
     end
     
     if (net_measure_option.global_efficiency == 1)
-        eff_mat = 1./ dist;
+        eff_mat = 1 ./ dist;
         eff_mat(~isfinite(eff_mat)) = 0;
         net.global_efficiency.nodal = sum(eff_mat, 2) / (N - 1);
-        net.global_efficiency.global = mean(net.global_efficiency.nodal);
+        net.global_efficiency.global = 2 * sum(eff_mat(corr_ind)) / (N * (N - 1));
     end
 end
 

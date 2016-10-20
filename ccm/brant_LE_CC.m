@@ -43,7 +43,8 @@ for m = 1:N
         end
         
         if (LE_ind == 1)
-            effi = 1./graphallshortestpaths(sparse(temp));
+            effi = 1 ./ graphallshortestpaths(sparse(temp), 'Directed', false);
+            effi(~isfinite(effi)) = 0;
             LE.nodal(m) = sum(effi(:)) / num_tot;
         end
     end

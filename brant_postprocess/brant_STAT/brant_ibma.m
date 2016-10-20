@@ -420,5 +420,5 @@ end
 function brant_save_nii_ibma(filename, img, pix_dim, org_mask, imginfo)
 
 % filename = fullfile(tardir, ['meta_', tok, '_p.nii']);
-nii = make_nii(img .* mask_bin, pix_dim, org_mask, 16, imginfo);
+nii = make_nii(img, pix_dim, org_mask, 16, imginfo);
 save_nii(nii, filename);

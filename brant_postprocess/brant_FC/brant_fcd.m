@@ -71,7 +71,6 @@ for mm = 1:numel(split_prefix)
         if numel(split_prefix) > 1
             fprintf('\n\tFCD is running... logs will be output when finished.\n');
             system(['cmd /C', 32, '"', bat_file, '"']);
-%             system(bat_file);
         else
             system(['start', 32, '"brant fcd" cmd.exe /K', 32, '"', bat_file, '"']);
         end
@@ -90,8 +89,9 @@ for mm = 1:numel(split_prefix)
         fclose(fid);
         
         if numel(split_prefix) > 1
-            fprintf('\n\tFCD is running... logs will be output when finished.\n');
-            system(['sh', 32, bat_file]);
+            fprintf('Please open a shell command window, cd to %s,\nand run sh fcd.sh\n', out_dir_tmp);
+%             fprintf('\n\tFCD is running... logs will be output when finished.\n');
+%             system(['sh', 32, bat_file]);
         end
     else
         error('Not supported platform!');

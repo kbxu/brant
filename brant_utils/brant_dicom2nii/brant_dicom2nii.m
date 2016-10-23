@@ -123,7 +123,25 @@ if ((delete_ind == 1) && (del_tps > 0))
         for m = 1:num_subj
             if (nifti_tps(m) > del_tps)
                 for n = (del_tps + 1):nifti_tps(m)
-                    copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n - del_tps, '_%04d'), '.nii']))
+                    if strcmpi(nifti_list{m}{n}(end-2:end), 'nii')
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.nii']));
+                    elseif strcmpi(nifti_list{m}{n}(end-5:end), 'nii.gz')
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.nii.gz']));
+                    elseif strcmpi(nifti_list{m}{n}(end-5:end), 'hdr.gz')
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.hdr.gz']));
+                        copyfile([nifti_list{m}{n}(1:end-6), 'img.gz'], fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.img.gz']));
+                    elseif strcmpi(nifti_list{m}{n}(end-5:end), 'img.gz')
+                        copyfile([nifti_list{m}{n}(1:end-6), 'hdr.gz'], fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.hdr.gz']));
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.img.gz']));
+                    elseif strcmpi(nifti_list{m}{n}(end-2:end), 'hdr')
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.hdr']));
+                        copyfile([nifti_list{m}{n}(1:end-3), 'img'], fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.img']));
+                    elseif strcmpi(nifti_list{m}{n}(end-2:end), 'img')
+                        copyfile([nifti_list{m}{n}(1:end-3), 'hdr'], fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.hdr']));
+                        copyfile(nifti_list{m}{n}, fullfile(outdirs_subj{m}, [out_fn, num2str(n, '_%04d'), '.img']));
+                    else
+                        error('Unknown filetype!');
+                    end
                 end
             else
                 warning('First %d timepoints will not be discarded for %s, please check!\n', del_tps, nifti_list{m});

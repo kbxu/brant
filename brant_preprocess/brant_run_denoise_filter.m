@@ -272,6 +272,7 @@ for m = 1:num_subj
             else
                 res_data = nii_2d_calc;
             end
+            clear('nii_2d_calc');
             
             denoise_vol = nan(size_input, 'single');
             denoise_vol(:, wb_mask_final(:)) = res_data;

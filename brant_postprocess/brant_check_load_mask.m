@@ -4,7 +4,7 @@ function [mask_hdr, mask_ind, size_mask, mask_new] = brant_check_load_mask(mask_
 [pth, mask_fn_raw, ext] = fileparts(mask_raw);
 
 if ~(exist(fullfile(outdir, [mask_fn_raw, ext]), 'file') == 2)
-    copyfile(mask_raw, outdir);
+    brant_copyfile(mask_raw, outdir);
 end
 
 mask_fn = fullfile(outdir, [mask_fn_raw, ext]);

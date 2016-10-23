@@ -54,20 +54,20 @@ if any(process_ind)
             if (exist(output_dirs{m}, 'dir') ~= 7)
                 mkdir(output_dirs{m});
                 fprintf('Copy %s to %s.\n', nifti_list_tmp{m}, output_dirs{m});
-                copyfile(nifti_list_tmp{m}, output_dirs{m});
+                brant_copyfile(nifti_list_tmp{m}, output_dirs{m});
             end
         end
         if all(cellfun(@exist, nifti_list_tmp_mat))
             for m = 1:numel(output_dirs)
                 fprintf('Copy %s to %s.\n', nifti_list_tmp_mat{m}, output_dirs{m});
-                copyfile(nifti_list_tmp_mat{m}, output_dirs{m});
+                brant_copyfile(nifti_list_tmp_mat{m}, output_dirs{m});
             end
         end
         
         if (ismember('realign', processes_curr) == 0)
             if any(strcmpi(processes_curr, 'denoise'))
                 if all(cellfun(@exist, nifti_list_rp))
-                    cellfun(@copyfile, nifti_list_rp, output_dirs);
+                    cellfun(@brant_copyfile, nifti_list_rp, output_dirs);
                 end
             end
             
@@ -75,7 +75,7 @@ if any(process_ind)
             if (any(strcmpi(processes_curr, 'normalise')) || any(strcmpi(processes_curr, 'normalise12')))
                 if all(cellfun(@exist, nifti_list_mean))
                     fprintf('Copying source files...\n');
-                    cellfun(@copyfile, nifti_list_mean, output_dirs);
+                    cellfun(@brant_copyfile, nifti_list_mean, output_dirs);
                 end
             end
         end
@@ -163,7 +163,7 @@ if any(process_ind)
                             [path_tmp, fn_tmp, ext] = fileparts(mask_all{n}); %#ok<ASGLU>
                             
                             if exist(fullfile(working_dir, [fn_tmp, ext]), 'file') ~= 2
-                                copyfile(mask_all{n}, working_dir);
+                                brant_copyfile(mask_all{n}, working_dir);
                             end
                             mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
                             

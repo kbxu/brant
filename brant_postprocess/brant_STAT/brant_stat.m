@@ -291,6 +291,7 @@ switch(out_info.data_type)
         % error!?????
         for m = 1:n_field
             net_fn_out = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '.csv']);
+            net_fn_out_stat = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_stat.csv']);
             
             glob_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).global, calc_rsts_all(good_ind));
             glob_vecs_corr_all = nan(size(calc_rsts_all));
@@ -303,6 +304,9 @@ switch(out_info.data_type)
             stat_out = brant_stat_raw(glob_vecs_corr_all, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
                       test_ind, out_info);
             
+            
+            brant_write_csv(net_fn_out_stat, [{'contrast'; 'threshold'; 't'; 'p right'},...
+                                              [[stat_out.constrast_str, cell(1, numel(stat_out.stat_val) - 1)]; thres_title_all; num2cell([stat_out.stat_val; stat_out.p_vec_R])]]);
             for p = 1:2
                 if size_two_thres(p) == 0, continue; end
 

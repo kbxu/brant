@@ -272,7 +272,6 @@ for m = 1:num_subj
             else
                 res_data = nii_2d_calc;
             end
-            clear('nii_2d_calc');
             
             denoise_vol = nan(size_input, 'single');
             denoise_vol(:, wb_mask_final(:)) = res_data;
@@ -292,8 +291,6 @@ for m = 1:num_subj
             clear('res_data');
         else
             vol_calc = nii_2d_calc;
-            clear('nii_2d_calc');
-
             prefix_calc = '';
         end
 
@@ -321,6 +318,8 @@ for m = 1:num_subj
             else
                 brant_save_nii(is4d_ind, data_files{m}, filter_prefix_calc, nii_hdr, filter_vol, outdirs{m}, gzip_ind(2));
             end
+            
+            clear('filter_vol', 'filter_calc', 'vol_calc');
         end
     end
 end

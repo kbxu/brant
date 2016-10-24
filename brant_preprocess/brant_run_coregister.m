@@ -71,5 +71,5 @@ spm_v = spm('ver');
 if strcmpi(spm_v, 'SPM12')
     spm_run_coreg(coreg_infos);
 else
-    spm_run_coreg_estwrite(coreg_infos);
+    spm_run_coreg_estimate(coreg_infos);
 end

@@ -1426,7 +1426,7 @@ field_name = get(obj, 'Userdata');
 str = get(obj, 'String');
 
 table_support = '^.*\.(csv|txt)$';
-nifti_support = '^.*\.(nii|img|nii.gz)$';
+nifti_support = '^.*\.(nii|hdr|img|nii.gz)$';
 
 switch(mode)
     case {'num_short_right', 'num_short_left', 'num_coords', 'num_long', 'num_longest', 'num_bin_num_edit'}

@@ -4,9 +4,9 @@ function data_fig = brant_prep_sync(brant_preps, prep_type)
 switch(prep_type)
     case 'slicetiming'
         brant_preps.denoise.filter.tr = brant_preps.slicetiming.tr;
-    case 'coregister'
-        brant_preps.normalise.subj.filetype_src = brant_preps.coregister.subj.filetype_src; % 'bet*.nii'
-        brant_preps.normalise12.subj.filetype_src = brant_preps.coregister.subj.filetype_src;
+%     case 'coregister'
+%         brant_preps.normalise.subj.filetype_src = brant_preps.coregister.subj.filetype_src; % 'bet*.nii'
+%         brant_preps.normalise12.subj.filetype_src = brant_preps.coregister.subj.filetype_src;
     case 'initial'
         fprintf('Parameters were set to reference values in\nslicetiming (TR), normalise (voxel size), denoise(timepoints, wholebrain mask)');
         brant_preps.denoise.filter.tr = brant_preps.slicetiming.tr;

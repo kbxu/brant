@@ -126,7 +126,7 @@ brant_pps.normalise12.woptions.prefix = 'w';
 % denoise
 % brant_pps.denoise.subj.tsnr_mask = 'none';
 % brant_pps.denoise.subj.tsnr_thres = 20;
-brant_pps.denoise.subj.wb_mask = fullfile(brant_path, 'template', 'fmaskEPI_V2mm.nii.gz');
+brant_pps.denoise.subj.wb_mask = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
 ...brant_pps.denoise.subj.wb_mask_other = '';
 brant_pps.denoise.subj.gsr = 0;
 brant_pps.denoise.subj.nogsr = 0;
@@ -137,7 +137,7 @@ brant_pps.denoise.subj.reslice_mask_ind = 1;
 
 brant_pps.denoise.detrend_mask.tissue_trends_ind = 1;
 brant_pps.denoise.detrend_mask.detrend = 1;
-brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'fmaskEPI_V2mm.nii.gz');
+brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
 brant_pps.denoise.detrend_mask.wm = fullfile(brant_path, 'template', 'mask_WM.nii.gz');
 brant_pps.denoise.detrend_mask.csf = fullfile(brant_path, 'template', 'mask_CSF.nii.gz');
 brant_pps.denoise.detrend_mask.user_mask = '';
@@ -146,8 +146,8 @@ brant_pps.denoise.detrend_mask.tissue_deriv = 1;
 brant_pps.denoise.motion.hm_model_ind = 1;
 brant_pps.denoise.motion.filetype = 'rp*.txt';
 brant_pps.denoise.motion.params_6 = 0;
-brant_pps.denoise.motion.params_12 = 1;
-brant_pps.denoise.motion.params_24 = 0;
+brant_pps.denoise.motion.params_12 = 0;
+brant_pps.denoise.motion.params_24 = 1;
 brant_pps.denoise.motion.scrub_FD = []; %0.5;
 brant_pps.denoise.motion.use_temp_mask = 0;
 

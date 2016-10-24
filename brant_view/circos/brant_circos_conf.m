@@ -24,6 +24,7 @@ label_fn = fullfile(out_dir, 'brant_labels.txt');
 band_fn = fullfile(out_dir, 'brant_band.txt');
 link_fn = fullfile(out_dir, 'brant_links.txt');
 
+out_dir = regexprep(out_dir, '[\/\\]+$', '');
 
 if (ispc == 1)
     bat_fn = fullfile(out_dir, 'brant_circos_cmd.bat');

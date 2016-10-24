@@ -48,7 +48,8 @@ switch(userdata)
         
         prompt{1} = {...
             'reference'           ,	'string'		,	'filetype_ref'  	;...
-            'source'		,	'string'		,	'filetype_src'  	};
+            'source'		,	'string'		,	'filetype_src'  	;...
+            'seg&bet'       ,   'numeric',       'seg_bet_ind'};
         ...'other'         ,   'string'        ,   'filetype_other'
             
     

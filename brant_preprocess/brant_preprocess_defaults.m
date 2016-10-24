@@ -58,6 +58,7 @@ brant_pps.realign.roptions.prefix = 'r';
 %
 brant_pps.coregister.subj.filetype_ref = 'mean*.nii';
 brant_pps.coregister.subj.filetype_src = 'co*.nii';
+brant_pps.coregister.subj.seg_bet_ind = 1; % 1 for segment and bet, 2 for bet only, 0 and others do nothing
 % brant_pps.coregister.subj.filetype_other = '';
 brant_pps.coregister.eoptions.cost_fun = 'nmi';
 brant_pps.coregister.eoptions.sep = [4 2];

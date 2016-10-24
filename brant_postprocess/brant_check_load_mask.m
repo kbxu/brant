@@ -36,6 +36,8 @@ else
     mask_new = mask_fn;
 end
 
+% would induce uncertinty, for each sample, the output mask will be
+% slightly different
 % good_sample_ind = isfinite(sample_nii.img) & (sample_nii.img ~= 0);
 % if ~all(good_sample_ind(:))
 %     mask_nii.img(~good_sample_ind) = 0;

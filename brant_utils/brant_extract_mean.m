@@ -24,6 +24,8 @@ end
 if volume_ind == 1
     jobman.input_nifti.single_3d = 1;
     [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
+    
+    [unused1, unused2, unused3, rois_resliced] = brant_check_load_mask(rois{1}, nifti_list{1}, outdir); %#ok<ASGLU>
     [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir); %#ok<ASGLU>
 elseif matrix_ind == 1
     node_out = brant_parse_node(roi_info);
@@ -44,7 +46,7 @@ if matrix_ind == 1
 elseif volume_ind == 1
     
     show_msg = 1;
-    [rois_inds, rois_str] = brant_get_rois(rois, size_mask, roi_index, show_msg);
+    [rois_inds, rois_str] = brant_get_rois({rois_resliced}, size_mask, roi_index, show_msg);
 %     num_roi = numel(rois_str);
     mask_good_binary = zeros(size_mask);
     mask_good_binary(mask_ind) = 1:numel(mask_ind);

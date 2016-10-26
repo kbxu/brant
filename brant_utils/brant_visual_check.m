@@ -70,7 +70,7 @@ if ortho_view_ind == 1
         curr_set = num_chk;
         curr_tp = 1;
         set(h_chk_fig, 'Userdata', all_tps);
-        set(h_chk_fig, 'KeyReleaseFcn', {@brant_spm_figure_KeyFun, [curr_set, curr_tp, num_subj, curr_tps], subj_ids, nifti_list, mask_fn, color_str});
+        set(h_chk_fig, 'KeyReleaseFcn', {@brant_spm_figure_KeyFun, [curr_set, curr_tp, num_subj, curr_tps], subj_ids, nifti_list, {mask_fn}, color_str});
     end
 end
 

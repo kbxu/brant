@@ -28,11 +28,11 @@ if (coreg_infos.subj.seg_bet_ind == 1) || (coreg_infos.subj.seg_bet_ind == 2)
     file_c3 = brant_get_subjs2(file_dirs, 1, 'c3*.nii');
     if (par == 0)
         for m = 1:numel(file_src)
-            brant_image_calc([file_src(m); file_c1(m); file_c2(m); file_c3(m)], 'betStructImg', file_dirs(m), 'i1.*((i2+i3+i4)>0.5)');
+            brant_image_calc([file_src(m); file_c1(m); file_c2(m); file_c3(m)], 'betStructImg', file_dirs(m), 'i1.*((i2+i3+i4)>0.5)', 0);
         end
     else
         parfor m = 1:numel(file_src)
-            brant_image_calc([file_src(m); file_c1(m); file_c2(m); file_c3(m)], 'betStructImg', file_dirs(m), 'i1.*((i2+i3+i4)>0.5)');
+            brant_image_calc([file_src(m); file_c1(m); file_c2(m); file_c3(m)], 'betStructImg', file_dirs(m), 'i1.*((i2+i3+i4)>0.5)', 0);
         end
     end
     

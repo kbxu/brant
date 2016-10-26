@@ -10,8 +10,6 @@ outdir = jobman.out_dir{1};
 [nifti_list, subj_ids] = brant_get_subjs(jobman.input_nifti);
 [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, outdir);
 
-
-
 tsnr_ts_3d_mean = 0;
 for m = 1:numel(nifti_list)
     
@@ -31,4 +29,10 @@ for m = 1:numel(nifti_list)
 
     fprintf('\t%s finished...\n', subj_ids{m});
 end
+
+if numel(subj_ids) > 1
+    imgsInOrder = cellfun(@(x) fullfile(outdir, ['TSNR_', x, '.nii']), subj_ids, 'UniformOutput', false);
+    brant_image_calc(imgsInOrder, 'mean_TSNR.nii', {outdir}, 'mean(X)', 1);
+end
+
 fprintf('\n\tAll finished.\n');

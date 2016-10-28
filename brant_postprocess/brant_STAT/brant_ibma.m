@@ -113,8 +113,8 @@ elseif strcmp(input_type, 'voxel')
                sprintf('\t%s\n', subj_ids_org{ept_ind})]);
     end
     
-    group1_org = cell2mat(tbl_info(2:end, tbl_ind{2}));
-    group2_org = cell2mat(tbl_info(2:end, tbl_ind{3}));
+    group1_org = cellfun(@str2num, tbl_info(2:end, tbl_ind{2}));
+    group2_org = cellfun(@str2num, tbl_info(2:end, tbl_ind{3}));
     
     if any([fem_ind, mem_ind])
         N1 = group1_org(cell2mat(subj_ind));

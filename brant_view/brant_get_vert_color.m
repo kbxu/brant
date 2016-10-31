@@ -23,6 +23,10 @@ b_box = [s_mat(:, 4), s_mat(:, 4) + step_len .* (size_data - 1)']';
 
 vol_int = permute(vol_int, [2, 1, 3]);
 vol_int(~isfinite(vol_int)) = 0;
+
+
+% vol_int = smooth3(vol_int, 'gaussian', 3);
+
 if (colorinfo.discrete == 0)
     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3));
 else

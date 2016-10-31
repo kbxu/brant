@@ -87,21 +87,23 @@ if (one_samp_ind == 1)
                 test_fn = sprintf('%s_%s_%s', test_str, filter_est{ooo}, group_est_one{m});
             end
 
+            fprintf('\n\tUncorrected p threshold is %g\n', out_info.thr);
+            
             switch(out_info.data_type)
-            case 'stat volume'
-                contr_str = sprintf('SPM{T_[%.1f]} - Contrast: %s', df_stu, group_est_one{m});
-                save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
-                                 test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R, df_stu);
-            case 'stat matrix'
-                save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
-                                 test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est_one{m}, df_stu, subjs);
-             case 'stat matrix - voxel to voxel'
-                out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
-                df = df_stu;
-                t_vec = stat_val;
-                save(out_fn_unc, 'group_est', 'p_vec_R', 't_vec', 'df', 'subjs', '-v7.3');
-            otherwise
-                error('Unknown command!');
+                case 'stat volume'
+                    contr_str = sprintf('SPM{T_[%.1f]} - Contrast: %s', df_stu, group_est_one{m});
+                    save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
+                                     test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R, df_stu);
+                case 'stat matrix'
+                    save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
+                                     test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est_one{m}, df_stu, subjs);
+                 case 'stat matrix - voxel to voxel'
+                    out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
+                    df = df_stu;
+                    t_vec = stat_val;
+                    save(out_fn_unc, 'group_est', 'p_vec_R', 't_vec', 'df', 'subjs', '-v7.3');
+                otherwise
+                    error('Unknown command!');
             end
         end
         clear('corr_2d_tmp');
@@ -228,7 +230,7 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                                         group_est{2}, num_grp2);
             
             if (num_grp1 == 0) || (num_grp2 == 0)
-                warning(sprintf('Insufficient subjects of group %s, it will be skipped!', grp_csts{m})); %#ok<*SPWRN>
+                warning(sprintf('Insufficient subjects of group %s which will be skipped!', grp_csts{m})); %#ok<*SPWRN>
                 continue;
             end
             
@@ -337,6 +339,8 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 test_fn = sprintf('%s_%s_%s_vs_%s', test_str, filter_est{ooo}, group_est{1}, group_est{2});
             end
 
+            fprintf('\n\tUncorrected p threshold is %g\n', out_info.thr);
+            
             switch(out_info.data_type)
                 case 'stat volume'
                     save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
@@ -401,8 +405,8 @@ if ~isempty(multi_use)
     p_vec_L = 1 - p_vec_R;
 
     for n = 1:numel(multi_use)
-        stat_val_thres = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, stat_val, df_stu);
-        if ~isempty(stat_val_thres)
+        stat_val_thres = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, stat_val);
+        if any(stat_val_thres ~= 0)
             result_3d_mul = zeros(size_mask, 'double');
             result_3d_mul(mask_ind_new) = stat_val_thres;
 
@@ -430,8 +434,6 @@ end
 p_rst_unc = cell(numel(contrs), 1);
 h_rst_unc = cell(numel(contrs), 1);
 tail_rst = cell(numel(contrs), 1);
-
-fprintf('\n\tUncorrected p threshold is %g\n', thr);
 
 p_vec_L = 1 - p_vec_R;
 for n_contr = 1:numel(contrs)
@@ -471,9 +473,9 @@ if ~isempty(multi_use)
     stat_val_thres = [];
 
     for n = 1:numel(multi_use)
-        t_mat_thres_tmp = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, t_rst_vec, df);
+        t_mat_thres_tmp = brant_multi_thres_t_ttest2(p_vec_L, p_vec_R, thr, multi_use{n}, t_rst_vec);
 
-        if ~isempty(t_mat_thres_tmp)
+        if any(t_mat_thres_tmp ~= 0)
             t_mat_thres_mat = zeros(mat_size, 'double');
             t_mat_thres_mat(corr_ind) = t_mat_thres_tmp;
             if (sym_ind == 1)
@@ -481,8 +483,6 @@ if ~isempty(multi_use)
             end
 
             h_rst.(multi_use{n}) = sign(t_mat_thres_mat);
-%             h_rst.(multi_use{n})(t_mat_thres_mat > 0) = 1;
-%             h_rst.(multi_use{n})(t_mat_thres_mat < 0) = -1;
         else
             h_rst.(multi_use{n}) = [];
         end

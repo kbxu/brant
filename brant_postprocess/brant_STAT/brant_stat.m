@@ -120,12 +120,6 @@ switch(out_info.data_type)
               test_ind, out_info);
     case 'stat matrix'
         [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
-%         % spliting filename removal using , or ;
-%         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
-%         subj_ids_org = subj_ids_org_tmp;
-%         for m = 1:numel(fn_rmv)
-%             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
-%         end
         
         subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
         
@@ -195,8 +189,7 @@ switch(out_info.data_type)
             data_2d_mat = double(data_2d_mat);
             brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
                   test_ind, out_info);
-        end
-        
+        end        
         
 %         % merge them maybe?
 %         out_fns = load(out_info_file);

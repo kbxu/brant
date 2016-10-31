@@ -52,9 +52,9 @@ if (strcmpi(mode_display, 'halves:left and right') == 0)
     
     if ~isempty(vol)
         colormap(c_map_wb);
-        if (draw_param.colorbar_ind == 1)
+%         if (draw_param.colorbar_ind == 1)
             caxis(cbr.caxis);
-        end
+%         end
     end
 else
     
@@ -85,9 +85,9 @@ else
         
         if ~isempty(vol)
             colormap(c_map_wb);
-            if (draw_param.colorbar_ind == 1)
+%             if (draw_param.colorbar_ind == 1)
                 caxis(cbr.caxis);
-            end
+%             end
         end
     end
 end

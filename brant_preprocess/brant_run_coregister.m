@@ -12,11 +12,11 @@ if (coreg_infos.subj.seg_bet_ind == 1) || (coreg_infos.subj.seg_bet_ind == 2)
         fprintf('\n*\tDoing Segment*\n');
         if (par == 0)
             for m = 1:numel(file_src)
-                brant_run_segment(file_src{m});
+                brant_run_segment(file_src{m}, [0, 0]);
             end
         else
             parfor m = 1:numel(file_src)
-                brant_run_segment(file_src{m});
+                brant_run_segment(file_src{m}, [0, 0]);
             end
         end
     end

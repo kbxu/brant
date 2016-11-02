@@ -40,6 +40,9 @@ if (coreg_infos.subj.seg_bet_ind == 1) || (coreg_infos.subj.seg_bet_ind == 2)
     file_src_cog = file_src;
 else
     file_src_bet = file_src;
+    file_c1 = cell(numel(file_src_bet), 1);
+    file_c2 = cell(numel(file_src_bet), 1);
+    file_c3 = cell(numel(file_src_bet), 1);
     file_src_cog = cell(numel(file_src_bet), 1);
 end
 %
@@ -48,11 +51,11 @@ end
 fprintf('\n*\tDoing coregister*\n');
 if (par == 0)
     for m = 1:numel(file_src_bet)
-        loop_coregister(file_src_bet(m), file_ref(m), file_src_cog(m), coreg_infos, file_dirs{m});
+        loop_coregister(file_src_bet(m), file_ref(m), [file_src_cog(m);file_c1(m);file_c2(m);file_c3(m)], coreg_infos, file_dirs{m});
     end
 else
     parfor m = 1:numel(file_src_bet)
-        loop_coregister(file_src_bet(m), file_ref(m), file_src_cog(m), coreg_infos, file_dirs{m});
+        loop_coregister(file_src_bet(m), file_ref(m), [file_src_cog(m);file_c1(m);file_c2(m);file_c3(m)], coreg_infos, file_dirs{m});
     end
 end
 
@@ -64,8 +67,13 @@ fprintf('\n*\tDoing coregister for data in %s.\t*\n', file_dirs);
 coreg_infos = rmfield(coreg_infos, 'subj');
 coreg_infos.source = file_src;
 coreg_infos.ref = file_ref;
-coreg_infos.other = file_other;
 
+oth_ept_ind = cellfun(@isempty, file_other);
+if all(oth_ept_ind)
+    coreg_infos.other = {''};
+else
+    coreg_infos.other = file_other(~oth_ept_ind);
+end
 
 spm_v = spm('ver');
 if strcmpi(spm_v, 'SPM12')

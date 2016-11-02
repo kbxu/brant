@@ -10,7 +10,7 @@ function [CData, c_map, cbr] = brant_get_vert_color(vol, vertices_coord, colorin
 
 
 vol_data = load_nii_mod(vol);
-vol_int = vol_data.img;
+vol_int = single(vol_data.img);
 % from brant_get_XYZ
 s_mat = [vol_data.hdr.hist.srow_x; vol_data.hdr.hist.srow_y; vol_data.hdr.hist.srow_z];
 if (s_mat(1, 1) < 0)

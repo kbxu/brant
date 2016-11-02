@@ -3,7 +3,10 @@ Help information for Coregister:
 Subject info:
     reference: Filetype of reference image stored in each subject's folder to register.
     source: Filetype of image to match the reference image stored in each subject's folder.
-	seg&bet: Segment structural T1/T2 and skull stripe, use skull striped T1/T2 to coregister. 1:segment and bet; 2:bet only (there should be already segmented c1-c3*.nii files in the directory); other number:do not segment nor bet; And recommend using co*.nii instead of bet*.nii to normalise!
+	seg&bet: Segment structural T1/T2 and skull stripe, use skull striped T1/T2 to coregister which is better sometimes and unsupervised. The dis-advantage is taking few minutes more time for each subject.
+		options:1:segment using new segment and bet based on tissue probability maps;
+				2:bet only (there should be segmented c1-c3*.nii files in the directory);
+				other number:do not segment nor bet; we recommend using co*.nii instead of bet*.nii to normalise.
 Estimate: 
     object fun: Methods to maximise or minimise objective function.
     sep: The average distance between sampled points (in mm).

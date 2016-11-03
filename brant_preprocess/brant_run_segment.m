@@ -35,7 +35,7 @@ if isequal(spm('ver'), 'SPM8')
     matlabbatch{1}.spm.tools.preproc8.tissue(6).warped = mod_inds;
     matlabbatch{1}.spm.tools.preproc8.warp.mrf = 0;
     matlabbatch{1}.spm.tools.preproc8.warp.reg = 4;
-    matlabbatch{1}.spm.tools.preproc8.warp.affreg = '';
+    matlabbatch{1}.spm.tools.preproc8.warp.affreg = 'mni';
     matlabbatch{1}.spm.tools.preproc8.warp.samp = 3;
     matlabbatch{1}.spm.tools.preproc8.warp.write = [0 0];
 elseif isequal(spm('ver'), 'SPM12')
@@ -70,7 +70,7 @@ elseif isequal(spm('ver'), 'SPM12')
     matlabbatch{1}.spm.spatial.preproc.warp.mrf = 1;
     matlabbatch{1}.spm.spatial.preproc.warp.cleanup = 1;
     matlabbatch{1}.spm.spatial.preproc.warp.reg = [0 0.001 0.5 0.05 0.2];
-    matlabbatch{1}.spm.spatial.preproc.warp.affreg = '';
+    matlabbatch{1}.spm.spatial.preproc.warp.affreg = 'mni';
     matlabbatch{1}.spm.spatial.preproc.warp.fwhm = 0;
     matlabbatch{1}.spm.spatial.preproc.warp.samp = 3;
     matlabbatch{1}.spm.spatial.preproc.warp.write = [0 0];

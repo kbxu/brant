@@ -1,5 +1,9 @@
 function den_fil_prefix = brant_run_denoise_filter(den_fil_infos, data_files, subj_fns, is4d_ind, outdirs)
-
+% den_fil_infos
+% data_files: N*1 cell array of full path filenames
+% subj_fns: N*1 cell array of subject ids
+% is4d_ind: 0 or 1, is input file 4D
+% outdirs: N*1 cell array of output directories.
 
 gzip_ind = [0, 0];
 
@@ -287,9 +291,11 @@ for m = 1:num_subj
                 brant_save_nii(is4d_ind, data_files{m}, prefix_calc, nii_hdr, denoise_vol, outdirs{m}, gzip_ind(1));
             end
 
+            % vol_calc: T timepoints * N voxels
             vol_calc = res_data;
             clear('res_data');
         else
+            % vol_calc: T timepoints * N voxels
             vol_calc = nii_2d_calc;
             prefix_calc = '';
         end

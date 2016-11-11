@@ -210,7 +210,11 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                     tmp = regs_info_all{ooo}(:, n);
                     if numel(unique(tmp)) > 2
                         test_strs{n} = 'ttest2';
-                        [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2));
+                        try
+                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 'tail', 'both');
+                        catch
+                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 0.05, 'both');
+                        end
                     else
                         test_strs{n} = 'crosstab';
                         [tbl_tmp, chi2_tmp, p_reg(n)] = crosstab(tmp, group_inds_2);

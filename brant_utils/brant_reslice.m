@@ -56,7 +56,7 @@ for m = 1:numel(src_file)
         
         gunzip(src_file{m}, tmpDir); % src_file(m) = 
         [pth_src, fn_src, ext_src] = brant_fileparts(src_file{m}); %#ok<ASGLU>
-        src_file{m} = fullfile(tmpDir, fn_src, strrep(ext_src, '.gz', ''));
+        src_file{m} = fullfile(tmpDir, [fn_src, strrep(ext_src, '.gz', '')]);
     end
     
     job.ref = {[ref_file, ',1']};
@@ -89,7 +89,7 @@ for m = 1:numel(src_file)
     if gz_ind == 1
         gzip(file_resliced, pth);
         [pth_res, fn_res, ext_res] = brant_fileparts(file_resliced); %#ok<ASGLU>
-        rst_files{m} = fullfile(pth, fn_res, [ext_res, '.gz']);
+        rst_files{m} = fullfile(pth, [fn_res, ext_res, '.gz']);
 %         if strcmpi(out.rfiles{1}(end-1:end), ',1')
 %             tmp = gzip(out.rfiles{1}(1:end-2), pth);
 %         else

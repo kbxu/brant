@@ -219,13 +219,13 @@ for mm = 1:numel(split_prefix)
                     end
                     
                     % corr_r
-                    corr_out = zeros(size_mask, 'single');
+                    corr_out = nan(size_mask, 'single');
                     corr_out(mask_ind) = corr_r_wb;
                     nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['rval_', corr_type]);
                     save_nii(nii, fullfile(out_roi_dirs_r{n}, [subj_ids{m}, '_corr_r.nii']));
                     
                     % corr_z
-                    corr_out = zeros(size_mask, 'single');
+                    corr_out = nan(size_mask, 'single');
                     corr_z_wb = 0.5 .* log((1 + corr_r_wb) ./ (1 - corr_r_wb));
                     corr_out(mask_ind) = corr_z_wb;
                     nii = make_nii(corr_out, mask_hdr.dime.pixdim(2:4), mask_hdr.hist.originator(1:3), [], ['zval_', corr_type]);

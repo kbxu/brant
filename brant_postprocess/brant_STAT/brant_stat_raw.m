@@ -161,8 +161,8 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 subj_ids_grp = subj_ids(group_inds, grp_ind_tmp);
                 
                 subjs = subj_ids(group_inds, :);
-                num_grp1 = size(subjs, 1) - 1;
-                num_grp2 = size(subjs, 1) - 1;
+                num_grp1 = size(subjs, 1);
+                num_grp2 = size(subjs, 1);
             else
                 group_inds = cellfun(@(x) any(strcmpi(group_est, x)), data_infos(:, 2));
                 group_inds = group_inds & fil_tmp;
@@ -392,6 +392,7 @@ function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val,
 contrs = {'gt', 'st', 'diff'};
 contrs_tail = {'right', 'left', 'both'};
     
+stat_val(~isfinite(stat_val)) = 0;
 result_3d_nor = zeros(size_mask, 'double');
 result_3d_nor(mask_ind_new) = stat_val;
 out_fn_unc = [out_prefix, test_fn, '.nii'];

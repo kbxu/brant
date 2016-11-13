@@ -157,11 +157,7 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             if (paired_t_ind == 1)
                 group_inds = true(size(subj_ids, 1), 1) & fil_tmp;
                 grp_ind_tmp = cellfun(@(x) find(strcmpi(group_est, x)), data_infos(1, :));
-                if iscell(data_2d_raw)
-                    corr_2d_tmp = arrayfun(@(x) cat(1, data_2d_raw{group_inds, x}), grp_ind_tmp, 'UniformOutput', false);
-                else
-                    corr_2d_tmp = arrayfun(@(x) cat(1, data_2d_raw(group_inds, x)), grp_ind_tmp, 'UniformOutput', false);
-                end
+                corr_2d_tmp = arrayfun(@(x) cat(2, data_2d_raw{group_inds, x})', grp_ind_tmp, 'UniformOutput', false);
                 subj_ids_grp = subj_ids(group_inds, grp_ind_tmp);
                 
                 subjs = subj_ids(group_inds, :);

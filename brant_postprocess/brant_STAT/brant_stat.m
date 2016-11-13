@@ -109,13 +109,13 @@ switch(out_info.data_type)
             [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
             fprintf('\n\tLoading nifti images...\n');
             data_2d_mat = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
+            data_2d_mat = double(data_2d_mat);
         end
             
         out_info.mask_ind = mask_ind;
         out_info.size_mask = size_mask;
         out_info.mask_hdr = mask_hdr;
-        
-        data_2d_mat = double(data_2d_mat);
+                
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
               test_ind, out_info);
     case 'stat matrix'

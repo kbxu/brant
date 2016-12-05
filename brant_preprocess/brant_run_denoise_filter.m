@@ -196,12 +196,11 @@ for m = 1:num_subj
     
     reg_tissue = [];
     diff_tissue = [];
+    detrend_reg = [];
     if (work_tissue == 1)
         % tissue regressors
         if (detrend_ind == 1)
             detrend_reg = (1:num_tps)';
-        else
-            detrend_reg = [];
         end
         
         if ~isempty(reg_masks_good_bin)

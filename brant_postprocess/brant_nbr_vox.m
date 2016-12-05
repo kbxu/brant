@@ -21,7 +21,6 @@ vol_ind(mask_ind) = 1:num_mask;
 switch(nbr_type)
     case {6, 7}
         ind_out = zeros(num_mask, 7, 'uint32');
-%         pts_shift = [1, size_volume(1), n_vox_slice(1)];
         pts_shift = [0, pts_shift_gross(1:3), -1 * pts_shift_gross(1:3)];
         for n = 1:7
             ind_out(:, n) = vol_ind(mask_ind + pts_shift(n));
@@ -36,7 +35,7 @@ switch(nbr_type)
         ind_out = zeros(num_mask, 27, 'uint32');
         pts_shift = [0, pts_shift_gross(1:13), -1 * pts_shift_gross(1:13)];
         for n = 1:27
-             ind_out(:, n) = vol_ind(mask_ind + pts_shift(n));
+            ind_out(:, n) = vol_ind(mask_ind + pts_shift(n));
         end
     otherwise
         error('nbr_type must be one of 6,7,18,18,26,27');

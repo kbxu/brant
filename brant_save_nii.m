@@ -5,7 +5,7 @@ if gzip_ind == 1
 end
 
 if is4d == 1
-    [filedir, nm_tmp, ext] = fileparts(raw_name);
+    [filedir, nm_tmp, ext] = brant_fileparts(raw_name);
     nm = regexprep(nm_tmp, '.(nii|nii.gz|hdr|img)$', '', 'ignorecase');
     if isempty(outdir)
         destdir = filedir;

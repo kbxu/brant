@@ -3,7 +3,7 @@ function [process_pars, ui_structs, process_fun] = brant_postprocess_defaults(pr
 brant_path = fileparts(which('brant'));
 
 bn_atlas = fullfile(brant_path, 'template', 'BN_Atlas_274_with_cerebellum_without_255.nii.gz');
-bn_atlas_info = fullfile(brant_path, 'template', 'roi_areas_274.txt');
+bn_atlas_info = fullfile(brant_path, 'template', 'BN_Atlas_274_subregion_name.txt');
 if (exist(bn_atlas, 'file') ~= 2)
     bn_atlas = '';
     bn_atlas_info = '';

@@ -36,7 +36,11 @@ if (coreg_infos.subj.seg_bet_ind == 1) || (coreg_infos.subj.seg_bet_ind == 2)
         end
     end
     
-    file_src_bet = brant_get_subjs2(file_dirs, 1, 'betStructImg*.nii');
+    if isequal(spm('ver'), 'SPM8')
+        file_src_bet = brant_get_subjs2(file_dirs, 1, 'betStructImg*.img');
+    else
+        file_src_bet = brant_get_subjs2(file_dirs, 1, 'betStructImg*.nii');
+    end
     file_src_cog = file_src;
 else
     file_src_bet = file_src;

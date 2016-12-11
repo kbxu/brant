@@ -2,7 +2,7 @@ function brant_draw_rois(jobman)
 % draw roi in standard space
 
 aio_ind = jobman.aio;
-mask_nii = load_nii(jobman.mask{1});
+mask_nii = load_nii_mod(jobman.mask{1}, 1);
 [mask_XYZ, s_mat] = brant_get_XYZ(mask_nii.hdr);
 mask_ind_all = mask_nii.img > 0.5;
 mask_hdr = mask_nii.hdr;

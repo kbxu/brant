@@ -1,4 +1,4 @@
-function [h_node, h_text] = brant_draw_node_new(node_ind, node_coords, node_info)
+function [h_node, h_text] = brant_draw_node_new(node_ind, node_coords, node_info, hide_ind)
 
 node_color = node_info.color(node_ind, :);
 r = node_info.size(node_ind);
@@ -8,15 +8,21 @@ label_part = node_info.label(node_ind);
 [x_sph, y_sph, z_sph] = sphere(100);
 num_node = size(coords_part, 1);
 
-node_x = arrayfun(@(x) x_sph .* r(x) + coords_part(x, 1), 1:num_node, 'UniformOutput', false);
-node_y = arrayfun(@(x) y_sph .* r(x) + coords_part(x, 2), 1:num_node, 'UniformOutput', false);
-node_z = arrayfun(@(x) z_sph .* r(x) + coords_part(x, 3), 1:num_node, 'UniformOutput', false);
+if hide_ind == 1
+    node_idx = find(r > 0);    
+else
+    r(r == 0) = 3;
+    node_idx = 1:num_node;
+end
 
+node_x = arrayfun(@(x) x_sph .* r(x) + coords_part(x, 1), node_idx, 'UniformOutput', false);
+node_y = arrayfun(@(x) y_sph .* r(x) + coords_part(x, 2), node_idx, 'UniformOutput', false);
+node_z = arrayfun(@(x) z_sph .* r(x) + coords_part(x, 3), node_idx, 'UniformOutput', false);
 h_node = cellfun(@(x, y, z, o) mesh(x, y, z, 'DisplayName', node_info.module{o},...
                                              'Edgecolor', 'none',...
                                              'Facecolor', node_color(o, :),...
                                              'EdgeAlpha', 0),...
-                               node_x, node_y, node_z, num2cell(1:num_node), 'UniformOutput', false);
+                               node_x, node_y, node_z, num2cell(node_idx), 'UniformOutput', false);
 
 % arrayfun(@(x) set(node_mesh{x}, 'Facecolor', node_color(x, :)), 1:num_node);
 % cellfun(@(x) set(x, 'EdgeAlpha', 0), node_mesh);
@@ -34,7 +40,7 @@ if ((node_info.show_label == 1) && all(cellfun(@isempty, label_part) == 0))
     else
         text_xyz = coords_part + [2 + r, -r, 3 + r];
     end
-    h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold'), 1:num_node, 'UniformOutput', false);
+    h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold'), node_idx, 'UniformOutput', false);
 else
     h_text = [];
 end  

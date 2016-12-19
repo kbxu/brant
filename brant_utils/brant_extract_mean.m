@@ -72,7 +72,7 @@ else
 end
 
 if volume_ind == 1
-    ts_rois_tmp = cellfun(@(x) mean(data_2d_mat(:, x), 2), rois_inds_new, 'UniformOutput', false);
+    ts_rois_tmp = cellfun(@(x) nanmean(data_2d_mat(:, x), 2), rois_inds_new, 'UniformOutput', false);
     ts_rois = cat(2, ts_rois_tmp{:});
     
     tbl = [['Name', rois_str_out']; subj_ids_org, num2cell(ts_rois)];

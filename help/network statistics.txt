@@ -2,19 +2,28 @@ Help information for Network Statistics:
 
 filetype: files in the filetype will be searched in input directories.
 data dir: directory where *.mat result of NETWORK CALCULATION is stored.
-stat type: one sample t-test and two sample t-test.
+stat type: one sample t-test, two sample t-test and paired t-test.
 groups:
     for two sample t-test, e.g. SZ,NC -> will do two-sample t-test for SZ and NC
+    for paired t-test, e.g. SZ,NC -> will do paired t-test for SZ and NC
     for one sample t-test, e.g. SZ;NC -> will do one-sample t-test for both SZ and NC group
 
-
 grouping info:
-    table: A csv table, for example:
-        name , group, fileter, age
+    table: A comma-seperated values (csv) table, which is used for parsing subject names and covariates. The parsed names/ids will be matched to search results conducted with datadir and filetype. Before matching, BRANT will remove specified strings.
+	
+    For one and two sample t-tests:
+        name , group, filter, age
         subj1 , SZ, center1, 28
         subj2 , SZ, center1, 27
         subj3 , NC, center1, 30
         subj4 , NC, center2, 25
+	
+    For paired t-test, another column of paired_t_idx is required to specify paired subjects in each group:
+        name , group, filter, age, paired_t_idx
+        subj1 , stage1, center1, 28, 1
+        subj2 , stage1, center1, 27, 2
+        subj3 , stage2, center1, 30, 1
+        subj4 , stage2, center2, 25, 2
         
     string removal*: optional. remove partial string from string parsed by id index.
     regressors*: optional. title of regressors which will be regressed out before statistical analysis. e.g. age

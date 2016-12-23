@@ -21,7 +21,7 @@ if mer_ind == 1;
     
     input_imgs = arrayfun(@spm_read_vols, spm_vols_input, 'UniformOutput', false);
     fprintf('Brant uses 0.5 as a threshold to binarize the input rois.\n');
-    input_bin = cellfun(@(x) abs(x) > 0.5, input_imgs, 'UniformOutput', false);
+    input_bin = cellfun(@(x) double(abs(x) > 0.5), input_imgs, 'UniformOutput', false);
     
     input_sum = sum(cat(4, input_bin{:}), 4);
     if any(input_sum(:) > 1)
@@ -38,7 +38,8 @@ if mer_ind == 1;
     
     out_vol = spm_vols_input(1);
     out_vol.fname = fullfile(output_dir, [merge_info.out_fn, '.nii']);
-    spm_write_vol(out_vol, output_img);
+    out_vol.dt = [spm_type('float32'), spm_platform('bigend')];
+    spm_write_vol(out_vol, single(output_img));
     
     fid = fopen(fullfile(output_dir, [merge_info.out_fn, '.txt']), 'wt');
     for m = 1:numel(input_bin)

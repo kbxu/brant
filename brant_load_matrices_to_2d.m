@@ -17,11 +17,14 @@ else
     corr_ind = true(size_sample) & corr_mask;
 end
 
-data_2d_mat = arrayfun(@(x, y) brant_load_single_mat(x{1}, corr_ind, y, numel(mat_list)), mat_list, (1:numel(mat_list))', 'UniformOutput', false);
+mat_idx = zeros(size(mat_list));
+mat_idx(:) = 1:numel(mat_list);
+data_2d_mat = arrayfun(@(x, y) brant_load_single_mat(x{1}, corr_ind, y, numel(mat_list)), mat_list, mat_idx, 'UniformOutput', false);
 
-if paired_ind == 0
-    data_2d_mat = cat(1, data_2d_mat{:});
-end
+data_2d_mat = cat(1, data_2d_mat{:});
+% if paired_ind == 0
+%     data_2d_mat = cat(1, data_2d_mat{:});
+% end
 
 % if paired_ind == 1
 %     data_2d_mat = cellfun(@(x) x(corr_ind), corr_mat, 'UniformOutput', false); % output to cell array

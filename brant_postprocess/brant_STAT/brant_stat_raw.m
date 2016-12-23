@@ -1,4 +1,4 @@
-function stat_out = brant_stat_raw(data_2d_raw, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj, test_ind, out_info)
+function stat_out = brant_stat_raw(data_2d_raw, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj, test_ind, out_info, varargin)
 
 % stat_out(ooo, m).constrast_str = test_fn;
 % stat_out(ooo, m).stat_val = stat_val;
@@ -8,6 +8,13 @@ stat_out = [];
 % stat_out = struct('constrast_str', {}, 'stat_val',...
 %                   {}, 'df_stu', {}, 'stat_info');
 
+if nargin == 9
+    paired_t_idx = varargin{1};
+else
+    paired_t_idx = []; 
+end
+
+
 student_t_ind = test_ind.student_t_ind;
 ranksum_ind = test_ind.ranksum_ind;
 
@@ -15,13 +22,15 @@ one_samp_ind = test_ind.one_samp_ind;
 two_samp_ind = test_ind.two_samp_ind;
 paired_t_ind = test_ind.paired_t_ind;
 
-if (paired_t_ind == 1)
-    subj_ids = data_infos(2:end, :);
-    tbl_groups = unique(data_infos(1, :));
-else
-    subj_ids = data_infos(:, 1);
-    tbl_groups = unique(data_infos(:, 2));
-end
+subj_ids = data_infos(:, 1);
+tbl_groups = unique(data_infos(:, 2));
+% if (paired_t_ind == 1)
+%     subj_ids = data_infos(2:end, :);
+%     tbl_groups = unique(data_infos(1, :));
+% else
+%     subj_ids = data_infos(:, 1);
+%     tbl_groups = unique(data_infos(:, 2));
+% end
 
 % % mean centering covariates
 % raw_reg_good_subj = reg_good_subj;
@@ -154,51 +163,77 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             
             group_est = ttest2_groups{m};
             
+%             if (paired_t_ind == 1)
+%                 group_inds = true(size(subj_ids, 1), 1) & fil_tmp;
+%                 grp_ind_tmp = cellfun(@(x) find(strcmpi(group_est, x)), data_infos(1, :));
+%                 corr_2d_tmp = arrayfun(@(x) cat(2, data_2d_raw{group_inds, x})', grp_ind_tmp, 'UniformOutput', false);
+%                 subj_ids_grp = subj_ids(group_inds, grp_ind_tmp);
+%                 
+%                 subjs = subj_ids(group_inds, :);
+%                 num_grp1 = size(subjs, 1);
+%                 num_grp2 = size(subjs, 1);
+%             else
+            group_inds = cellfun(@(x) any(strcmpi(group_est, x)), data_infos(:, 2));
+            group_inds = group_inds & fil_tmp;
+            subj_ids_grp = subj_ids(group_inds);
+            corr_2d_tmp = data_2d_raw(group_inds, :);
+            subjs = data_infos(group_inds, :);
+            
             if (paired_t_ind == 1)
-                group_inds = true(size(subj_ids, 1), 1) & fil_tmp;
-                grp_ind_tmp = cellfun(@(x) find(strcmpi(group_est, x)), data_infos(1, :));
-                corr_2d_tmp = arrayfun(@(x) cat(2, data_2d_raw{group_inds, x})', grp_ind_tmp, 'UniformOutput', false);
-                subj_ids_grp = subj_ids(group_inds, grp_ind_tmp);
+                %sort data if it's paired-t test
+                paired_t_idx_fil = paired_t_idx(group_inds);                
+                grp_1_idx = paired_t_idx_fil(strcmpi(group_est{1}, subjs(:, 2)));
+                grp_2_idx = paired_t_idx_fil(strcmpi(group_est{2}, subjs(:, 2)));
+                if any(sort(grp_1_idx) ~= sort(grp_2_idx))...
+                       || (numel(unique(grp_1_idx)) ~= numel(grp_1_idx))...
+                       || (numel(unique(grp_2_idx)) ~= numel(grp_2_idx))
+                    error('Please check the index of paired_t_idx');
+                end
                 
-                subjs = subj_ids(group_inds, :);
-                num_grp1 = size(subjs, 1);
-                num_grp2 = size(subjs, 1);
-            else
-                group_inds = cellfun(@(x) any(strcmpi(group_est, x)), data_infos(:, 2));
-                group_inds = group_inds & fil_tmp;
-                subj_ids_grp = subj_ids(group_inds);
-                corr_2d_tmp = data_2d_raw(group_inds, :);
-                
-                subjs = data_infos(group_inds, :);
-                group_inds_1 = strcmpi(group_est{1}, subjs(:, 2));
-                group_inds_2 = strcmpi(group_est{2}, subjs(:, 2));
-                
-                num_grp1 = sum(group_inds_1);
-                num_grp2 = sum(group_inds_2);
-            end
-
-            if (paired_t_ind == 1)
-                grp_reg_m = [];
-                data_mat_2d = corr_2d_tmp;
+                group_raw = subjs(:, 2);
+                subj_ids_grp = sort_for_paired_t(subj_ids_grp, group_est, group_raw, paired_t_idx);
+                subjs = sort_for_paired_t(subjs, group_est, group_raw, paired_t_idx);
+                corr_2d_tmp = sort_for_paired_t(corr_2d_tmp, group_est, group_raw, paired_t_idx);
+                           
+                if ~isempty(reg_good_subj)
+                    reg_tmp = sort_for_paired_t(reg_good_subj(group_inds, :), group_est, group_raw, paired_t_idx);
+                else
+                    reg_tmp = [];
+                end
             else
                 if ~isempty(reg_good_subj)
-                    % mean centering covariates
                     reg_tmp = reg_good_subj(group_inds, :);
-                    reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean(reg_tmp, 1));
-
-                    grp_reg_m = [ones(sum(group_inds), 1), reg_good_subj_nm];
-                    glm_beta = grp_reg_m \ corr_2d_tmp;
-                    data_mat_2d = corr_2d_tmp - grp_reg_m(:, 2:end) * glm_beta(2:end, :);
                 else
-                    grp_reg_m = [];
-                    data_mat_2d = corr_2d_tmp;
+                    reg_tmp = [];
                 end
             end
+            
+            % new group index
+            group_inds_1 = strcmpi(group_est{1}, subjs(:, 2));
+            group_inds_2 = strcmpi(group_est{2}, subjs(:, 2));
+
+            num_grp1 = sum(group_inds_1);
+            num_grp2 = sum(group_inds_2);
+%             end
+
+            if ~isempty(reg_tmp)
+                % mean centering covariates
+                fprintf('\n\tRegressing out covariates...\n');
+                reg_good_subj_nm = bsxfun(@minus, reg_tmp, mean(reg_tmp, 1));
+
+                grp_reg_m = [ones(sum(group_inds), 1), reg_good_subj_nm];
+                glm_beta = grp_reg_m \ corr_2d_tmp;
+                data_mat_2d = corr_2d_tmp - grp_reg_m(:, 2:end) * glm_beta(2:end, :);
+            else
+                grp_reg_m = [];
+                data_mat_2d = corr_2d_tmp;
+            end
+            
             clear('corr_2d_tmp');
            
-            if ~isempty(reg_good_subj)
+            if ~isempty(reg_tmp) && (paired_t_ind == 0)
                 grp_info_all{ooo} = subjs;
-                regs_info_all{ooo} = reg_good_subj(group_inds, :);
+                regs_info_all{ooo} = reg_tmp;
                 
                 test_strs = cell(size(reg_tmp, 2), 1);
                 p_reg = zeros(size(reg_tmp, 2), 1);
@@ -223,9 +258,8 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 reg_stat_info = '';
             end
             
-            
             num_grp_all{m}(ooo, :) = [num_grp1, num_grp2];
-            fprintf('\tNumber of subjects of %s is %d\n\tNumber of subjects of %s is %d\n',...
+            fprintf('\tThe number of subjects of %s is %d\n\tNumber of subjects of %s is %d\n',...
                                         group_est{1}, num_grp1,...
                                         group_est{2}, num_grp2);
             
@@ -234,8 +268,8 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 continue;
             end
             
-            if ~isempty(reg_good_subj)
-                reg_info = arrayfun(@num2str, reg_good_subj(group_inds, :), 'UniformOutput', false);%cellstr(num2str(reg_good_subj(group_inds, :)));
+            if ~isempty(reg_tmp)
+                reg_info = arrayfun(@num2str, reg_tmp, 'UniformOutput', false);%cellstr(num2str(reg_good_subj(group_inds, :)));
                 reg_title = ['subject', out_info.reg_nm];
                 subj_infos = [subj_ids_grp, reg_info];
             else
@@ -244,7 +278,7 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             end
                 
             if (paired_t_ind == 1)
-                brant_print_cell([tbl_groups; subjs]);
+                brant_print_cell([tbl_groups'; [subjs(group_inds_1, 1), subjs(group_inds_2, 1)]]);
             else
                 if isempty(filter_est)
                     fprintf('\n\t%d subjects of group %s:\n', num_grp1, group_est{1});
@@ -266,24 +300,14 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             
             clear('stat_info');
             
-            if (paired_t_ind == 1)
-                stat_info.mean_grp_1_vec = mean(data_mat_2d{1}, 1);
-                stat_info.mean_grp_2_vec = mean(data_mat_2d{2}, 1);
-                stat_info.std_grp_1_vec = std(data_mat_2d{1}, [], 1);
-                stat_info.std_grp_2_vec = std(data_mat_2d{2}, [], 1);
-                stat_info.num_grp_1 = num_grp1;
-                stat_info.num_grp_2 = num_grp2;
-            else
-                stat_info.mean_grp_1_vec = mean(data_mat_2d(group_inds_1, :), 1);
-                stat_info.mean_grp_2_vec = mean(data_mat_2d(group_inds_2, :), 1);
-                stat_info.std_grp_1_vec = std(data_mat_2d(group_inds_1, :), [], 1);
-                stat_info.std_grp_2_vec = std(data_mat_2d(group_inds_2, :), [], 1);
-                stat_info.num_grp_1 = sum(group_inds_1);
-                stat_info.num_grp_2 = sum(group_inds_2);
-            end
+            stat_info.mean_grp_1_vec = mean(data_mat_2d(group_inds_1, :), 1);
+            stat_info.mean_grp_2_vec = mean(data_mat_2d(group_inds_2, :), 1);
+            stat_info.std_grp_1_vec = std(data_mat_2d(group_inds_1, :), [], 1);
+            stat_info.std_grp_2_vec = std(data_mat_2d(group_inds_2, :), [], 1);
+            stat_info.num_grp_1 = sum(group_inds_1);
+            stat_info.num_grp_2 = sum(group_inds_2);
             
             if (student_t_ind == 1)
-                
                 if (paired_t_ind == 1)
                     if isempty(filter_est)
                         fprintf('\tRunning paired t-test for %s\n', grp_csts{m});
@@ -292,9 +316,9 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                     end
                     
                     try
-                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, 'Tail', 'right', 'Alpha', out_info.thr); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), 'Tail', 'right', 'Alpha', out_info.thr); %#ok<*ASGLU>
                     catch
-                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d{1}, data_mat_2d{2}, out_info.thr, 'right'); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, paired_t_stat] = ttest(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), out_info.thr, 'right'); %#ok<*ASGLU>
                     end
                     stat_val = paired_t_stat.tstat;
                     df_stu = num_grp1 - 1;
@@ -385,6 +409,21 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
         end
     end
     diary('off');
+end
+
+function [sorted_arr, sorted_group] = sort_for_paired_t(data_arr, group_con, group, paired_t_idx)
+% return sorted arrays that stacked over groups
+
+grp_inds = cellfun(@(x) strcmpi(x, group), group_con, 'UniformOutput', false);
+data_arr_tmp = cellfun(@(x) data_arr(x, :), grp_inds, 'UniformOutput', false);
+paired_t_idx_tmp = cellfun(@(x) paired_t_idx(x, :), grp_inds, 'UniformOutput', false);
+[pt_idx, sort_idx] = cellfun(@sort, paired_t_idx_tmp, 'UniformOutput', false);
+
+sorted_arr = [data_arr_tmp{1}(sort_idx{1}, :); data_arr_tmp{2}(sort_idx{2}, :)];
+
+if nargout == 2
+    group_tmp = cellfun(@(x) group(x, :), grp_inds, 'UniformOutput', false);
+    sorted_group = [group_tmp{1}(sort_idx{1}, :); group_tmp{2}(sort_idx{2}, :)];
 end
 
 function save_results_vox(outdir, out_prefix, size_mask, mask_ind_new, stat_val, test_fn, mask_hdr, contr_str, multi_use, thr, p_vec_R, df_stu)

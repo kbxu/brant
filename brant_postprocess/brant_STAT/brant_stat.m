@@ -81,7 +81,12 @@ end
 
 filter_est = parse_strs(grp_filter, 'filter', 0);
 reg_est = parse_strs(grp_regr_strs, 'regressors', 0);
-score_est = '';
+
+if (strcmpi(stat_type, 'paired t-test') == 1)
+    score_est = {'paired_t_idx'};
+else
+    score_est = '';
+end
 
 out_info.reg_nm = reg_est;
 
@@ -99,36 +104,24 @@ switch(out_info.data_type)
         for m = 1:numel(fn_rmv)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
-        
-        if (strcmpi(stat_type, 'paired t-test') == 1)
-            [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
-            reg_good_subj = '';
-            fprintf('\n\tLoading nifti images...\n');
-            data_2d_mat = cellfun(@(x) brant_4D_to_mat_new(x, mask_ind, 'mat', '')', nifti_list(subj_ind), 'UniformOutput', false);
-        else
-            [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
-            fprintf('\n\tLoading nifti images...\n');
-            data_2d_mat = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
-            data_2d_mat = double(data_2d_mat);
-        end
+            
+        [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+        fprintf('\n\tLoading nifti images...\n');
+        data_2d_mat = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
+        data_2d_mat = double(data_2d_mat);
             
         out_info.mask_ind = mask_ind;
         out_info.size_mask = size_mask;
         out_info.mask_hdr = mask_hdr;
                 
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-              test_ind, out_info);
+              test_ind, out_info, paired_t_idx);
     case 'stat matrix'
         [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
         
         subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
         
-        if (strcmpi(stat_type, 'paired t-test') == 1)
-            [data_infos, subj_ind, fil_inds] = brant_parse_subj_info3(regressors_tbl, subj_ids_org, group_est, filter_est);
-            reg_good_subj = '';
-        else
-            [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
-        end
+        [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         
         fprintf('\n\tLoading correlation matrix...\n');
         
@@ -138,7 +131,7 @@ switch(out_info.data_type)
         
         out_info.sym_ind = jobman.sym_ind;
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-              test_ind, out_info);
+              test_ind, out_info, paired_t_idx);
           
     case 'stat matrix - voxel to voxel'
         
@@ -155,7 +148,7 @@ switch(out_info.data_type)
         for m = 1:numel(fn_rmv)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
-        [data_infos, subj_ind, fil_inds, reg_good_subj] = parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
+        [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         fprintf('\tIn total %d blocks, %d correlations/block...\n', tot_pieces, mat_sample.num_roi);
         
         out_info_file = fullfile(out_info.outdir, 'output_fns.mat');
@@ -178,8 +171,6 @@ switch(out_info.data_type)
 
             corr_tmp = load(mat_list_good{1}, 'num_roi', 'rois_str', 'rois_tag');
             num_rois = corr_tmp.num_roi;
-%             out_info.rois_str = corr_tmp.rois_str;
-%             out_info.rois_tag = corr_tmp.rois_tag;
 
 %             out_info.corr_ind = corr_ind;
             out_info.mat_size = [num_rois, num_rois];
@@ -188,14 +179,8 @@ switch(out_info.data_type)
 
             data_2d_mat = double(data_2d_mat);
             brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-                  test_ind, out_info);
+                  test_ind, out_info, paired_t_idx);
         end        
-        
-%         % merge them maybe?
-%         out_fns = load(out_info_file);
-%         for m = 1:numel(out_fns.cen_strs)
-%             mat_list = cellfun(@(x) fullfile(out_info.outdir, [num2str(m, 'stat_%04d_'), sprintf('%s.mat', out_fns.cen_strs{m})]), 1:tot_pieces, 'UniformOutput', false);
-%         end
         
     case 'stat network'
         
@@ -211,8 +196,6 @@ switch(out_info.data_type)
             error('Parameters used in network calculation are different in the following files\ncompared with %s', net_files{1});
         end
         
-%         net_mat = load(net_file, 'subj_ids', 'net_measure_option');
-        
         % parse fields to run t-test
         sample_mat = net_mats(1);
         field_tmp = fieldnames(sample_mat.net_measure_option);
@@ -226,6 +209,11 @@ switch(out_info.data_type)
 
         if isempty(field_strs), return; end
         
+        if any(strcmpi(field_strs, 'small_worldness'))
+            field_strs = setdiff(field_strs, {'small_worldness'});
+            field_strs = [field_strs; {'smallworldness_sigma'; 'smallworldness_lambda'; 'smallworldness_gamma'}];
+        end
+        
         field_strs_good = setdiff(field_strs, '');
         n_field = numel(field_strs_good);
         
@@ -236,7 +224,7 @@ switch(out_info.data_type)
 %         for m = 1:numel(fn_rmv)
 %             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
 %         end
-        [data_infos, subj_ind, fil_inds, reg_good_subj] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, '', discard_bad_ind);
+        [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         
         % get the data out of mats
         num_subj = sum(subj_ind);
@@ -264,8 +252,6 @@ switch(out_info.data_type)
         out_suffix = {'corr', 'spar'};
         
         calc_rsts_all = [data_load_all{1}; data_load_all{2}]';
-        
-        
         
         thres_title_all = [thres_title{1}, thres_title{2}];
         ept_ind = cellfun(@isempty, calc_rsts_all);
@@ -295,11 +281,12 @@ switch(out_info.data_type)
                 glob_vecs_corr_all(:, thres_ept) = 0;
             end
             stat_out = brant_stat_raw(glob_vecs_corr_all, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-                      test_ind, out_info);
+                      test_ind, out_info, paired_t_idx);
             
-            
-            brant_write_csv(net_fn_out_stat, [{'contrast'; 'threshold'; 't'; 'p right'},...
-                                              [[stat_out.constrast_str, cell(1, numel(stat_out.stat_val) - 1)]; thres_title_all; num2cell([stat_out.stat_val; stat_out.p_vec_R])]]);
+            brant_write_csv(net_fn_out_stat, [{'contrast'; 'threshold'; 't'; 'p right'; 'df'},...
+                                              [[stat_out.constrast_str, cell(1, numel(stat_out.stat_val) - 1)];...
+                                                thres_title_all;...
+                                                num2cell([stat_out.stat_val;stat_out.p_vec_R;repmat(stat_out.df_stu, size(stat_out.p_vec_R))])]]);
             for p = 1:2
                 if size_two_thres(p) == 0, continue; end
 
@@ -321,11 +308,14 @@ switch(out_info.data_type)
                 set(h_fig, 'Color', [1, 1, 1], 'InvertHardcopy', 'off', 'PaperPositionMode', 'auto');
                 out_fn_tmp = fullfile(out_info.outdir, [field_strs_good{m}, '_', out_suffix{p}, '_', title_tmp, '.png']);
                 saveas(h_fig, out_fn_tmp);
-                fprintf('%s\n', out_fn_tmp);
+                fprintf('\t%s\n', out_fn_tmp);
                 delete(h_fig);
             end
         end
-
+        fid = fopen(fullfile(out_info.outdir, 'readme.txt'), 'wt');
+        fprintf(fid, 'Curve: mean value of each threshold.\nbar:standard error.\nRed:the first group.\nBlue: the second group.\nstar(*): p<=0.05 & p>0.001.\ncaret(^): p<=0.001\n');
+        fclose(fid);
+        
     otherwise
         error('Unknown datatype!');
 end
@@ -367,7 +357,7 @@ end
 p_ind = p_val_l <= 0.05;
 if any(p_ind)
     
-    p_ind = p_val_r <= 0.05 & p_val_r > 0.001;
+    p_ind = p_val_l <= 0.05 & p_val_l > 0.001;
     if any(p_ind)
         plot(thres_x(p_ind), star_loc, 'b*');
     end

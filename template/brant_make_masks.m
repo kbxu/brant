@@ -9,8 +9,8 @@ tpm_file = fullfile(spm_path, 'tpm', 'TPM.nii');
 tpm_vol = spm_vol(tpm_file);
 
 make_wm = 1;
-make_csf = 1;
-make_gm = 1;
+make_csf = 0;
+make_gm = 0;
 
 % white matter mask
 if (make_wm == 1)

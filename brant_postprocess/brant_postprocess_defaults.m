@@ -26,7 +26,7 @@ switch(lower(process_str))
         end
         
         process_pars.circos_dir = {circos_dir};
-        process_pars.conf_dir = {fullfile(brant_path, 'brant_view', 'circos')};
+        process_pars.conf_dir = {fullfile(brant_path, 'circos')};
         process_pars.roi_info = {''};
         process_pars.edge = {''};
 %         process_pars.chromo_units = 100000;

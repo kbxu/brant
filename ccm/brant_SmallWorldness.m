@@ -4,21 +4,26 @@ function [s, l, g] = brant_SmallWorldness(G, simT, gType, kc, par_ind)
 N = length(G);   G(1:(N+1):end) = 0;%clear self-edges
 
 % Measure in real network
-lp_real = CCM_AvgShortestPath(G, 1:N);
-cp_real = CCM_ClusteringCoef(G, gType);
 
-lp_rand = zeros(simT, 1);   cp_rand = zeros(simT, 1);
+lp_real = brant_ShortestPathLength(G);
+cp_real = brant_ClusteringCoef(G);
+
+% lp_real = CCM_AvgShortestPath(G, 1:N);
+% cp_real = CCM_ClusteringCoef(G, gType);
+
+lp_rand = zeros(simT, 1);
+cp_rand = zeros(simT, 1);
 
 if (par_ind == 1)
     parfor i = 1:simT       
         newg = brant_randomizeGraph(G, kc);
-        lp_rand(i) = brant_GlobalEfficiency(newg);
+        lp_rand(i) = brant_ShortestPathLength(newg);
         cp_rand(i) = brant_ClusteringCoef(newg);
     end
 else
     for i = 1:simT       
         newg = brant_randomizeGraph(G, kc);
-        lp_rand(i) = brant_GlobalEfficiency(newg);
+        lp_rand(i) = brant_AveShortestPathLength(newg);
         cp_rand(i) = brant_ClusteringCoef(newg);
     end
 end
@@ -43,8 +48,8 @@ end
 % end
 % disp([lp_rand, cp_rand]);
 % lp_rand(1:30) = [];%eliminate suspect vaule 
-lp_rand = mean(lp_rand);
 % cp_rand(1:30) = [];
+lp_rand = mean(lp_rand);
 cp_rand = mean(cp_rand);
 
 % SmallWorldness

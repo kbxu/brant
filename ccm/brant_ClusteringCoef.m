@@ -10,7 +10,7 @@ for m = 1:N
     temp = gBin(gBin(m, :), gBin(m, :));
     Num = size(temp, 1);
     if(Num > 1),
-        Cp_Nodal(m) = sum(temp(:)) / Num / (Num - 1);   
+        Cp_Nodal(m) = sum(temp(:)) / (Num * (Num - 1));
     end
 end
 

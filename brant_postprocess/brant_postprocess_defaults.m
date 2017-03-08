@@ -48,6 +48,64 @@ switch(lower(process_str))
         
         process_fun = @brant_circos_conf;
     
+    case 'normalise'
+        
+        process_pars.norm_ind = 1;
+        process_pars.fwd_deform_ind = 1;
+        process_pars.fwd_deform_filetypes = '';
+        process_pars.fwd_resolution = [3,3,3];
+        process_pars.inv_deform_ind = 1;
+        process_pars.inv_deform_ref = '';
+        process_pars.inv_deform_file = {bn_atlas};
+        
+        ui_structs = {...
+            {'chb', 'num_bin'},          'normalise source to template (spm12)',   {'norm_ind'},                          '';...
+            {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'filetype', '*.nii'}, {'nm_pos', 1}, {'mask', '', 'disable'}},              '';...
+            {'chb', 'num_bin'},          'forward deformation (individual to mni)',   {'fwd_deform_ind'},                          '';...
+            {'edit', 'str_long_right'}, 'filetypes',   {'fwd_deform_filetypes'},                 '';...
+            {'edit', 'num_short_right'},      'target resolution',          {'fwd_resolution'},              '';...
+            {'chb', 'num_bin'},          'inverse deformaiton (mni to individual)',   {'inv_deform_ind'},                          '';...
+            {'edit', 'str_long_right'}, 'ref filetype',   {'inv_deform_ref'},                 '';...
+            {'edit', 'str_nifti'},       'file in mni',         {'inv_deform_file'},             '';...
+            };
+        
+        process_fun = @brant_normalise_batch;
+    case 'dwi'
+        
+        if (ispc == 1)
+            [ret, str] = system('where bnviewer.exe');
+        else
+            [ret, str] = system('which bnviewer');
+        end
+        
+        dk_dir = '';
+        if (ret == 0)
+            dk_dir = fileparts(str);
+        end
+        
+        ...process_pars.wk_dir = {pwd};
+        process_pars.dk_dir = {dk_dir};
+        process_pars.eddy_ind = 1;
+        process_pars.recon_dti_ind = 1;
+        process_pars.DTI_trk_ind = 1;
+        ...process_pars.recon_hardi_ind = 0;
+        process_pars.hardi_odf_ind = 0;
+        process_pars.hardi_fod_ind = 0;
+        
+        ui_structs = {...
+            ...{'edit', 'str_dir'},     'wk dir',     {'wk_dir'},      '';...
+            {'edit', 'str_dir'},     'D.K. dir',     {'dk_dir'},      '';...
+            {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'filetype', '*.nii'}, {'nm_pos', 1}, {'mask', '', 'disable'}},              '';...
+            {'chb', 'num_bin'},          'eddy correction',   {'eddy_ind'},                          '';...
+            {'chb', 'num_bin'},          'reconstruction -- DTI',   {'recon_dti_ind'},                          '';...
+            {'chb', 'num_bin'},          'tracking -- DTI',   {'DTI_trk_ind'},                          '';...
+            ...{'chb', 'num_bin'},          'reconstruction -- HARDI',   {'recon_hardi_ind'},                          '';...
+            {'chb', 'num_bin'},          'reconstruction -- HARDI (ODF)',   {'hardi_odf_ind'},                          '';...
+            {'chb', 'num_bin'},          'reconstruction -- HARDI (FOD)',   {'hardi_fod_ind'},                          '';...
+            };
+        
+        process_fun = @brant_dwi_batch;
+        
     case 'reslice'
         
         process_pars.ref = {''};

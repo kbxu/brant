@@ -1,0 +1,26 @@
+Help information for DWI:
+A batch processing GUI-interface for Diffusion Toolkit
+
+D.K. dir: path of installed Diffusion Toolkit, e.g. C:\Program Files (x86)\DiffusionKit
+id index: identifier to find unique string for each subject
+filetype: files in the filetype will be searched in input directories.
+4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
+input dirs: directories can be input either using a .txt file or spm select window.
+
+Choose below options to perform in each directory.
+eddy correction
+reconstruction--DTI
+tracking--DTI
+reconstruction--HARDI(ODF)
+reconstruction--HARDI(FOD)
+
+Results will be saved in each input directory.
+
+For more information, please visit
+http://diffusion.brainnetome.org/
+
+Reference:
+Sangma Xie, Liangfu Chen, Nianming Zuo and Tianzi Jiang, DiffusionKit: A Light One-Stop Solution for Diffusion MRI Data Analysis, Journal of Neuroscience Methods, vol. 273, pp. 107-119, 2016.
+
+end
+     

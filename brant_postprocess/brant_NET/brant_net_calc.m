@@ -124,9 +124,9 @@ fprintf('\nFinished!\n');
 
 function net = brant_measure(net_measure_option, subj_id, gMatrix, net_type)
 
-N = size(gMatrix, 1);
+% N = size(gMatrix, 1);
 
-corr_ind = triu(true(N, N), 1);
+% corr_ind = triu(true(N, N), 1);
 
 if ~any(gMatrix(:))
     net = [];
@@ -158,7 +158,7 @@ if (net_measure_option.betweenness_centrality == 1)
     
     if (strcmp(computer('arch'), 'win64') == 1)
         bc = brant_betweenness_centrality(sparse(gMatrix)); %  normalized / ((N - 1) * (N - 2) / 2)
-        N = size(gMatrix, 1);
+%         N = size(gMatrix, 1);
 %         bc = bc; %  unnormalized / ((N - 1) * (N - 2) / 2)
         net.betweenness_centrality.global = mean(bc);
         net.betweenness_centrality.nodal = bc;
@@ -181,19 +181,13 @@ if any([net_measure_option.local_efficiency,...
         net_measure_option.global_efficiency,...
         net_measure_option.shortest_path_length]) == 1
     fprintf('%s: the shortest distance matrix of source nodes.\n', subj_id);
-    dist = graphallshortestpaths(sparse(gMatrix), 'Directed', false);
-    
     
     if (net_measure_option.shortest_path_length == 1)
-        net.shortest_path_length.nodal = sum(dist, 2) / (N - 1);
-        net.shortest_path_length.global = mean(net.shortest_path_length.nodal);
+        [net.shortest_path_length.global, net.shortest_path_length.nodal] = brant_AveShortestPathLength(gMatrix);
     end
     
     if (net_measure_option.global_efficiency == 1)
-        eff_mat = 1 ./ dist;
-        eff_mat(~isfinite(eff_mat)) = 0;
-        net.global_efficiency.nodal = sum(eff_mat, 2) / (N - 1);
-        net.global_efficiency.global = 2 * sum(eff_mat(corr_ind)) / (N * (N - 1));
+        [net.global_efficiency.global, net.global_efficiency.nodal] = brant_GlobalEfficiency(gMatrix);
     end
 end
 

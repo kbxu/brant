@@ -1226,8 +1226,8 @@ else
     sel_one_file = 0;
 end
 
-table_support = '^.*\.(csv|txt)$';
-nifti_support = '^.*\.(nii|img|nii.gz)$';
+table_support = '^.*\.(|CSV|csv|txt|TXT)$';
+nifti_support = '^.*\.(nii|img|nii.gz|NII|IMG|NII.GZ)$';
 
 switch(mode)
     % single file input below

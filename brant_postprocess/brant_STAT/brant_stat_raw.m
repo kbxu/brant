@@ -106,7 +106,7 @@ if (one_samp_ind == 1)
                 case 'stat matrix'
                     save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                      test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est_one{m}, df_stu, subjs);
-                 case 'stat matrix - voxel to voxel'
+                case 'stat matrix - voxel to voxel'
                     out_fn_unc = fullfile(out_info.outdir, [out_info.out_prefix, sprintf('%s.mat', test_fn)]);
                     df = df_stu;
                     t_vec = stat_val;

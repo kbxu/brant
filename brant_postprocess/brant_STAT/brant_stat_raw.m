@@ -496,7 +496,7 @@ for n_contr = 1:numel(contrs)
     end
 
 %     h_rst_unc{n_contr} = ((p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0)) .* sign(t_rst);
-    h_rst_unc{n_contr} = (p_rst_unc{n_contr} < thr) & (p_rst_unc{n_contr} > 0);
+    h_rst_unc{n_contr} = (p_rst_unc{n_contr} < thr); % & (p_rst_unc{n_contr} > 0); due to accuracy loss, p could be 0
     tail_rst{n_contr} = contrs_tail{n_contr};
 end
 

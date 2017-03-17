@@ -3,18 +3,24 @@ function brant_draw_brain(node_info, edge_info)
 hold('on');
 if ~isempty(node_info)
     node_ind = true(size(node_info.x, 1), 1);
-    if ((~isempty(edge_info.edge)) && (edge_info.wei_rad == 1))
+    if ~isempty(edge_info.edge)
         edge_part = edge_info.edge;
         thres_str = strrep(edge_info.thres, 'edge', 'edge_part');
         edge_ind = eval(thres_str);
+        
         size_raw = sum(abs(edge_part .* edge_ind), 2);
-        size_raw_scale_tmp = ((size_raw(size_raw ~= 0) - 1) / max(size_raw)) * 7 + 3;
-        size_raw_scale = size_raw;
-        size_raw_scale(size_raw ~= 0) = size_raw_scale_tmp;
-        node_info.size = size_raw_scale;
+        if edge_info.wei_rad == 1
+            
+            size_raw_scale_tmp = ((size_raw(size_raw ~= 0) - 1) / max(size_raw)) * 7 + 3;
+            size_raw_scale = size_raw;
+            size_raw_scale(size_raw ~= 0) = size_raw_scale_tmp;
+            node_info.size = size_raw_scale;
+        else
+            node_info.size(size_raw == 0) = 0;
+        end
         
         if (edge_info.wei_thr > 0)
-            node_ind = size_raw >= edge_info.wei_thr & node_ind;
+            node_ind = (size_raw >= edge_info.wei_thr) & node_ind;
         end
     end
     brant_draw_node_new(node_ind, node_info.coords, node_info, edge_info.hide_node);

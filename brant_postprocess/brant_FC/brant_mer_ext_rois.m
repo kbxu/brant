@@ -14,35 +14,36 @@ merge_info.out_fn = jobman.out_fn;
 out2single = jobman.out2single;
 output_dir = jobman.out_dir{1};
 
-if mer_ind == 1;
+if mer_ind == 1
     [nifti_list, subj_ids] = brant_get_subjs(merge_info);
     spm_vols_input = cellfun(@spm_vol, nifti_list);
     spm_check_orientations(spm_vols_input);
     
-    input_imgs = arrayfun(@spm_read_vols, spm_vols_input, 'UniformOutput', false);
-    fprintf('Brant uses 0.5 as a threshold to binarize the input rois.\n');
-    input_bin = cellfun(@(x) double(abs(x) > 0.5), input_imgs, 'UniformOutput', false);
-    
-    input_sum = sum(cat(4, input_bin{:}), 4);
-    if any(input_sum(:) > 1)
-        warning('on'); %#ok<WNON>
-        warning(sprintf('\nOverlap has been detected among the input files!\nOverlap areas will be discarded!\n')); %#ok<SPWRN>
-        
-        overlap_mask = input_sum > 1;
-        input_num = cellfun(@(x, y) (x & (~overlap_mask)) .* y, input_bin, num2cell(1:numel(input_bin))', 'UniformOutput', false);
-    else
-        input_num = cellfun(@(x, y) x .* y, input_bin, num2cell(1:numel(input_bin))', 'UniformOutput', false);
+    fprintf('\n\tMerging ROI files...\n');
+    fprintf('\n\tBrant uses abs(intensity) > 0.5 to binarize the input rois.\n');
+    input_sum = single(0); input_num = single(0);
+    for m = 1:numel(spm_vols_input)
+        input_img_tmp = spm_read_vols(spm_vols_input(m));
+        input_bin = abs(input_img_tmp) > 0.5;
+        input_sum = input_sum + single(input_bin);
+        input_num = input_num + single(input_bin) * m;
     end
+    clear('input_img_tmp');
     
-    output_img = sum(cat(4, input_num{:}), 4);
+    overlap_mask = input_sum > 1;
+    if any(overlap_mask(:))
+        warning('on');
+        warning(sprintf('\n\tOverlap has been detected among the input files!\n\tOverlaping areas will be set to 0!\n')); %#ok<SPWRN>
+        input_num(overlap_mask) = 0;
+    end
     
     out_vol = spm_vols_input(1);
     out_vol.fname = fullfile(output_dir, [merge_info.out_fn, '.nii']);
     out_vol.dt = [spm_type('float32'), spm_platform('bigend')];
-    spm_write_vol(out_vol, single(output_img));
+    spm_write_vol(out_vol, input_num);
     
     fid = fopen(fullfile(output_dir, [merge_info.out_fn, '.txt']), 'wt');
-    for m = 1:numel(input_bin)
+    for m = 1:numel(subj_ids)
         fprintf(fid, '%d %s\n', m, subj_ids{m});
     end
     fclose(fid);
@@ -67,7 +68,6 @@ elseif ext_ind == 1
     
     % uses load_untouch_nii to load roi file
     [rois_inds, rois_str, roi_tags] = brant_get_rois(extract_info.rois, [], extract_info.roi_info{1}, 0, @load_untouch_nii);
-    
     
     roi_ind_bp = arrayfun(@(x) find(x == roi_tags), roi_vec);
     if out2single == 0
@@ -97,12 +97,6 @@ elseif ext_ind == 1
         out_file = fullfile(output_dir, ['brant_extract_', fn, '.csv']);
         roi_info_cell = [arrayfun(@num2cell, roi_tags(roi_ind_bp)), rois_str(roi_ind_bp)];
         brant_write_csv(out_file, roi_info_cell);
-        
-%         fid = fopen(fullfile(output_dir, ['brant_extract_', fn, '.txt']), 'wt');
-%         for m = 1:numel(roi_ind_bp)
-%             fprintf(fid, '%d %s\n', roi_tags(roi_ind_bp(m)), rois_str{roi_ind_bp(m)});
-%         end
-%         fclose(fid);
     end
 else
     error('Unknown Input!');

@@ -169,6 +169,9 @@ if any(process_ind)
                             
                             sts = brant_spm_check_orientations([mask_tmp_hdr; data_sample_hdr]);
                             if sts == false
+                                fprintf('To keep the resolution and orientation of mask and data as the same, brant will reslice the mask to data.\n');
+                                fprintf('In this part brant assumes all data files have same header and takes the first one as reference.\n');
+                                fprintf('Reslicing mask %s to sample file %s...\n', mask_all_new{n}, sample_file);
                                 mask_all_new{n} = brant_reslice(sample_file, mask_all_new{n}, img_size_str);
                             end
                         end

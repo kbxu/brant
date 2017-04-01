@@ -3,7 +3,8 @@ function brant_draw_rois(jobman)
 
 aio_ind = jobman.aio;
 mask_nii = load_nii_mod(jobman.mask{1}, 1);
-[mask_XYZ, s_mat] = brant_get_XYZ(mask_nii.hdr);
+[mask_XYZ, s_mat] = brant_get_XYZ(mask_nii.hdr); %#ok<ASGLU>
+clear('mask_XYZ');
 mask_ind_all = mask_nii.img > 0.5;
 mask_hdr = mask_nii.hdr;
 size_mask = mask_hdr.dime.dim(2:4);
@@ -75,7 +76,7 @@ else
     end
 end
 
-
+s_mat = double(s_mat);
 v_res = reshape(diag(s_mat(1:3, 1:3)), 1, 3);
 
 num_coords = size(coords, 1);
@@ -107,7 +108,7 @@ vox_ind_l = brant_mni2vox(coords_low, coords_bound_l, v_res);
 vox_ind_u = brant_mni2vox(coords_upper, coords_bound_l, v_res);
 
 for m = 1:num_coords
-    fprintf('\tDrawing ROI %s of tag %d as %s.\n', roi_strs{m}, m, radius_type);
+    fprintf('\tDrawing ROI %s of tag %d as %s with radius %.1f mm\n', roi_strs{m}, m, radius_type, radius_mm);
     
     [vox_x, vox_y, vox_z] = meshgrid(vox_ind_l(m, 1):vox_ind_u(m, 1),...
                                      vox_ind_l(m, 2):vox_ind_u(m, 2),...
@@ -151,7 +152,7 @@ for m = 1:num_coords
 end
 
 if (roi_overlap == 1)
-    warning('ROI overlaped in %s.nii!', num2str(num_coords, 'rois_%d'));
+    warning(sprintf('\n\tROI overlaped!\n\tPlease check the radius and coordinates!')); %#ok<SPWRN>
 end
 
 brant_write_csv(fullfile(outdir, sprintf('roi_info_%s_%d_rois.csv', radius_type, num_coords)), [num2cell(1:num_coords)', roi_strs]);

@@ -137,6 +137,13 @@ for m = 1:num_coords
         temp_img(~mask_ind_all) = false;
     end
     
+    if ~any(temp_img(:))
+        fid = fopen(fullfile(outdir, 'empty_rois.txt'), 'at');
+        fprintf(fid, 'ROI_%03d %.1f,%.1f,%.1f was not drawn (0 voxels).\n', m, coords(m, :));
+        fclose(fid);
+        continue;
+    end
+    
     if (roi_overlap == 0)
         if any(temp_nii_aio(temp_img))
             roi_overlap = 1;

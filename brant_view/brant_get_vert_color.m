@@ -40,8 +40,8 @@ vq(~vol_3d_mask) = 0;
     
 % min_vq = min(setdiff(vq, 0));
 % max_vq = max(setdiff(vq, 0));
-min_vq = min(setdiff(vol_int, 0));
-max_vq = max(setdiff(vol_int, 0));
+min_vq = min(setdiff(vol_int(:), 0));
+max_vq = max(setdiff(vol_int(:), 0));
 max_abs = max(abs(vol_int(:)));
 
 
@@ -130,7 +130,7 @@ if (colorinfo.discrete == 0)
     end   
     cbr.caxis = [1, 129];
 else
-    uniq_color = setdiff(vol_int, 0);
+    uniq_color = setdiff(vol_int(:), 0);
     color_N = numel(uniq_color);
     
     c_map = hsv(color_N);

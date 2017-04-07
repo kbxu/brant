@@ -80,7 +80,6 @@ if volume_ind == 1
 else
     [x, y] = find(corr_ind);
     fc_strs = cellfun(@(x, y) [x, '--', y], rois_str(x), rois_str(y), 'UniformOutput', false);
-    tbl = [['Name', fc_strs']; subj_ids_org, num2cell(single(data_2d_mat))];
     dlmwrite(fullfile(outdir, 'corr_ind.csv'), corr_ind);
     
     %
@@ -89,6 +88,7 @@ else
     save(fullfile(outdir, 'brant_fc_value_strings.mat'), 'subj_ids_org', 'fc_strs', 'info_readme');
     
     % write a full/large csv file
+    tbl = [['Name', fc_strs']; subj_ids_org, num2cell(single(data_2d_mat))];
     brant_write_csv(fullfile(outdir, 'brant_fc_value.csv'), tbl);
 end
 

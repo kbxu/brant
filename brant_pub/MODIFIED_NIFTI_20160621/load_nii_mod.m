@@ -9,40 +9,61 @@
 %  nii will be in RAS orientation, i.e. X axis from Left to Right,
 %  Y axis from Posterior to Anterior, and Z axis from Inferior to
 %  Superior.
-%
-%  Usage: nii = load_nii_mod(filename, [img_idx], [tolerance], [preferredForm])
-%
+%  
+%  Usage: nii = load_nii(filename, [img_idx], [dim5_idx], [dim6_idx], ...
+%			[dim7_idx], [old_RGB], [tolerance], [preferredForm])
+%  
 %  filename  - 	NIFTI or ANALYZE file name.
-%
+%  
 %  img_idx (optional)  -  a numerical array of 4th dimension indices,
 %	which is the indices of image scan volume. The number of images
 %	scan volumes can be obtained from get_nii_frame.m, or simply
-%	hdr.dime.dim(5). Only the specified volumes will be loaded.
+%	hdr.dime.dim(5). Only the specified volumes will be loaded. 
 %	All available image volumes will be loaded, if it is default or
 %	empty.
 %
+%  dim5_idx (optional)  -  a numerical array of 5th dimension indices.
+%	Only the specified range will be loaded. All available range
+%	will be loaded, if it is default or empty.
+%
+%  dim6_idx (optional)  -  a numerical array of 6th dimension indices.
+%	Only the specified range will be loaded. All available range
+%	will be loaded, if it is default or empty.
+%
+%  dim7_idx (optional)  -  a numerical array of 7th dimension indices.
+%	Only the specified range will be loaded. All available range
+%	will be loaded, if it is default or empty.
+%
+%  old_RGB (optional)  -  a scale number to tell difference of new RGB24
+%	from old RGB24. New RGB24 uses RGB triple sequentially for each
+%	voxel, like [R1 G1 B1 R2 G2 B2 ...]. Analyze 6.0 from AnalyzeDirect
+%	uses old RGB24, in a way like [R1 R2 ... G1 G2 ... B1 B2 ...] for
+%	each slices. If the image that you view is garbled, try to set 
+%	old_RGB variable to 1 and try again, because it could be in
+%	old RGB24. It will be set to 0, if it is default or empty.
+%
 %  tolerance (optional) - distortion allowed in the loaded image for any
-%	non-orthogonal rotation or shearing of NIfTI affine matrix. If
-%	you set 'tolerance' to 0, it means that you do not allow any
-%	distortion. If you set 'tolerance' to 1, it means that you do
+%	non-orthogonal rotation or shearing of NIfTI affine matrix. If 
+%	you set 'tolerance' to 0, it means that you do not allow any 
+%	distortion. If you set 'tolerance' to 1, it means that you do 
 %	not care any distortion. The image will fail to be loaded if it
 %	can not be tolerated. The tolerance will be set to 0.1 (10%), if
 %	it is default or empty.
 %
 %  preferredForm (optional)  -  selects which transformation from voxels
 %	to RAS coordinates; values are s,q,S,Q.  Lower case s,q indicate
-%	"prefer sform or qform, but use others if preferred not present".
+%	"prefer sform or qform, but use others if preferred not present". 
 %	Upper case indicate the program is forced to use the specificied
 %	tranform or fail loading.  'preferredForm' will be 's', if it is
 %	default or empty.	- Jeff Gunter
 %
 %  Returned values:
-%
+%  
 %  nii structure:
 %
 %	hdr -		struct with NIFTI header fields.
 %
-%	filetype -	Analyze format .hdr/.img (0);
+%	filetype -	Analyze format .hdr/.img (0); 
 %			NIFTI .hdr/.img (1);
 %			NIFTI .nii (2)
 %
@@ -53,169 +74,132 @@
 %	img - 		3D (or 4D) matrix of NIFTI data.
 %
 %	original -	the original header before any affine transform.
-%
+%  
 %  Part of this file is copied and modified from:
 %  http://www.mathworks.com/matlabcentral/fileexchange/1878-mri-analyze-tools
-%
+%  
 %  NIFTI data format can be found on: http://nifti.nimh.nih.gov
-%
+%  
 %  - Jimmy Shen (jimmy@rotman-baycrest.on.ca)
 %
-function nii = load_nii_mod(filename, img_idx, tolerance, preferredForm)
+function nii = load_nii_mod(filename, img_idx, dim5_idx, dim6_idx, dim7_idx, ...
+			old_RGB, tolerance, preferredForm)
 
-% if strcmpi(filename(end-2:end), 'img') == 1 %ismac == 1 %strcmp(computer('arch'), 'win64') == 0
-%     nii = load_nii(filename, img_idx, [], [], [], [], tolerance, preferredForm);
-%     return;
-% end
+   if ~exist('filename','var')
+      error('Usage: nii = load_nii(filename, [img_idx], [dim5_idx], [dim6_idx], [dim7_idx], [old_RGB], [tolerance], [preferredForm])');
+   end
 
-if ~exist('filename','var')
-    error('Usage: nii = load_nii_mod(filename, [img_idx], [dim5_idx], [tolerance], [preferredForm])');
-end
+   if exist(filename, 'file') ~= 2
+       error('File not found!');
+   end
+   
+   if ~exist('img_idx','var') || isempty(img_idx)
+      img_idx = [];
+   end
 
-if ~exist('img_idx','var') || isempty(img_idx)
-    img_idx = [];
-end
+   if ~exist('dim5_idx','var') || isempty(dim5_idx)
+      dim5_idx = [];
+   end
 
-if ~exist('tolerance','var') || isempty(tolerance)
-    tolerance = 0.1;			% 10 percent
-end
+   if ~exist('dim6_idx','var') || isempty(dim6_idx)
+      dim6_idx = [];
+   end
 
-if ~exist('preferredForm','var') || isempty(preferredForm)
-    preferredForm= 's';		% Jeff
-end
+   if ~exist('dim7_idx','var') || isempty(dim7_idx)
+      dim7_idx = [];
+   end
 
-img_idx = double(img_idx);
+   if ~exist('old_RGB','var') || isempty(old_RGB)
+      old_RGB = 0;
+   end
 
-%  new load header and image
-[nii.hdr, img] = load_nii_hdr_img_raw_c(filename, img_idx);
-nii.machine = 'ieee-le';
+   if ~exist('tolerance','var') || isempty(tolerance)
+      tolerance = 0.1;			% 10 percent
+   end
 
-[pth, fileprefix] = brant_fileparts(filename);
-nii.fileprefix = fullfile(pth, fileprefix);
+   if ~exist('preferredForm','var') || isempty(preferredForm)
+      preferredForm= 's';		% Jeff
+   end
 
-nii.hdr.hist.originator = double(nii.hdr.hist.originator);
-nii.hdr.dime.dim = double(nii.hdr.dime.dim);
-% if ~strcmp(nii.hdr.hist.magic, 'n+1') && ~strcmp(nii.hdr.hist.magic, 'ni1')
-%     nii.hdr.hist.qform_code = 0;
-%     nii.hdr.hist.sform_code = 0;
-% end
+%    v = version;
 
-if strcmp(nii.hdr.hist.magic, 'n+1')
-    nii.filetype = 2;
-elseif strcmp(nii.hdr.hist.magic, 'ni1')
-    nii.filetype = 1;
-else
-    nii.filetype = 0;
-end
+   %  Check file extension. If .gz, unpack it into temp folder
+   %
+   if length(filename) > 2 && strcmpi(filename(end-2:end), '.gz')
 
-[nii.img,nii.hdr] = load_nii_img_mod(nii.hdr,img,img_idx);
-%  Perform some of sform/qform transform
-nii = xform_nii(nii, tolerance, preferredForm);
+      if ~strcmpi(filename(end-6:end), '.img.gz') && ...
+	 ~strcmpi(filename(end-6:end), '.hdr.gz') && ...
+	 ~strcmpi(filename(end-6:end), '.nii.gz')
 
-fields_org = {'hdr', 'filetype', 'fileprefix', 'machine', 'img', 'original'};
-nii = orderfields(nii, fields_org);
+         error('Please check filename.');
+      end
 
-%  - Jimmy Shen (jimmy@rotman-baycrest.on.ca)
-% cut off support for RGB and dimension higher than 4
-function [img,hdr] = load_nii_img_mod(hdr,img,img_idx)
+%       if str2num(v(1:3)) < 7.1 || ~usejava('jvm')
+%          error('Please use MATLAB 7.1 (with java) and above, or run gunzip outside MATLAB.');
+%       elseif strcmp(filename(end-6:end), '.img.gz')
+%          filename1 = filename;
+%          filename2 = filename;
+%          filename2(end-6:end) = '';
+%          filename2 = [filename2, '.hdr.gz'];
+% 
+% %          tmpDir = tempname;
+% %          mkdir(tmpDir);
+% %          gzFileName = filename;
+% % 
+% %          filename1 = gunzip(filename1, tmpDir);
+% %          filename2 = gunzip(filename2, tmpDir);
+%          filename = char(filename1);	% convert from cell to string
+%       elseif strcmp(filename(end-6:end), '.hdr.gz')
+%          filename1 = filename;
+%          filename2 = filename;
+%          filename2(end-6:end) = '';
+%          filename2 = [filename2, '.img.gz'];
+% 
+% %          tmpDir = tempname;
+% %          mkdir(tmpDir);
+% %          gzFileName = filename;
+% % 
+% %          filename1 = gunzip(filename1, tmpDir);
+% %          filename2 = gunzip(filename2, tmpDir);
+%          filename = char(filename1);	% convert from cell to string
+%       elseif strcmp(filename(end-6:end), '.nii.gz')
+% %          tmpDir = tempname;
+% %          mkdir(tmpDir);
+% %          gzFileName = filename;
+% %          filename = gunzip(filename, tmpDir);
+%          filename = char(filename);	% convert from cell to string
+%       end
+   end
 
-if ~exist('img_idx','var') || isempty(img_idx) || (hdr.dime.dim(5)<1)
-    img_idx = [];
-end
+   %  Read the dataset header
+   %
+   [nii.hdr, nii.filetype, nii.fileprefix, nii.machine] = load_nii_hdr_mod(filename, 'touch');
+%    [nii.hdr,nii.filetype,nii.fileprefix,nii.machine] = load_nii_hdr(filename);
 
-if ~isempty(img_idx) && ~isnumeric(img_idx)
-    error('"img_idx" should be a numerical array.');
-end
+   %  Read the header extension
+   %
+%   nii.ext = load_nii_ext(filename);
 
-if length(unique(img_idx)) ~= length(img_idx)
-    error('Duplicate image index in "img_idx"');
-end
+   %  Read the dataset body
+   %
+   [nii.img,nii.hdr] = load_nii_img_mod(nii.hdr,nii.filetype,nii.fileprefix, ...
+		nii.machine,img_idx,dim5_idx,dim6_idx,dim7_idx,old_RGB);
 
-if ~isempty(img_idx) && (min(img_idx) < 1 || (max(img_idx) > hdr.dime.dim(5)))
-    max_range = hdr.dime.dim(5);
-    
-    if max_range == 1
-        error(['"img_idx" should be 1.']);
-    else
-        range = ['1 ' num2str(max_range)];
-        error(['"img_idx" should be an integer within the range of [' range '].']);
-    end
-end
+   %  Perform some of sform/qform transform
+   %
+   nii = xform_nii(nii, tolerance, preferredForm);
 
-[img,hdr] = read_image_mod(hdr,img,img_idx);
+   %  Clean up after gunzip
+   %
+%    if exist('gzFileName', 'var')
+% 
+%       %  fix fileprefix so it doesn't point to temp location
+%       %
+%       
+%       
+%       nii.fileprefix = gzFileName(1:end-7);
+%       rmdir(tmpDir,'s');
+%    end
+% 
+%    return					% load_nii
 
-
-%---------------------------------------------------------------------
-function [img,hdr] = read_image_mod(hdr,img,img_idx)
-%  Set bitpix according to datatype
-%
-%  /*Acceptable values for datatype are*/
-%
-%     0 None                     (Unknown bit per voxel) % DT_NONE, DT_UNKNOWN
-%     1 Binary                         (ubit1, bitpix=1) % DT_BINARY
-%     2 Unsigned char         (uchar or uint8, bitpix=8) % DT_UINT8, NIFTI_TYPE_UINT8
-%     4 Signed short                  (int16, bitpix=16) % DT_INT16, NIFTI_TYPE_INT16
-%     8 Signed integer                (int32, bitpix=32) % DT_INT32, NIFTI_TYPE_INT32
-%    16 Floating point    (single or float32, bitpix=32) % DT_FLOAT32, NIFTI_TYPE_FLOAT32
-%    32 Complex, 2 float32      (Use float32, bitpix=64) % DT_COMPLEX64, NIFTI_TYPE_COMPLEX64
-%    64 Double precision  (double or float64, bitpix=64) % DT_FLOAT64, NIFTI_TYPE_FLOAT64
-%   128 uint8 RGB                 (Use uint8, bitpix=24) % DT_RGB24, NIFTI_TYPE_RGB24
-%   256 Signed char            (schar or int8, bitpix=8) % DT_INT8, NIFTI_TYPE_INT8
-%   511 Single RGB              (Use float32, bitpix=96) % DT_RGB96, NIFTI_TYPE_RGB96
-%   512 Unsigned short               (uint16, bitpix=16) % DT_UNINT16, NIFTI_TYPE_UNINT16
-%   768 Unsigned integer             (uint32, bitpix=32) % DT_UNINT32, NIFTI_TYPE_UNINT32
-%  1024 Signed long long              (int64, bitpix=64) % DT_INT64, NIFTI_TYPE_INT64
-%  1280 Unsigned long long           (uint64, bitpix=64) % DT_UINT64, NIFTI_TYPE_UINT64
-%  1536 Long double, float128  (Unsupported, bitpix=128) % DT_FLOAT128, NIFTI_TYPE_FLOAT128
-%  1792 Complex128, 2 float64  (Use float64, bitpix=128) % DT_COMPLEX128, NIFTI_TYPE_COMPLEX128
-%  2048 Complex256, 2 float128 (Unsupported, bitpix=256) % DT_COMPLEX128, NIFTI_TYPE_COMPLEX128
-%
-switch hdr.dime.datatype
-    case   1,
-        hdr.dime.bitpix = 1;  precision = 'ubit1';
-    case   2,
-        hdr.dime.bitpix = 8;  precision = 'uint8';
-    case   4,
-        hdr.dime.bitpix = 16; precision = 'int16';
-    case   8,
-        hdr.dime.bitpix = 32; precision = 'int32';
-    case  16,
-        hdr.dime.bitpix = 32; precision = 'float32';
-    case  32,
-        hdr.dime.bitpix = 64; precision = 'float32';
-    case  64,
-        hdr.dime.bitpix = 64; precision = 'float64';
-    case 128,
-        hdr.dime.bitpix = 24; precision = 'uint8';
-    case 256
-        hdr.dime.bitpix = 8;  precision = 'int8';
-    case 511
-        hdr.dime.bitpix = 96; precision = 'float32';
-    case 512
-        hdr.dime.bitpix = 16; precision = 'uint16';
-    case 768
-        hdr.dime.bitpix = 32; precision = 'uint32';
-    case 1024
-        hdr.dime.bitpix = 64; precision = 'int64';
-    case 1280
-        hdr.dime.bitpix = 64; precision = 'uint64';
-    case 1792,
-        hdr.dime.bitpix = 128; precision = 'float64';
-    otherwise
-        error('This datatype is not supported');
-end
-
-hdr.dime.dim(hdr.dime.dim < 1) = 1;
-
-if isempty(img_idx)
-    img_idx = 1:hdr.dime.dim(5);
-end
-
-% img = img(:, :, :, img_idx);
-
-hdr.dime.glmax = double(max(img(:)));
-hdr.dime.glmin = double(min(img(:)));
-
-if ~isempty(img_idx)
-    hdr.dime.dim(5) = length(img_idx);
-end

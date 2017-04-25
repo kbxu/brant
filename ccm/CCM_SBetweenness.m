@@ -25,7 +25,7 @@ function [B_global,B] = CCM_SBetweenness(gMatrix, bType, gType)
 % Based on Matlab 2008a
 % $Revision: 1.0, Copywrite (c) 2010
 
-error(nargchk(1,3,nargin,'struct'));
+narginchk(1, 3);
 if(nargin < 2),        bType = 'vertex';    gType = 'weighted';
 elseif(nargin < 3),    gType = 'weighted';   end
 

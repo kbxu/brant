@@ -1,4 +1,4 @@
-function [LE, CC] = brant_LE_CC(gMatrix, LE_ind, CC_ind)
+function [LE, CC] = brant_LE_CC(gMatrix_CC, gMatrix_LE, LE_ind, CC_ind)
 % adapted from CCM_ClusteringCoef and CCM_LEfficient
 % works only for binary symmetric network
 % LE_ind: 1, 0 -- calculate local efficiency when assigned to 1

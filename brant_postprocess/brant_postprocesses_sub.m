@@ -54,7 +54,9 @@ button_len = 51;
 
 ui_buttons = {...
   'run',   [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 20, button_len, 20],    {@run_cb, process_fun};...
-  'help',  [current_pos.x + (disp_size(1) - button_len) / 2, current_pos.y - 20, button_len, 20],  {@brant_help_cb, hfig_inputdlg, dlg_title};...
+  'S',  [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len) + button_len + 5, current_pos.y - 20, 20, 20],  {@brant_save_gui, process_fun, []};...
+  'L',  [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len) + button_len + 30, current_pos.y - 20, 20, 20],  {@brant_load_gui};...
+  '?',  [current_pos.x + (disp_size(1) - button_len) / 2 - button_len - 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len) + button_len + 55, current_pos.y - 20, 20, 20],  {@brant_help_cb, hfig_inputdlg, dlg_title};...
   'cancel',   [current_pos.x + (disp_size(1) + button_len) / 2 + 1 / 2 * ((disp_size(1) - button_len) / 2 - button_len), current_pos.y - 20, button_len, 20], @close_window
   };
 
@@ -72,7 +74,6 @@ end
 
 current_pos.y = fig.height - 60;
 
-% logo_fn = fullfile(fileparts(which('brant')), 'brant_logo_cn_resize.png');
 logo_fn = fullfile(fileparts(which('brant')), 'logo_resize.png');
 if (exist(logo_fn, 'file') == 2)
     create_logo(hfig_inputdlg, current_pos, logo_fn);
@@ -82,8 +83,6 @@ create_elements(hfig_inputdlg, prompt, [current_pos.x, current_pos.y], jobman); 
 brant_except_ui(hfig_inputdlg);
 
 function create_logo(hfig_inputdlg, current_pos, logo_fn)
-
-%I = imresize(imread(logo_fn), 50/159);
 
 h_btn = uicontrol(...
         'Parent',       hfig_inputdlg,...
@@ -714,7 +713,8 @@ else
             edit_str_out = num2str(edit_str, '%d,');
             edit_str_out(end) = '';
         else
-            edit_str_out = num2str(edit_str, '%.3f,');
+%             edit_str_out = num2str(edit_str, '%.3f,');
+            edit_str_out = num2str(edit_str, '%g,');
             edit_str_out(end) = '';
         end
     else

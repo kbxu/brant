@@ -33,7 +33,12 @@ function T = CCM_Transitivity(gMatrix, gType, mode)
 % $Revision: 1.0, Copywrite (c) 2010
 % See also Net_ClusteringCoefficients
 
-error(nargchk(1,3,nargin,'struct'));
+% error(nargchk(1,3,nargin,'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,3,nargin,'struct'));
+else
+    narginchk(1, 3);
+end
 if(nargin < 2),     gType = 'binary';   mode = 'geometric';
 elseif(nargin < 3),	mode  = 'geometric';    end
 N = length(gMatrix);

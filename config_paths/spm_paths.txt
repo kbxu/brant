@@ -1,9 +1,0 @@
-matlabbatch\cfg_basicio
-toolbox\Shoot
-toolbox\OldSeg
-toolbox\OldNorm
-toolbox\Longitudinal
-toolbox\FieldMap
-toolbox\DARTEL
-config
-matlabbatch

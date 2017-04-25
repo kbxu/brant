@@ -20,6 +20,11 @@ Pearson's correlation: correlation type
 Partial correlation: when calculating correlation, between one roi mean time series and voxels/other time series, the rest of roi mean time serieses will be regressed out from the calculation.
 
 out dir: output directory for saving results.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

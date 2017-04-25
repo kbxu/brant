@@ -25,7 +25,7 @@ function [dist, pred, seq, sigma] = bfs(gMatrix, s, gtype)
 % Based on Matlab 2008a
 % $Revision: 1.0, Copywrite (c) 2010
 
-error(nargchk(2, 3, nargin, 'struct'));
+narginchk(2, 3);
 if(nargin < 3),    gtype  = 'weighted';   end
 %if(issparse(gMatrix)), gMatrix = sparse(gMatrix);  end
 N = length(gMatrix);

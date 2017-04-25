@@ -51,7 +51,7 @@ set(findall(hfig_inputdlg, '-property', 'FontSize'), 'FontSize', 8);
 
 function doCallback(obj, evd) %#ok
 
-userdata = get(obj,'Tag');
+userdata = get(obj, 'Tag');
 h_board = findobj(0, 'Tag', userdata, 'Name', userdata);
 if isempty(h_board)    
     [jobman, ui_strucs, process_fun] = brant_postprocess_defaults(userdata);

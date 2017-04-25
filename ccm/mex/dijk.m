@@ -28,8 +28,12 @@ function D = dijk(A,s,t)
 %  Modified by JBT, Dec 2000, to delete paths
 
 % Input Error Checking ******************************************************
-error(nargchk(1,3,nargin,'struct'));
-
+% error(nargchk(1,3,nargin,'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,3,nargin,'struct'));
+else
+    narginchk(1, 3);
+end
 [n,cA] = size(A);
 
 if nargin < 2 | isempty(s), s = (1:n)'; else s = s(:); end

@@ -70,7 +70,7 @@ case 'BIN'% binary network
          	G(i2,j2) = 0;          G(j2,i2) = 0;
            
             % Check connectivity
-            if(brat_isconnected(G)) % faster than isconnected
+            if(brant_isconnected(G)) % faster than isconnected
             	J(edge1) = j2;     J(edge2) = j1;            
               	num = num + 1;
             else

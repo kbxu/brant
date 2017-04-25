@@ -49,6 +49,8 @@ if mer_ind == 1
     fclose(fid);
     
 elseif ext_ind == 1
+    
+    fprintf('\n\tExtracting ROIs...\n');
     roi_full = load_untouch_nii(extract_info.rois{1});
     all_roi_inds = setdiff(roi_full.img(:), [0, NaN]);
     all_roi_inds = all_roi_inds(isfinite(all_roi_inds));

@@ -3,7 +3,7 @@ function [s, l, g] = CCM_SmallWorldness(G, simT, gType, csign)
 % Input:
 %   G       adjacency matrix of Graph, no has vaule inf!
 %   simT    simulative times of random network, default 100
-%   gType 	type of network,'binary' or 'directed'(default)
+%   gType 	type of network,'binary', 'weighted' or 'directed'(default)
 %   csign   sign of connectivity, 1 for keeping connectivity, 0 for no
 %           considering (default)
 % Usage:
@@ -30,7 +30,11 @@ function [s, l, g] = CCM_SmallWorldness(G, simT, gType, csign)
 % $Revision: 1.0, Copywrite (c) 2010
 % See also Net_ClusteringCoefficients
 
-error(nargchk(1, 4, nargin, 'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,4,nargin,'struct'));
+else
+    narginchk(1, 4);
+end
 if(nargin < 2),       gType = 'directed';   simT = 100;   csign = 0;
 elseif(nargin < 3),   simT = 100;   csign = 0;
 elseif(nargin < 4),   csign = 0;
@@ -55,11 +59,10 @@ end
 
 newg = G;
 T = min(nnz(G), 100);%times of swap, different from simT
-if(csign > 0),
+if(csign > 0)
     for i = 1:simT        
         newg = randomizeGraph_kc(newg, T, gType);%randomize netowrk
-%         lp_rand(i) = CCM_AvgShortestPath(newg, 1:N);
-        lp_rand(i) = brat_globalefficiency(newg);
+        lp_rand(i) = CCM_AvgShortestPath(newg, 1:N);
         cp_rand(i) = CCM_ClusteringCoef(newg, gType);
     end
 else

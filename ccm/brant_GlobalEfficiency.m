@@ -1,6 +1,6 @@
-function [eff_global, eff_nodal] = brant_GlobalEfficiency(gBin)
+function [eff_global, eff_nodal] = brant_GlobalEfficiency(gMatrix)
 
-dist = graphallshortestpaths(sparse(gBin), 'Directed', false);
+dist = graphallshortestpaths(sparse(gMatrix), 'Directed', false);
 
 N = size(dist, 1);
 eff_mat = 1./ dist;

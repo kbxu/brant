@@ -11,7 +11,11 @@ lower cutoff (Hz): lower cutoff for band pass filter.
 upper cutoff (Hz): upper cutoff for band pass filter.
 normalize transform: in output file, a suffix of '_m' means the output is divided by mean intensity in the mask; a suffix of '_z' means the output is subtracted by mean intensity and divided by standard deviation.
 out dir: output directory for saving results.
-
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

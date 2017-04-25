@@ -24,8 +24,12 @@ function [num,bset] = branches(gMatrix)
 % $Revision: 1.0, Copywrite (c) 2010
 
 % ###### Input check #########
-error(nargchk(0,1,nargin,'struct'));
-
+% error(nargchk(0,1,nargin,'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(0,1,nargin,'struct'));
+else
+    narginchk(0, 1);
+end
 if(~issparse(gMatrix))
     gMatrix = sparse(gMatrix);
 end

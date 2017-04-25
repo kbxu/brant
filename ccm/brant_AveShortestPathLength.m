@@ -1,6 +1,6 @@
-function [sp_global, sp_nodal] = brant_AveShortestPathLength(gBin)
+function [sp_global, sp_nodal] = brant_AveShortestPathLength(gMatrix)
 
-dist = graphallshortestpaths(sparse(gBin), 'Directed', false);
+dist = graphallshortestpaths(sparse(gMatrix), 'Directed', false);
 
 N = size(dist, 1);
 dist(~isfinite(dist)) = 0;

@@ -1,6 +1,5 @@
 function conn_ind = brant_isconnected(gBin)
 % gBin should be symmetric matrix with zero diagnal elements
-% AWESOME KAIBIN
 
 % conn_ind = false;
 

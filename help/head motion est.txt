@@ -18,6 +18,11 @@ mean-rotation-Dijk(deg): mean absolute Euler angle
 From Power et al., Neuroimage 2012
 mean-FD(mm): frame-wise displacement. Estimated using translation and rotation.
 num-FD>0.5: number of frame-wise displacement that is greater than 0.5mm.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

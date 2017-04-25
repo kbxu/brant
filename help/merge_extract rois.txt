@@ -17,6 +17,11 @@ roi info: optional. labels of tagged ROIs in an .csv file. For example:
 roi index: a vector of integers. used for selecting wanted ROIs.
 output to single file:choose to output to only one file.
 out dir: output directory
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

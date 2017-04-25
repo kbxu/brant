@@ -1,0 +1,29 @@
+Help information for Preprocess:
+    
+System Configuration:
+    Output to wk dir: Set to output results to wk (working) directory defined below. BRANT will create new directory for each subject and copy necessary files to the new directory, then start processing.
+    Check Board: Open/Close CheckBoard.
+    Sync: Synchronize parameters of TR in slice timing and denoise.
+    Parallel Workers: The number of workers used during processing. e.g. when set to 2, BRANT will run 2 subjects in parallel. The processing speed depends on both CPU and Hard Drive speed, if there are a lot data IO with less computation task, set to more workers will slow down the entire process.
+    
+Directories: 
+    wk dir: Working directory to save intermidiate files. By default is set to the current directory.
+    data dirs: directories of each subject, can be inupt from an SPM input dialog of directories or from a *.txt file filled with one directory at a line.
+    filetype: Initial filetype for processing, normally wildcard after DICOM conversion. The item can update itself after each process.
+    data in 4D: Checked means input data is in 4D format, which is highly suggested. If 3D file format is used, each subjects directory will have up to thousands of files after process.
+    
+Preprocess Modules: (for parameters, press help in each input dialog)
+    Slice Timing: Correct for timing information of each slice during one TR.
+    Realign: Correct and estimate spatially the head motion.
+    Coregister (optional): Coregister structural image to mean functional images.
+    Normalize: Normalize functional images to standard space (both SPM12 and SPM8 methods is valid).
+    Denoise: multi-variable regerssion and filter.
+    Smooth: 3D spatial smooth with Gaussian kernal.
+    
+Buttons:
+    R: Refresh (only checkboxes, parameters will remain untouched). Uncheck all selected items and recover the Run button when an error occurs.
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
+end

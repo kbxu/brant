@@ -7,6 +7,14 @@ brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\
 outdir = jobman.out_dir{1};
 mask_fn = jobman.input_nifti.mask{1};
 bn_path = fileparts(which(mfilename));
+thres_corr = jobman.threshold_corr;
+
+assert((thres_corr <= 1) && (thres_corr >= 0));
+
+is4d_ind = jobman.input_nifti.is4d;
+if (is4d_ind == 0)
+    error('Current C++ excutable only works on 4-D data.');
+end
 
 switch(computer('arch'))
     case {'win64', 'win32'}
@@ -15,11 +23,6 @@ switch(computer('arch'))
         ba_full = fullfile(bn_path, 'BN.unix64');
     otherwise
        error('Not supported operation system!');
-end
-
-is4d_ind = jobman.input_nifti.is4d;
-if (is4d_ind == 0)
-    error('Current C++ excutable only works on 4-D data.');
 end
 
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
@@ -38,10 +41,6 @@ for mm = 1:numel(split_prefix)
 
     [mask_hdr, mask_ind, size_mask, new_mask_fn] = brant_check_load_mask(mask_fn, nifti_list{1}, out_dir_tmp); %#ok<ASGLU>
     
-%     mask_tmp = load_nii(mask_fn);
-%     new_mask_fn = fullfile(out_dir_tmp, 'brant_mask_for_fcd.nii');
-%     save_nii(mask_tmp, new_mask_fn);
-
     text_out = fullfile(out_dir_tmp, 'fcd_subject_list.txt');
     fid = fopen(text_out, 'wt');
     cellfun(@(x) fprintf(fid, '%s\n', x), nifti_list);
@@ -64,7 +63,7 @@ for mm = 1:numel(split_prefix)
         fprintf(fid, 'set INFILE="%s"\n', text_out);
         fprintf(fid, 'set MASK="%s"\n', new_mask_fn);
         fprintf(fid, 'set OUTDIR="%s"\n', out_dir_tmp);
-        fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr 0.6 -mask %%MASK%% -nmpos %d -out %%OUTDIR%% %s', nmpos, mode_str);
+        fprintf(fid, '%%BN%% -infile %%INFILE%% -coef fcd -thres_corr %g -mask %%MASK%% -nmpos %d -out %%OUTDIR%% %s', thres_corr, nmpos, mode_str);
         fclose(fid);
         
 %         fprintf('dos command line:\n%s\n', cmd_str);
@@ -85,13 +84,11 @@ for mm = 1:numel(split_prefix)
         fprintf(fid, 'MASK="%s"\n', new_mask_fn);
         fprintf(fid, 'OUTDIR="%s"\n', out_dir_tmp);
         fprintf(fid, 'chmod u+x ${BN}\n');
-        fprintf(fid, '${BN} -infile ${INFILE} -coef fcd -thres_corr 0.6 -mask ${MASK} -nmpos %d -out ${OUTDIR} %s', nmpos, mode_str);
+        fprintf(fid, '${BN} -infile ${INFILE} -coef fcd -thres_corr %g -mask ${MASK} -nmpos %d -out ${OUTDIR} %s', thres_corr, nmpos, mode_str);
         fclose(fid);
         
         if numel(split_prefix) > 1
             fprintf('Please open a shell command window, cd to %s,\nand run sh fcd.sh\n', out_dir_tmp);
-%             fprintf('\n\tFCD is running... logs will be output when finished.\n');
-%             system(['sh', 32, bat_file]);
         end
     else
         error('Not supported platform!');

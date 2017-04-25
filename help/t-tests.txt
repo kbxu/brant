@@ -43,6 +43,11 @@ Multiple comparison correction methods (voxel-wise)
     bonf: Bonferroni correction for family wise error rate
 
 out dir: output directory for saving results.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

@@ -14,7 +14,7 @@ end
 
 data_tmp = brant_file_pre(data_files, nor_infos.num_tps, is4d_ind, 'data_cell');
 
-fprintf('\n*\tDoing normalise*\n');
+fprintf('\n*\tRunning normalise*\n');
 if par == 0
     for m = 1:numel(data_tmp)
         loop_normalise(data_tmp{m}, file_est{m}, file_wt{m}, nor_infos, file_dirs{m});
@@ -29,7 +29,7 @@ nor_prefix = nor_infos.roptions.prefix;
 fprintf('\n*\tNormalise finished!*\n');
 
 function loop_normalise(data_tmp, file_est, file_wt, nor_infos, file_dirs)
-fprintf('\n*\tDoing normalise for subject %s\t*\n', file_dirs);
+fprintf('\n*\tRunning normalise for subject %s\t*\n', file_dirs);
 nor_infos.subj.resample = data_tmp;
 nor_infos.subj.source = file_est;
 nor_infos.subj.wtsrc = file_wt;

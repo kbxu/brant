@@ -17,6 +17,11 @@ data: volume
 	
 string removal*: optional. remove partial string from string parsed by id index.
 out dir: output directory for saving results.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

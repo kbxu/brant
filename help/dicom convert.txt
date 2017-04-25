@@ -18,5 +18,10 @@ operation: delete
     delete first N timepoints: delete heading fMRI volumes.
     output fn: output filename.
     output to another directory: output data to another directory
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end

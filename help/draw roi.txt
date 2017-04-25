@@ -11,5 +11,10 @@ mask roi afterwards: mask generated roi using input mask
 output to one roi file: instead of output one file for each roi, BRANT will generate one roi file with each roi labeled by number
 ref&mask: reference and mask file. for extracting information of origin, voxel size, bounding box, etc..
 out dir: directory for output
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end

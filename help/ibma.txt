@@ -1,5 +1,5 @@
-Help information for IBMA:
-
+Help information for IBMA (Image-based meta-analysis):
+    
 data: matrix
     filetype: files in the filetype will be searched in input directories.
     data dir: directory where all ttest2*.mat results are stored.
@@ -23,12 +23,32 @@ Multiple comparison correction methods (voxel-wise)
 IBMA Methods:
     Stouffer's z-score
     Fisher's method
-    Fixed Effect Model
-    Mixed Effect Model
+    Fixed Effects Model
+    Mixed Effects Model
     Friston's method
     Nichols's method
 	
 out dir: output directory for saving results.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
+References:
+1. Stouffer's z-score:
+    https://en.wikipedia.org/wiki/Fisher%27s_method#cite_note-5
+    Stouffer, S.A., Suchman, E.A., DeVinney, L.C., Star, S.A. and Williams Jr, R.M., 1949. The American soldier: Adjustment during army life.(Studies in social psychology in World War II), Vol. 1.
+2. Fisher
+    https://en.wikipedia.org/wiki/Fisher%27s_method#cite_note-5
+    Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
+3. Fixed/mixed Effects Model
+    Hedges, L.V. (1992). Meta-Analysis. Journal of Educational and Behavioral Statistics 17(4), 279-296. doi: 10.3102/10769986017004279.
+    Konstantopoulos, S., 2006. Fixed and mixed effects models in meta-analysis.
+4. Worsley and Friston's method
+    Worsley, K.J., and Friston, K.J. (2000). A test for a conjunction. Statistics & Probability Letters 47(2), 135-140. doi: Doi 10.1016/S0167-7152(99)00149-2.
+5. Nichols's method
+    Nichols, T., Brett, M., Andersson, J., Wager, T., and Poline, J.B. (2005). Valid conjunction inference with the minimum statistic. Neuroimage 25(3), 653-660. doi: 10.1016/j.neuroimage.2004.12.005.
+	
 end
      

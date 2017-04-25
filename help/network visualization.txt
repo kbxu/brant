@@ -25,6 +25,11 @@ threshold: an expression that compatible with matlab syntax to filter out unwant
 
 use summed weight as node radius: sum up node's degree and define node size.
 threshold: nodes with degree smaller than the threshold will not be shown.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

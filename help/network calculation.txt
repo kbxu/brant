@@ -1,5 +1,5 @@
 Help information for Network Calculation:
-
+    
 parallel workers: number of workers used for parallel computing.
 filetype: files in the filetype will be searched in input directories.
 data dir: directory where all *.txt correlation matrix results are stored.
@@ -8,16 +8,20 @@ matrix type:
     raw value: use raw value to construct binary matrix.
     absolute value: use absolute value to construct binary matrix.
 	
-thresholds of correlation coefficient: a vector of correlation threshold, for each element, threshold the input matrix¡¯s intensity to a binary network.
-correlation thres: vector of thresholds for correlation.
-
+intensity threshold: vector of thresholds for matrix intensity. e.g. correlation coefficient
 thresholds of sparsity: a vector of sparsity threshold, for each element, threshold the input matrix using the fraction of the matrix¡¯s largest number of connection n * (n+1)/2;
-correlation thres: vector of thresholds for sparsity.
 
-minimum spanning tree: a process to avoid unconnected network.
+minimum spanning tree: a process to avoid unconnected network. To label the backbone of the network's nodes.
 
+matrix type: binarized and weighted network. The binarized networks comes from thresholded input matrics, while the weighted network comes from a dot product operation of binarized network and the original network.
 Network properies: a panel to select network properties.
+	in the option panel, (*) means the calculation of the property is slow.
 out dir: output directory for saving results.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

@@ -180,8 +180,9 @@ dim_t_mats = length(size_t_mat);
 
 rep_size = [ones(1, dim_t_mats - 1), nStudies];
         
-if stouffer_ind == 1
-    
+if stouffer_ind == 1    
+%   https://en.wikipedia.org/wiki/Fisher%27s_method#cite_note-5
+% 	Stouffer, S.A., Suchman, E.A., DeVinney, L.C., Star, S.A. and Williams Jr, R.M., 1949. The American soldier: Adjustment during army life.(Studies in social psychology in World War II), Vol. 1.
     fprintf('\tCalculating Stouffer''s meta-analysis on %d studies\n', nStudies);
     if dim_t_mats == 4
         Timgs_sum = 0;
@@ -217,7 +218,8 @@ if stouffer_ind == 1
 end
 
 if fisher_ind == 1
-    
+%     https://en.wikipedia.org/wiki/Fisher%27s_method#cite_note-5
+%     Fisher, R.A. (1925). Statistical Methods for Research Workers. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
     fprintf('\tCalculating Fisher''s meta-analysis on %d studies\n', nStudies);
     
     fisher_ibma.pval = cell(num_tail, 1);
@@ -252,20 +254,21 @@ if any([fem_ind, mem_ind])
 end
 
 if fem_ind == 1
-
+    % Hedges, L.V. (1992). Meta-Analysis. Journal of Educational and Behavioral Statistics 17(4), 279-296. doi: 10.3102/10769986017004279.
+    % Konstantopoulos, S., 2006. Fixed and mixed effects models in meta-analysis.
     fprintf('\tCalculating Fixed Effects Model meta-analysis on %d studies\n', nStudies);
 
     % fixed effects model
-    fixed_effects.tval = beta0 ./ sqrt(v);
+    fixed_effects.zval = beta0 ./ sqrt(v);
     fixed_effects.pval = cell(num_tail, 1);
     for m = 1:num_tail
         switch(tail_est{m})
             case 'right'
-                fixed_effects.pval{m} = spm_Ncdf(-1 * fixed_effects.tval);
+                fixed_effects.pval{m} = spm_Ncdf(-1 * fixed_effects.zval);
             case 'left'
-                fixed_effects.pval{m} = spm_Ncdf(fixed_effects.tval);
+                fixed_effects.pval{m} = spm_Ncdf(fixed_effects.zval);
             case 'both'
-                fixed_effects.pval{m} = 2 * spm_Ncdf(-1 * abs(fixed_effects.tval));
+                fixed_effects.pval{m} = 2 * spm_Ncdf(-1 * abs(fixed_effects.zval));
         end
     end
     
@@ -280,10 +283,11 @@ if fem_ind == 1
 end
 
 if mem_ind == 1
-
+    % Hedges, L.V. (1992). Meta-Analysis. Journal of Educational and Behavioral Statistics 17(4), 279-296. doi: 10.3102/10769986017004279.
+    % Konstantopoulos, S., 2006. Fixed and mixed effects models in meta-analysis.
     fprintf('\tCalculating Mixed Effects Model meta-analysis on %d studies\n', nStudies);
 
-    % mixed/random effects model
+    % mixed effects model
     a = sum(W, dim_t_mats) - sum(W.^2, dim_t_mats) ./ sum(W, dim_t_mats);
     Q = sum((ES - repmat(beta0, rep_size)).^ 2 ./ Va, dim_t_mats);
     tau2 = zeros(size(Q));
@@ -320,8 +324,8 @@ if mem_ind == 1
 end
 
 if friston_ind == 1
-    
-    fprintf('\tCalculating Friston''s meta-analysis on %d studies\n', nStudies);
+    % Worsley, K.J., and Friston, K.J. (2000). A test for a conjunction. Statistics & Probability Letters 47(2), 135-140. doi: Doi 10.1016/S0167-7152(99)00149-2.
+    fprintf('\tCalculating Worsley and Friston''s meta-analysis on %d studies\n', nStudies);
     
     for m = 1:num_tail
         max_p = max(p_mats.(tail_est{m}), [], dim_t_mats);
@@ -341,6 +345,7 @@ if friston_ind == 1
 end
 
 if nichols_ind == 1
+    % Nichols, T., Brett, M., Andersson, J., Wager, T., and Poline, J.B. (2005). Valid conjunction inference with the minimum statistic. Neuroimage 25(3), 653-660. doi: 10.1016/j.neuroimage.2004.12.005.
     fprintf('\tCalculating Nichols''s meta-analysis on %d studies\n', nStudies);
     
     for m = 1:num_tail

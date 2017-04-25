@@ -10,7 +10,7 @@ data_tmp = brant_file_pre(data_files, nor_infos.num_tps, is4d_ind, 'data_cell');
 
 nor_infos.eoptions.tpm = {nor_infos.eoptions.tpm};
 
-fprintf('\n*\tDoing normalise*\n');
+fprintf('\n*\tRunning normalise*\n');
 if par == 0
     for m = 1:numel(data_tmp)
         loop_normalise(data_tmp{m}, file_est{m}, nor_infos, file_dirs{m});
@@ -25,7 +25,7 @@ nor_prefix = 'w';
 fprintf('\n*\tNormalise finished!*\n');
 
 function loop_normalise(data_tmp, file_est, nor_infos, file_dirs)
-fprintf('\n*\tDoing normalise for subject %s\t*\n', file_dirs);
+fprintf('\n*\tRunning normalise for subject %s\t*\n', file_dirs);
 nor_infos.subj.resample = data_tmp;
 nor_infos.subj.vol = {file_est};
 

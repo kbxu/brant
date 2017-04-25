@@ -21,7 +21,12 @@ function [D_Global, D_Nodal] = CCM_AvgShortestPath(gMatrix, s, t)
 % $Revision: 1.0, Copywrite (c) 2007
 
 % ###### Input check #########
-error(nargchk(1,3,nargin,'struct'));
+% error(nargchk(1,3,nargin,'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,3,nargin,'struct'));
+else
+    narginchk(1, 3);
+end
 N = length(gMatrix);
 if(nargin < 2 || isempty(s)),    s = (1:N)';
 else    s = s(:);   end

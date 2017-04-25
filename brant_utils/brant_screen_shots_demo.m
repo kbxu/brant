@@ -58,6 +58,8 @@ for m = 1:numel(nifti_list)
     imwrite(imresize(outimg, 5), fullfile(outdir_ss{4}, [subj_ids{m}, '.png']));
 end
 
+fprintf('\nFinished saving screenshots of brains.\n');
+
 function mask_all_rgb = brant_img2rgb(img2d, color_rgb)
 mask_all_rgb = cat(3, img2d * color_rgb(1),...
                       img2d * color_rgb(2),...

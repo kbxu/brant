@@ -24,7 +24,12 @@ function [evector,evalue,num] = maxeigen(gMatrix,b0)
 % $Revision: 1.0, Copywrite (c) 2010
 
 % ###### Input check #########
-error(nargchk(1,2,nargin,'struct'));
+% error(nargchk(1,2,nargin,'struct'));
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,2,nargin,'struct'));
+else
+    narginchk(1, 2);
+end
 N = length(gMatrix);
 if nargin < 2
     b0 = rand(N,1);

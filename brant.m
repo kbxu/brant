@@ -1,6 +1,6 @@
 function varargout = brant(Action)
 % BRANT   BRAinNetome Toolkit
-%   Progammers: XU Kaibin, ZHAN Yafeng, HU Yong, LIU Yong
+%   Authors: XU Kaibin, ZHAN Yafeng, HU Yong, LIU Yong
 %   Usages: brant(Action)
 %         Actions: { ''(empty)| 'fMRI' | 
 %         'Path' | 'Preprocess' | 'Net' | 'Spon' | 'FC' | 'Stat'   | 
@@ -11,9 +11,11 @@ function varargout = brant(Action)
 % National Lab of Pattern Recognition (NLPR),
 % Institute of Automation,
 % Chinese Academy of Sciences (IACAS), China.
+% BRANT Home page: http://www.brainnetome.org/en/brainnetometool.html
+% Fast Update Version: https://github.com/kbxu/brant
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 3.11;
-% $Release = 20170407;
+% $Version = 3.20;
+% $Release = 20170424;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles
@@ -34,16 +36,16 @@ switch upper(Action)
             figure(Hbrant);
         end
 
-    case 'PATH', % update search path
+    case 'PATH' % update search path
         brant_check_paths;
 
-    case {'PREPROCESS','PREP'},
+    case {'PREPROCESS','PREP'}
         brant_preprocess;
 
-    case {'FC', 'SPON', 'UTILITY', 'STAT', 'NET', 'VIEW' }
+    case {'FC', 'SPON', 'UTILITY', 'STAT', 'NET', 'VIEW', 'EMBEDDED'}
         brant_postprocess(upper(Action));
         
-    case 'QUIT',
+    case 'QUIT'
         window_names = brant_windows;
         h_all_fig = findobj(0, 'Type', 'fig');
         nm_all_fig = arrayfun(@(x) get(x, 'Name'), h_all_fig, 'UniformOutput', false);
@@ -59,17 +61,21 @@ switch upper(Action)
     case {'ABOUT', 'ABOUTBRANT'}  % help documents
         web('http://www.brainnetome.org/en/brainnetometool.html', '-browser');
 
-    case 'MAIL', % mail to author
-        web('mailto:liuyong.ccm@gmail.com');
+    case 'MAIL' % mail to author
+        web('mailto:yliu@nlpr.ia.ac.cn');
         
     case {'LICENCE', 'LICENSE'}
         fprintf('o\n');
         
+    case 'VERSION'
+        varargout = regexpi(help(mfilename),'Version = ([0-9\.]+);','tokens','once');
     otherwise
         error(['Usage: ', mfilename]);
 end
 
-if(nargout>0),  varargout{1} = Hbrant;    end
+if (nargout>0) && (strcmpi(Action, 'version') == 0)
+    varargout{1} = Hbrant;    
+end
   
 
 
@@ -89,10 +95,11 @@ fprintf('*  BRAinNetome Toolkit (BRANT)\n');
 fprintf('*  Version = %s\n',Version{1});
 fprintf('*  Release = %s\n',Release{1});
 fprintf('*  Copyright(c) 2010 - now\n');
-fprintf('*  Brainnetome Center: http://www.brainnetome.org\n');
+fprintf('*  Brainnetome Center: <a href = "http://www.brainnetome.org">http://www.brainnetome.org</a>\n');
 fprintf('*  National Lab of Pattern Recognition(NLPR)\n');
 fprintf('*  Institute of Automation,\n');
 fprintf('*  Chinese Academy of Sciences(CASIA), China\n');
+fprintf('*  <a href = "http://www.brainnetome.org/en/brainnetometool.html">Homepage</a> <a href = "https://github.com/kbxu/brant">GitHub</a>\n')
 fprintf('*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n');
 
 set(0,'Units','pixels');
@@ -106,6 +113,7 @@ h_fig = figure(...
     'Position',         [screensize(3)/2 - 400, screensize(4) - 400, 310 270],...   % new edited on 20140219
     'Color',            defColor,...
     'CloseRequestFcn',  [mfilename,'(''Quit'')'],...
+    ...'DeleteFcn',        [mfilename,'(''Quit'')'],...
 	'NumberTitle',      'off',...
 	'Tag',              'figBRANT',...	
     'Units',            'pixels',...
@@ -145,7 +153,7 @@ btnOpt = {...
     'NET',              [120 46 60 25];...
     'STAT',             [195 46 60 25];...
     'View',             [120 8  60 25];...
-    'About',            [15  8  90 25];...
+    'Embedded',            [15  8  90 25];...
     'Quit',             [195 8  60 25]};
 
 h_btn = zeros(size(btnOpt, 1), 1);

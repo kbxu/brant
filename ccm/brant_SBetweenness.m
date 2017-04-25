@@ -29,7 +29,11 @@ function [vert, edge] = brant_SBetweenness(gMatrix, gType)
 % error(nargchk(1,3,nargin,'struct'));
 % if(nargin < 2),        bType = 'vertex';    gType = 'binary';
 % elseif(nargin < 3),    gType = 'binary';   end
-
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,3,nargin,'struct'));
+else
+    narginchk(1, 3);
+end
 N = size(gMatrix,1);%number of nodes
 gMatrix(1:(N+1):end) = 0;%clear self-edges
 

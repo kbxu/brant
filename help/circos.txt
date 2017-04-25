@@ -10,6 +10,11 @@ index_module: order of the arranged module.
 index_node: order of sub-areas within one module.
 
 Before using the function, please download and install circos 0.69 or higher.
-
+    
+Buttons:
+    S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
+    L: Load parameters from *.mat for the current panel.
+    ?: Help information.
+    
 end
      

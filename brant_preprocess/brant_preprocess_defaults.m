@@ -33,13 +33,13 @@ brant_pps.ind.denoise = 0;
 % brant_pps.ind.filter = 0;
 brant_pps.ind.smooth = 0;
 
-% slice timing
+%% slice timing
 brant_pps.slicetiming.slice_order = 0;
 brant_pps.slicetiming.tr = 0;
 brant_pps.slicetiming.refslice = 0;
 brant_pps.slicetiming.prefix = 'a';
 
-% realign
+%% realign
 % estimate
 brant_pps.realign.eoptions.quality = 0.9;
 brant_pps.realign.eoptions.sep = 4;
@@ -69,7 +69,7 @@ brant_pps.coregister.eoptions.fwhm = [7 7];
 % brant_pps.coregister.roptions.mask = 0;
 % brant_pps.coregister.roptions.prefix = 'r';
 
-% normalise
+%% normalise
 % subject infomations
 % brant_pps.normalise.subj.source = '';
 % brant_pps.normalise.subj.wtsrc = '';
@@ -100,7 +100,7 @@ brant_pps.normalise.roptions.prefix = 'w';
 
 
 
-
+%%
 brant_pps.normalise12.subj.filetype_src = 'mean*.nii';
 brant_pps.normalise12.eoptions.biasreg = 0.0001;
 brant_pps.normalise12.eoptions.biasfwhm = 60;
@@ -123,52 +123,77 @@ brant_pps.normalise12.woptions.prefix = 'w';
 
 
 
-% denoise
-% brant_pps.denoise.subj.tsnr_mask = 'none';
-% brant_pps.denoise.subj.tsnr_thres = 20;
-brant_pps.denoise.subj.wb_mask = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
-...brant_pps.denoise.subj.wb_mask_other = '';
-brant_pps.denoise.subj.gsr = 0;
-brant_pps.denoise.subj.nogsr = 0;
-brant_pps.denoise.subj.bothgsr = 1;
-brant_pps.denoise.subj.prefix_denoise = 'd';
-brant_pps.denoise.subj.prefix_filter = 'f';
-brant_pps.denoise.subj.reslice_mask_ind = 1;
-
-brant_pps.denoise.detrend_mask.tissue_trends_ind = 1;
-brant_pps.denoise.detrend_mask.detrend = 1;
-brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
-brant_pps.denoise.detrend_mask.wm = fullfile(brant_path, 'template', 'mask_WM.nii.gz');
-brant_pps.denoise.detrend_mask.csf = fullfile(brant_path, 'template', 'mask_CSF.nii.gz');
-brant_pps.denoise.detrend_mask.user_mask = '';
-brant_pps.denoise.detrend_mask.tissue_deriv = 1;
-
-brant_pps.denoise.motion.hm_model_ind = 1;
-brant_pps.denoise.motion.filetype = 'rp*.txt';
-brant_pps.denoise.motion.params_6 = 0;
-brant_pps.denoise.motion.params_12 = 0;
-brant_pps.denoise.motion.params_24 = 1;
-brant_pps.denoise.motion.scrub_FD = []; %0.5;
-brant_pps.denoise.motion.use_temp_mask = 0;
-
-brant_pps.denoise.filter.filter_ind = 1;
-brant_pps.denoise.filter.tr = 0;
-brant_pps.denoise.filter.lower_cutoff = 0.01;
-brant_pps.denoise.filter.upper_cutoff = 0.08;
+% %% denoise
+% brant_pps.denoise.subj.wb_mask = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
+% brant_pps.denoise.subj.gsr = 0;
+% brant_pps.denoise.subj.nogsr = 0;
+% brant_pps.denoise.subj.bothgsr = 1;
+% brant_pps.denoise.subj.prefix_denoise = 'd';
+% brant_pps.denoise.subj.prefix_filter = 'f';
+% brant_pps.denoise.subj.reslice_mask_ind = 1;
+% 
+% brant_pps.denoise.detrend_mask.tissue_trends_ind = 1;
+% brant_pps.denoise.detrend_mask.detrend = 1;
+% brant_pps.denoise.detrend_mask.gs = fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz');
+% brant_pps.denoise.detrend_mask.wm = fullfile(brant_path, 'template', 'mask_WM.nii.gz');
+% brant_pps.denoise.detrend_mask.csf = fullfile(brant_path, 'template', 'mask_CSF.nii.gz');
+% brant_pps.denoise.detrend_mask.user_mask = '';
+% brant_pps.denoise.detrend_mask.tissue_deriv = 1;
+% 
+% brant_pps.denoise.motion.hm_model_ind = 1;
+% brant_pps.denoise.motion.filetype = 'rp*.txt';
+% brant_pps.denoise.motion.params_6 = 0;
+% brant_pps.denoise.motion.params_12 = 0;
+% brant_pps.denoise.motion.params_24 = 1;
+% brant_pps.denoise.motion.scrub_FD = []; %0.5;
+% brant_pps.denoise.motion.use_temp_mask = 0;
+% 
+% brant_pps.denoise.filter.filter_ind = 1;
+% brant_pps.denoise.filter.tr = 0;
+% brant_pps.denoise.filter.lower_cutoff = 0.01;
+% brant_pps.denoise.filter.upper_cutoff = 0.08;
 
 
-% % filter
-% brant_pps.filter.tsnr_mask = 'group tsnr';
-% brant_pps.filter.tsnr_thres = 20;
-% brant_pps.filter.wb_mask = fullfile(brant_path, 'template', 'fmaskEPI_V3mm.nii');
-% brant_pps.filter.lower_cutoff = 0.01;
-% brant_pps.filter.upper_cutoff = 0.08;
-% brant_pps.filter.tr = 0;
-% brant_pps.filter.timepoints = 0;
-% brant_pps.filter.prefix = 'f';
-% brant_pps.filter.gzip = 0;
+%% denoise new
+brant_pps.denoise.space_mask.space_comm = 1;
+brant_pps.denoise.space_mask.space_ind = 0;
+brant_pps.denoise.space_mask.mask_wb = struct('ind', 1, 'string', fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz'));
+brant_pps.denoise.space_mask.mask_gs = struct('ind', 1, 'string', fullfile(brant_path, 'template', 'mask_ICV_WB.nii.gz'));
+brant_pps.denoise.space_mask.mask_wm = struct('ind', 1, 'string', fullfile(brant_path, 'template', 'mask_WM.nii.gz'));
+brant_pps.denoise.space_mask.mask_csf = struct('ind', 1, 'string', fullfile(brant_path, 'template', 'mask_CSF.nii.gz'));
+brant_pps.denoise.space_mask.ft_wb = struct('ind', 1, 'string', 'wholebrain*.nii', 'thr', 0.8);
+brant_pps.denoise.space_mask.ft_gs = struct('ind', 1, 'string', 'c1*.nii', 'thr', 0.8);
+brant_pps.denoise.space_mask.ft_wm = struct('ind', 1, 'string', 'c2*.nii', 'thr', 0.8);
+brant_pps.denoise.space_mask.ft_csf = struct('ind', 1, 'string', 'c3*.nii', 'thr', 0.8);
+brant_pps.denoise.space_mask.mask_res_type = 'nearest neighbour';
+brant_pps.denoise.space_mask.ft_motion = 'rp*.txt';
 
-% smooth
+brant_pps.denoise.reg_mdl.lin_trend = 1;
+brant_pps.denoise.reg_mdl.quad_trend = 1;
+brant_pps.denoise.reg_mdl.char_info = sprintf('T(selected tissue): GS,WM,CSF\nR(motion): x,y,z,pitch,roll,yaw');
+brant_pps.denoise.reg_mdl.regressors = struct('T', 1, 'T_square', 1, 'T_prime', 1, 'T_prime_square', 1, 'T_prep', 0, 'T_prep_square', 0,...
+                                              'R', 1, 'R_square', 1, 'R_prime', 1, 'R_prime_square', 1, 'R_prep', 0, 'R_prep_square', 0);
+brant_pps.denoise.reg_mdl.spike_info = '\nSpike Handling';
+brant_pps.denoise.reg_mdl.scrubbing = 0;
+brant_pps.denoise.reg_mdl.fd_thr = 0.5;
+
+% brant_pps.denoise.fil_opt.filter_ind = 1;
+brant_pps.denoise.fil_opt.tr = 0;
+brant_pps.denoise.fil_opt.lower_cutoff = 0.01;
+brant_pps.denoise.fil_opt.upper_cutoff = 0.08;
+
+brant_pps.denoise.fil_opt.opt = '\nOutput Options';
+brant_pps.denoise.fil_opt.reg_filter = 1;
+brant_pps.denoise.fil_opt.filter_reg = 0;
+brant_pps.denoise.fil_opt.reg_only = 0;
+brant_pps.denoise.fil_opt.filter_only = 0;
+brant_pps.denoise.fil_opt.save_last = 0;
+brant_pps.denoise.fil_opt.gzip_output = 0;
+brant_pps.denoise.fil_opt.gsr_nogsr = 1;
+brant_pps.denoise.fil_opt.prefix_reg = 'd';
+brant_pps.denoise.fil_opt.prefix_filter = 'f';
+
+%% smooth
 brant_pps.smooth.fwhm  = [6 6 6];
 brant_pps.smooth.prefix  = 's6';
 brant_pps.smooth.dtype = 0;

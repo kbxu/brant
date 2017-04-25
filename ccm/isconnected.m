@@ -23,8 +23,11 @@ function flag = isconnected(gMatrix,s,t)
 % $Revision: 1.0, Copywrite (c) 2010
 
 % ###### Input check #########
-error(nargchk(1,3,nargin,'struct'));
-
+if verLessThan('matlab', '7.14')
+    error(nargchk(1,3,nargin,'struct'));
+else
+    narginchk(1, 3);
+end
 N = length(gMatrix);
 gMatrix(1:(N+1):end) = 0;       %clear self-edges
 if nargin < 2

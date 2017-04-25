@@ -51,7 +51,7 @@ for mm = 1:numel(split_prefix)
         if (am_ind == 1)
             fprintf('\tCalculating mean temporal amplitude for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             AM_temp = nan(size_mask, 'single');
-            AM_temp(mask_ind) = mean(abs(detrend(data_2d_mat, 'constant')));
+            AM_temp(mask_ind) = nanmean(abs(detrend(data_2d_mat, 'constant')));
             brant_write_nii(AM_temp, mask_ind, mask_hdr, subj_ids{m}, 'AM', outdir_mk{1}, 0, nor_ind, {'', outdir_mk{4}});
         end
         

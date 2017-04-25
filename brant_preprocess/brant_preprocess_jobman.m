@@ -1,5 +1,35 @@
-function brant_preprocess_jobman(jobman, h_filetype, h_fig)
+function brant_preprocess_jobman(jobman, h_fig)
 
+%% use diary
+process_ind = cellfun(@(x) jobman.ind.(x), jobman.pref.order);
+working_dir = jobman.subj.out.dir;
+
+if any(process_ind)
+    string_disp = brant_update_pre_disp;
+    try
+        time_now = ceil(clock);
+        fn = fullfile(working_dir, ['brant_log', sprintf('_%d', time_now), '.txt']);
+        fid = fopen(fn, 'wt');
+        fprintf(fid, '%s\n', string_disp{:});
+        fclose(fid);
+    catch
+        warning('on');
+        warning('Error creating log file at %s!', pwd);
+    end
+    
+    if ~isempty(h_fig)
+        h_filetype = findobj(h_fig, 'Tag', 'filetype_text');
+    else
+        h_filetype = [];
+    end
+%     set(h_run_btn, 'Enable', 'off');
+%     brant_preprocess_jobman(jobman, h_filetype, h_fig);
+%     set(h_run_btn, 'Enable', 'on');
+else
+    return;
+end
+
+%%
 process_ind = cellfun(@(x) jobman.ind.(x), jobman.pref.order);
 
 if any(process_ind)
@@ -132,64 +162,70 @@ if any(process_ind)
             switch(processes_curr{m})
                 case 'denoise'
                     
-                    % reslice masks to the first data's first timepoint
-                    if (run_data.denoise.subj.reslice_mask_ind == 1)
-                               
-                        mask_all = cell(5, 1);
-                        mask_all_new = cell(5, 1);
-                        mask_all{1, 1} = run_data.denoise.subj.wb_mask;
-                        mask_all{2, 1} = run_data.denoise.detrend_mask.gs;
-                        mask_all{3, 1} = run_data.denoise.detrend_mask.wm;
-                        mask_all{4, 1} = run_data.denoise.detrend_mask.csf;
-                        mask_all{5, 1} = run_data.denoise.detrend_mask.user_mask;
-                        
-                        if (data_input.is4d == 1)
-                            sample_file = run_data.subjs.files{1};
-                        else
-                            sample_file = run_data.subjs.files{1}{1};
-                        end
-                        
-                        data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
-                        img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
-                            
-                        for n = 1:numel(mask_all)
-                            
-                            if isempty(mask_all{n})
-                                continue;
-                            end
-                            
-                            mask_tmp_hdr = load_nii_hdr_img_raw_c(mask_all{n});
-                                                        
-                            [path_tmp, fn_tmp, ext] = fileparts(mask_all{n}); %#ok<ASGLU>
-                            
-                            if exist(fullfile(working_dir, [fn_tmp, ext]), 'file') ~= 2
-                                brant_copyfile(mask_all{n}, working_dir);
-                            end
-                            mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
-                            
-                            sts = brant_spm_check_orientations([mask_tmp_hdr; data_sample_hdr]);
-                            if sts == false
-                                fprintf('To keep the resolution and orientation of mask and data as the same, brant will reslice the mask to data.\n');
-                                fprintf('In this part brant assumes all data files have same header and takes the first one as reference.\n');
-                                fprintf('Reslicing mask %s to sample file %s...\n', mask_all_new{n}, sample_file);
-                                mask_all_new{n} = brant_reslice(sample_file, mask_all_new{n}, img_size_str);
-                            end
-                        end
-                                                
-                        run_data.denoise.subj.wb_mask = mask_all_new{1, 1};
-                        run_data.denoise.detrend_mask.gs = mask_all_new{2, 1};
-                        run_data.denoise.detrend_mask.wm = mask_all_new{3, 1};
-                        run_data.denoise.detrend_mask.csf = mask_all_new{4, 1};
-                        run_data.denoise.detrend_mask.user_mask = mask_all_new{5, 1};
-                    end
-                    
-                    jobman.(processes_curr{m}) = run_data.(processes_curr{m});
-                    end_prefix = brant_run_denoise_filter(run_data.(processes_curr{m}), run_data.subjs.files, subj_ids, data_input.is4d, output_dirs);
-                case 'coregister'
-                    end_prefix = '';
-                    feval(['brant_run_', processes_curr{m}], run_data.(processes_curr{m}), run_data.subjs.files, data_input.is4d, par_on);
+                    end_prefix = brant_run_denoise(working_dir, run_data.(processes_curr{m}), run_data.subjs.files, subj_ids, data_input.is4d, output_dirs);
+%                     break;
+%                     
+%                     % reslice masks to the first data's first timepoint
+%                     if (run_data.denoise.subj.reslice_mask_ind == 1)
+%                                
+%                         mask_all = cell(5, 1);
+%                         mask_all_new = cell(5, 1);
+%                         mask_all{1, 1} = run_data.denoise.subj.wb_mask;
+%                         mask_all{2, 1} = run_data.denoise.detrend_mask.gs;
+%                         mask_all{3, 1} = run_data.denoise.detrend_mask.wm;
+%                         mask_all{4, 1} = run_data.denoise.detrend_mask.csf;
+%                         mask_all{5, 1} = run_data.denoise.detrend_mask.user_mask;
+%                         
+%                         if (data_input.is4d == 1)
+%                             sample_file = run_data.subjs.files{1};
+%                         else
+%                             sample_file = run_data.subjs.files{1}{1};
+%                         end
+%                         
+%                         data_sample_hdr = load_nii_hdr_img_raw_c(sample_file);
+%                         img_size_str = sprintf('r%d%d%dmm_', data_sample_hdr.dime.pixdim(2:4));
+%                             
+%                         for n = 1:numel(mask_all)
+%                             
+%                             if isempty(mask_all{n})
+%                                 continue;
+%                             end
+%                             
+%                             mask_tmp_hdr = load_nii_hdr_img_raw_c(mask_all{n});
+%                                                         
+%                             [path_tmp, fn_tmp, ext] = fileparts(mask_all{n});
+%                             
+%                             if exist(fullfile(working_dir, [fn_tmp, ext]), 'file') ~= 2
+%                                 brant_copyfile(mask_all{n}, working_dir);
+%                             end
+%                             mask_all_new{n} = fullfile(working_dir, [fn_tmp, ext]);
+%                             
+%                             sts = brant_spm_check_orientations([mask_tmp_hdr; data_sample_hdr]);
+%                             if sts == false
+%                                 fprintf('To keep the resolution and orientation of mask and data as the same, brant will reslice the mask to data.\n');
+%                                 fprintf('In this part brant assumes all data files have same header and takes the first one as reference.\n');
+%                                 fprintf('Reslicing mask %s to sample file %s...\n', mask_all_new{n}, sample_file);
+%                                 mask_all_new{n} = brant_reslice(sample_file, mask_all_new{n}, img_size_str);
+%                             end
+%                         end
+%                                                 
+%                         run_data.denoise.subj.wb_mask = mask_all_new{1, 1};
+%                         run_data.denoise.detrend_mask.gs = mask_all_new{2, 1};
+%                         run_data.denoise.detrend_mask.wm = mask_all_new{3, 1};
+%                         run_data.denoise.detrend_mask.csf = mask_all_new{4, 1};
+%                         run_data.denoise.detrend_mask.user_mask = mask_all_new{5, 1};
+%                     end
+%                     
+%                     jobman.(processes_curr{m}) = run_data.(processes_curr{m});
+%                     end_prefix = brant_run_denoise_filter(run_data.(processes_curr{m}), run_data.subjs.files, subj_ids, data_input.is4d, output_dirs);
+%                 case 'coregister'
+%                     end_prefix = '';
+%                     feval(['brant_run_', processes_curr{m}], run_data.(processes_curr{m}), run_data.subjs.files, data_input.is4d, par_on);
                 otherwise
                     end_prefix = feval(['brant_run_', processes_curr{m}], run_data.(processes_curr{m}), run_data.subjs.files, data_input.is4d, par_on);
+                    if strcmpi(processes_curr{m}, 'coregister') == 1
+                        end_prefix = '';
+                    end
             end
         end
         

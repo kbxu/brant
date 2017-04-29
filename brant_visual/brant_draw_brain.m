@@ -15,6 +15,7 @@ if ~isempty(node_info)
             size_raw_scale = size_raw;
             size_raw_scale(size_raw ~= 0) = size_raw_scale_tmp;
             node_info.size = size_raw_scale;
+%             node_ind = (size_raw_scale >= edge_info.wei_thr) & node_ind;
         else
             node_info.size(size_raw == 0) = 0;
         end

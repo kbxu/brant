@@ -673,7 +673,7 @@ switch(lower(process_str))
         process_pars.neg_color = [0, 1, 1];
         process_pars.edge_thr = 'edge ~= 0';
         process_pars.wei_rad = 0;
-        process_pars.wei_thr = 0;
+        process_pars.wei_thr = 1;
         
         ui_structs = {{'edit', 'str_surf'},      'surface',    {'surface'},              '';...
             {'edit', 'num_short_left'},     'alpha',      {'alpha'},                          '';...

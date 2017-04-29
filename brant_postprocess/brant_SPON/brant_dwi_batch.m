@@ -61,7 +61,7 @@ for m = 1:num_subj
     % eddy correction at first
     if eddy_ind == 1
         fprintf('\tDoing eddy correction...\n');
-        system(sprintf('"%s" -i "%s" -o "%s" -ref 0', fullfile(dk_dir, 'bneddy'), DWI_fn{m}, eddy_out_fn));
+        system(sprintf('"%s" -i "%s" -o "%s" -ref 0 -omp 2', fullfile(dk_dir, 'bneddy'), DWI_fn{m}, eddy_out_fn));
     end
     
     % skull stripping

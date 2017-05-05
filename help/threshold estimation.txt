@@ -5,7 +5,7 @@ find out for each subject, the sparsity under each threshold of correlation
 filetype: files in the filetype will be searched in input directories.
 data dir: directory where all *.txt correlation matrix results are stored.
 use absolute value of input matrics: as it means
-
+    
 intensity threshold: vector of thresholds for matrix intensity. e.g. correlation coefficient
 out dir: output directory for saving results.
     

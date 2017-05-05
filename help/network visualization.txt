@@ -1,5 +1,5 @@
 Help information for Network Visualization:
-
+    
 surface: surface file
 alpha: degree of opaque
 display: mode of display
@@ -9,20 +9,20 @@ For example:
     -1,20,20,4,module1,5,5,5,node1
     -10,22,20,4,module1,5,5,5,node2
     12,20,20,4,module2,5,5,5,node3
-
+    
 show node labels: check to show labels defined in input node file.
 same size: use same size for all node, uncheck to use user defined size in input node file.
 user defined node color: use color defined in input node file.
 same node color: use same color for all node.
 module color: use different color for each module. Modules are defined in input node file.
-
+    
 edge: edge matrix for input file, the number of rows and columns should be the same as input file.
 display edges: display or not edges.
 hide node without edge: select not to show nodes without edge
 thickness: relative thickness for all edges
 adjust edge color: use different color for positive and negative edge.
 threshold: an expression that compatible with matlab syntax to filter out unwanted edges in edge matrix.
-
+    
 use summed weight as node radius: sum up node's degree and define node size.
 threshold: nodes with degree smaller than the threshold will not be shown.
     

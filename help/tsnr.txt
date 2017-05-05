@@ -1,5 +1,5 @@
 Help information for TSNR (Temporal Signal to Noise Ratio):
-
+    
 mask: could be whole brain mask or gray matter mask.
 id index: identifier to find unique string for each subject
 filetype: files in the filetype will be searched in input directories.

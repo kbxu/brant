@@ -5,19 +5,19 @@ process_ind = cellfun(@(x) jobman.ind.(x), jobman.pref.order);
 working_dir = jobman.subj.out.dir;
 
 if any(process_ind)
-    string_disp = brant_update_pre_disp;
-    try
-        time_now = ceil(clock);
-        fn = fullfile(working_dir, ['brant_log', sprintf('_%d', time_now), '.txt']);
-        fid = fopen(fn, 'wt');
-        fprintf(fid, '%s\n', string_disp{:});
-        fclose(fid);
-    catch
-        warning('on');
-        warning('Error creating log file at %s!', pwd);
-    end
-    
     if ~isempty(h_fig)
+        string_disp = brant_update_pre_disp;
+        try
+            time_now = ceil(clock);
+            fn = fullfile(working_dir, ['brant_log', sprintf('_%d', time_now), '.txt']);
+            fid = fopen(fn, 'wt');
+            fprintf(fid, '%s\n', string_disp{:});
+            fclose(fid);
+        catch
+            warning('on');
+            warning('Error creating log file at %s!', pwd);
+        end
+    
         h_filetype = findobj(h_fig, 'Tag', 'filetype_text');
     else
         h_filetype = [];

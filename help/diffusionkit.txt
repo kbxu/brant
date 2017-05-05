@@ -1,20 +1,20 @@
 Help information for DWI:
     
 A batch processing GUI-interface for DiffusionKit
-
+    
 D.K. dir: path of installed DiffusionKit, e.g. C:\Program Files (x86)\DiffusionKit
 id index: identifier to find unique string for each subject
 filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
-
+    
 Choose below options to perform in each directory.
 eddy correction
 reconstruction--DTI
 tracking--DTI
 reconstruction--HARDI(ODF)
 reconstruction--HARDI(FOD)
-
+    
 Results will be saved in each input directory.
     
 Buttons:

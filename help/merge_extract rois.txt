@@ -1,13 +1,13 @@
 Help information for Merge/Extract ROIs:
-
+    
 Operation:select to merge 3D rois into one, or extract ROIs from an atlas.
-
+    
 Merge:
 filetype: files in the filetype will be searched in input directories.
 data dir: directory in which stores 3D rois.
 out fn: output filename
 out dir: output directory
-
+    
 Extract:
 roi file: ROIs in one nifti file
 roi info: optional. labels of tagged ROIs in an .csv file. For example:

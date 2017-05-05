@@ -1,6 +1,5 @@
 function brant_draw_surface(surface_brain, mode_display, draw_param, vol)
-% varargin{2}: 3D volume of intensities
-% varargin{1}: color info
+% varargin{1}: radius of maximum neighbour interpolation in mm
 % if input is a nifti mask, the current programm only works for standard
 % space -- mean zeroed image
 

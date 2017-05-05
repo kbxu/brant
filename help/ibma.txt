@@ -3,7 +3,7 @@ Help information for IBMA (Image-based meta-analysis):
 data: matrix
     filetype: files in the filetype will be searched in input directories.
     data dir: directory where all ttest2*.mat results are stored.
-
+    
 data: volume
     center info: number of subjects for different centers. A csv format table is required. N1 and N2 is the number of subjects in each group.
         center, N1, N2
@@ -19,7 +19,7 @@ Multiple comparison correction methods (voxel-wise)
     fdrID: false discovery rate (independent input)
     fdrN: false discovery rate (inputs not independent)
     bonf: Bonferroni correction for family wise error rate
-
+    
 IBMA Methods:
     Stouffer's z-score
     Fisher's method

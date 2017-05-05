@@ -183,6 +183,7 @@ if obj_val == 1
         fig_opts.ind.normalise = 0;
         fig_opts.ind.normalise12 = 1;
     end
+    fig_opts.pref.norm12_ind = 1;
 else
     h_opt = findobj(h_fig, 'Tag', 'normalise12_input');
     set(h_opt, 'Tag', 'normalise_input');
@@ -197,6 +198,7 @@ else
         fig_opts.ind.normalise = 1;
         fig_opts.ind.normalise12 = 0;
     end
+    fig_opts.pref.norm12_ind = 0;
 end
 
 set(h_fig, 'Userdata', fig_opts);

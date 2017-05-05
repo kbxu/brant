@@ -1,13 +1,13 @@
 Help information for Statistics:
-
+    
 data: matrix
     symmetric matrix: check to extract the upper right matrix's elements, uncheck to extract all elements
 data: volume
     mask: could be whole brain mask or gray matter mask.
-
+    
 filetype: filetype
 data dir: Input directories of matrices.
-
+    
 grouping info:
     stat type: one sample t-test, two sample t-test and paired t-test.
     groups:
@@ -41,7 +41,7 @@ Multiple comparison correction methods (voxel-wise)
     fdrID: false discovery rate (independent input)
     fdrN: false discovery rate (inputs not independent)
     bonf: Bonferroni correction for family wise error rate
-
+    
 out dir: output directory for saving results.
     
 Buttons:

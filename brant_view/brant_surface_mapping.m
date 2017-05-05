@@ -18,6 +18,8 @@ draw_param.discrete = jobman.discrete;
 draw_param.vol_exp = jobman.vol_thr;
 draw_param.colorbar_ind = jobman.colorbar;
 
+draw_param.rad_mm = jobman.rad_mm;
+
 brant_create_disp_fig(h_con, 'Surface Mapping: Draw');
 brant_draw_surface(surface_file, mode_display, draw_param, vol_file);
 % material(draw_param.material_type);

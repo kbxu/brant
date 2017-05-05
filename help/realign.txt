@@ -1,5 +1,5 @@
 Help information for Realign:
-
+    
 Estimate: Estimate parameters for realignment.
     quality: Highest quality (1) gives most precise results, whereas lower qualities gives faster realignment.
     sep: The separation (in mm) between the points sampled in the reference image. Smaller sampling distances gives more accurate results, but will be slower.

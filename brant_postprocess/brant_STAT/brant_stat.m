@@ -93,7 +93,7 @@ out_info.reg_nm = reg_est;
 switch(out_info.data_type)
     case 'stat volume'
         jobman.input_nifti.single_3d = 1;
-
+        
         mask_fn = jobman.input_nifti.mask{1};
         [nifti_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_nifti);
         [mask_hdr, mask_ind, size_mask] = brant_check_load_mask(mask_fn, nifti_list{1}, out_info.outdir);
@@ -104,18 +104,18 @@ switch(out_info.data_type)
         for m = 1:numel(fn_rmv)
             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
         end
-            
+        
         [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         fprintf('\n\tLoading nifti images...\n');
         data_2d_mat = brant_4D_to_mat_new(nifti_list(subj_ind), mask_ind, 'mat', '');
         data_2d_mat = double(data_2d_mat);
-            
+        
         out_info.mask_ind = mask_ind;
         out_info.size_mask = size_mask;
         out_info.mask_hdr = mask_hdr;
-                
+        
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-              test_ind, out_info, paired_t_idx);
+            test_ind, out_info, paired_t_idx);
     case 'stat matrix'
         [mat_list, subj_ids_org_tmp] = brant_get_subjs(jobman.input_matrix);
         
@@ -131,8 +131,8 @@ switch(out_info.data_type)
         
         out_info.sym_ind = jobman.sym_ind;
         brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-              test_ind, out_info, paired_t_idx);
-          
+            test_ind, out_info, paired_t_idx);
+        
     case 'stat matrix - voxel to voxel'
         
         jobman.input_matrix.nm_pos = 1;
@@ -164,31 +164,31 @@ switch(out_info.data_type)
             
             out_info.out_prefix = num2str(m, 'stat_%04d_');
             fprintf('\n\tLoading correlation matrix...\n');
-
+            
             mat_list_good = mat_list(subj_ind);
             corr_mat = cellfun(@(x) load(x, 'corr_z'), mat_list_good);
             data_2d_mat = cat(2, corr_mat.corr_z)';
-
+            
             corr_tmp = load(mat_list_good{1}, 'num_roi', 'rois_str', 'rois_tag');
             num_rois = corr_tmp.num_roi;
-
-%             out_info.corr_ind = corr_ind;
+            
+            %             out_info.corr_ind = corr_ind;
             out_info.mat_size = [num_rois, num_rois];
             out_info.sym_ind = 1;
             clear('corr_mat', 'corr_tmp');
-
+            
             data_2d_mat = double(data_2d_mat);
             brant_stat_raw(data_2d_mat, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-                  test_ind, out_info, paired_t_idx);
-        end        
+                test_ind, out_info, paired_t_idx);
+        end
         
     case 'stat network'
         
         % check options
         check_options = {'net_measure_option', 'thres_spar_ind', 'thres_corr_ind',...
-                         'corr_ind', 'spar_ind',...
-                         'mst_ind', 'net_type', 'num_node', 'thres_corr_use',...
-                         'thres_spar_use', 'thres_nodes_num_spar'};
+            'corr_ind', 'spar_ind',...
+            'mst_ind', 'net_type', 'num_node', 'thres_corr_use',...
+            'thres_spar_use', 'thres_nodes_num_spar'};
         net_mats = cellfun(@(x) load(x, check_options{:}), net_files);
         eq_ind = arrayfun(@(x) isequal(net_mats(1), x), net_mats);
         if any(eq_ind == 0)
@@ -203,10 +203,10 @@ switch(out_info.data_type)
         field_tmp2 = field_tmp(struct_ind);
         sel_ind = cellfun(@(x) sample_mat.net_measure_option.(x) == 1, field_tmp2);
         field_strs = field_tmp2(sel_ind);
-
+        
         fields_no_test = {'resilience'};
         field_strs = setdiff(field_strs, [fields_no_test, {''}]);
-
+        
         if isempty(field_strs), return; end
         
         if any(strcmpi(field_strs, 'small_worldness'))
@@ -218,12 +218,12 @@ switch(out_info.data_type)
         n_field = numel(field_strs_good);
         
         subj_ids_org = brant_rm_strs(subj_ids_org_tmp, jobman.subj_prefix);
-%         % parse data
-%         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
-%         subj_ids_org = subj_ids_org_tmp;
-%         for m = 1:numel(fn_rmv)
-%             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
-%         end
+        %         % parse data
+        %         fn_rmv = regexp(jobman.subj_prefix, '[,;]', 'split');
+        %         subj_ids_org = subj_ids_org_tmp;
+        %         for m = 1:numel(fn_rmv)
+        %             subj_ids_org = strrep(subj_ids_org, fn_rmv{m}, '');
+        %         end
         [data_infos, subj_ind, fil_inds, reg_good_subj, paired_t_idx] = brant_parse_subj_info2(regressors_tbl, subj_ids_org, group_est, filter_est, reg_est, score_est, discard_bad_ind);
         
         % get the data out of mats
@@ -267,10 +267,9 @@ switch(out_info.data_type)
         
         csv_title = ['Name', 'Group', reg_est, thres_title_all];
         
-        % error!?????
+        % can't do with filter option.
         for m = 1:n_field
             net_fn_out = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '.csv']);
-            net_fn_out_stat = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_stat.csv']);
             
             glob_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).global, calc_rsts_all(good_ind));
             glob_vecs_corr_all = nan(size(calc_rsts_all));
@@ -281,35 +280,38 @@ switch(out_info.data_type)
                 glob_vecs_corr_all(:, thres_ept) = 0;
             end
             stat_out = brant_stat_raw(glob_vecs_corr_all, grp_stat, filter_est, data_infos, fil_inds, reg_good_subj,...
-                      test_ind, out_info, paired_t_idx);
+                test_ind, out_info, paired_t_idx);
             
-            brant_write_csv(net_fn_out_stat, [{'contrast'; 'threshold'; 't'; 'p right'; 'df'},...
-                                              [[stat_out.constrast_str, cell(1, numel(stat_out.stat_val) - 1)];...
-                                                thres_title_all;...
-                                                num2cell([stat_out.stat_val;stat_out.p_vec_R;repmat(stat_out.df_stu, size(stat_out.p_vec_R))])]]);
-            for p = 1:2
-                if size_two_thres(p) == 0, continue; end
-
-                title_tmp = stat_out.constrast_str;
-                stat_info_tmp = stat_out.stat_info;
-
-                pval_r = stat_out.p_vec_R(thres_vec{p});
-                pval_l = 1 - pval_r;
-
-                mean_grp1 = stat_info_tmp.mean_grp_1_vec(thres_vec{p});
-                mean_grp2 = stat_info_tmp.mean_grp_2_vec(thres_vec{p});
-                ste_grp1 = stat_info_tmp.std_grp_1_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_1);
-                ste_grp2 = stat_info_tmp.std_grp_2_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_2);
-
-                group_est = stat_out.group_est;
-
-                h_fig = plot_rst(thres_strs{p}, field_strs_good{m}, group_est, pval_r, pval_l, thres_use{p}, mean_grp1, ste_grp1, mean_grp2, ste_grp2);
-                title(strrep(title_tmp, '_', '\_'));
-                set(h_fig, 'Color', [1, 1, 1], 'InvertHardcopy', 'off', 'PaperPositionMode', 'auto');
-                out_fn_tmp = fullfile(out_info.outdir, [field_strs_good{m}, '_', out_suffix{p}, '_', title_tmp, '.png']);
-                saveas(h_fig, out_fn_tmp);
-                fprintf('\t%s\n', out_fn_tmp);
-                delete(h_fig);
+            for nn = 1:numel(stat_out)
+                net_fn_out_stat = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_', stat_out(nn).constrast_str, '_stat.csv']);
+                brant_write_csv(net_fn_out_stat, [{'contrast'; 'threshold'; 't'; 'p right'; 'df'},...
+                    [[stat_out(nn).constrast_str, cell(1, numel(stat_out(nn).stat_val) - 1)];...
+                    thres_title_all;...
+                    num2cell([stat_out(nn).stat_val;stat_out(nn).p_vec_R;repmat(stat_out(nn).df_stu, size(stat_out(nn).p_vec_R))])]]);
+                for p = 1:2
+                    if size_two_thres(p) == 0, continue; end
+                    
+                    title_tmp = stat_out(nn).constrast_str;
+                    stat_info_tmp = stat_out(nn).stat_info;
+                    
+                    pval_r = stat_out(nn).p_vec_R(thres_vec{p});
+                    pval_l = 1 - pval_r;
+                    
+                    mean_grp1 = stat_info_tmp.mean_grp_1_vec(thres_vec{p});
+                    mean_grp2 = stat_info_tmp.mean_grp_2_vec(thres_vec{p});
+                    ste_grp1 = stat_info_tmp.std_grp_1_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_1);
+                    ste_grp2 = stat_info_tmp.std_grp_2_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_2);
+                    
+                    group_est = stat_out(nn).group_est;
+                    
+                    h_fig = plot_rst(thres_strs{p}, field_strs_good{m}, group_est, pval_r, pval_l, thres_use{p}, mean_grp1, ste_grp1, mean_grp2, ste_grp2);
+                    title(strrep(title_tmp, '_', '\_'));
+                    set(h_fig, 'Color', [1, 1, 1], 'InvertHardcopy', 'off', 'PaperPositionMode', 'auto');
+                    out_fn_tmp = fullfile(out_info.outdir, [field_strs_good{m}, '_', out_suffix{p}, '_', title_tmp, '.png']);
+                    saveas(h_fig, out_fn_tmp);
+                    fprintf('\t%s\n', out_fn_tmp);
+                    delete(h_fig);
+                end
             end
         end
         fid = fopen(fullfile(out_info.outdir, 'readme.txt'), 'wt');
@@ -332,7 +334,7 @@ ylabel(strrep(title_str, '_', ' '), 'FontSize', 12, 'FontWeight', 'bold');
 errorbar(thres_x, mean_grp1, ste_grp1, 'r-', 'LineWidth', 2);
 errorbar(thres_x, mean_grp2, ste_grp2, 'b-', 'LineWidth', 2);
 
-legend(group_est{1}, group_est{2}, 'location', 'NorthEast');        
+legend(group_est{1}, group_est{2}, 'location', 'NorthEast');
 
 x_gca = xlim;
 y_gca = ylim;
@@ -347,7 +349,7 @@ if any(p_ind)
     if any(p_ind)
         plot(thres_x(p_ind), star_loc, 'r*');
     end
-
+    
     p_ind = p_val_r <= 0.001;
     if any(p_ind)
         plot(thres_x(p_ind), star_loc, 'r^');

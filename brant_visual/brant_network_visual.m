@@ -61,6 +61,7 @@ end
 
 if isempty(jobman.edge{1})
     edge_info.edge = [];
+    edge_info.hide_node = 0;
 else
     edge_info.edge = load(jobman.edge{1});
     if isequal(edge_info.edge, edge_info.edge') == 0

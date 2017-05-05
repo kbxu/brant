@@ -1,5 +1,5 @@
 Help information for Denoise:
-
+    
 Masks & Motion
     Input mask files for whole brain, global mean signal, white matter signal and CSF signal;
     If common space is selected, one mask file for each mask type should be input.

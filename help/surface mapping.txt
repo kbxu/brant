@@ -1,10 +1,11 @@
 Help information for Surface Mapping:
-
+    
 show colorbar: display colorbar
 discrete value: the intensity of the input volume has float or integer datatype
 zero color: normalized RGB color for zero value, range from 0 to 1.
 alpha: degree of opeque
-
+max val radius(mm): radius for maximum neighbour interpolation. if the radius is greater than the size of a voxel, the program will search for maximum value within a sphere for each vertex, otherwise (leave empty or smaller than the size of a voxel) use the default 1-voxel interpolation.
+    
 pos color: colormap of positive intensity
 neg color: colormap of negative intensity
 display: mode of display

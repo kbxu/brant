@@ -1,11 +1,11 @@
 Help information for ReHo:
-
+    
 mask: could be whole brain mask or gray matter mask.
 id index: identifier to find unique string for each subject
 filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
-
+    
 nbr type: number of neighbor voxels, 6 face neighbor, 18 for edge neighbor and 26 for vertex neighbor.
 normalize transform: in output file, a suffix of '_m' means the output is divided by mean intensity in the mask.
 out dir: output directory for saving results.

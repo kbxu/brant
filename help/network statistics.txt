@@ -1,5 +1,5 @@
 Help information for Network Statistics:
-
+    
 filetype: files in the filetype will be searched in input directories.
 data dir: directory where *.mat result of NETWORK CALCULATION is stored.
 stat type: one sample t-test, two sample t-test and paired t-test.
@@ -7,7 +7,7 @@ groups:
     for two sample t-test, e.g. SZ,NC -> will do two-sample t-test for SZ and NC
     for paired t-test, e.g. SZ,NC -> will do paired t-test for SZ and NC
     for one sample t-test, e.g. SZ;NC -> will do one-sample t-test for both SZ and NC group
-
+    
 grouping info:
     table: A comma-seperated values (csv) table, which is used for parsing subject names and covariates. The parsed names/ids will be matched to search results conducted with datadir and filetype. Before matching, BRANT will remove specified strings.
 	

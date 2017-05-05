@@ -1,5 +1,5 @@
 Help information for Coregister:
-
+    
 Subject info:
     reference: Filetype of reference image stored in each subject's folder to register.
     source: Filetype of image to match the reference image stored in each subject's folder.

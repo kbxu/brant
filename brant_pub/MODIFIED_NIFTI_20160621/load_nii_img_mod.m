@@ -8,6 +8,13 @@ if ~exist('hdr','var') || ~exist('filetype','var') || ~exist('fileprefix','var')
     error('Usage: [img,hdr] = load_nii_img(hdr,filetype,fileprefix,machine,[img_idx],[dim5_idx],[dim6_idx],[dim7_idx],[old_RGB]);');
 end
 
+[pth, fn, ext] = brant_fileparts(fileprefix);
+if strcmp(ext, '.hdr') || strcmp(ext, '.hdr.gz')
+    fileprefix = fullfile(pth, [fn, strrep(ext, '.hdr', '.img')]);
+elseif strcmp(ext, '.HDR') || strcmp(ext, '.HDR.GZ')
+    fileprefix = fullfile(pth, [fn, strrep(ext, '.HDR', '.IMG')]);
+end
+
 if ~exist('img_idx','var') || isempty(img_idx) || hdr.dime.dim(5)<1
     img_idx = [];
 end

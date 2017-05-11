@@ -183,7 +183,7 @@ if vox_offset
     end_of_ext = vox_offset;
 else % no voxels, all extension
     if foptgz(fileprefix, 'remain', uint32(348)) > 0
-        end_of_ext = 352 + foptgz(fileprefix, 'remain', uint32(352));
+        end_of_ext = 352 + double(foptgz(fileprefix, 'remain', uint32(352)));
     else
         end_of_ext = 348;
     end

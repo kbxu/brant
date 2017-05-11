@@ -82,14 +82,26 @@ else
     fc_strs = cellfun(@(x, y) [x, '--', y], rois_str(x), rois_str(y), 'UniformOutput', false);
     dlmwrite(fullfile(outdir, 'corr_ind.csv'), corr_ind);
     
-    %
-    dlmwrite(fullfile(outdir, 'brant_fc_value_numbers.txt'), data_2d_mat);
-    info_readme = 'Extracted matrix is arranged as subjs (rows) x FCs (columns)'; %#ok<NASGU>
-    save(fullfile(outdir, 'brant_fc_value_strings.mat'), 'subj_ids_org', 'fc_strs', 'info_readme');
+    data_size = size(data_2d_mat);
+    % write to a matrix file and *.mat file
+    if jobman.ASCII == 1
+        dlmwrite(fullfile(outdir, 'brant_fc_value_numbers_ascii.txt'), data_2d_mat);
+        info_readme = 'Extracted matrix is arranged as subjs (rows) x FCs (columns). Use ''load'' command to load text matrix. Please refer to loaded parameters ''subj_ids_org'' and ''fc_strs'''; %#ok<NASGU>
+    else
+        brant_save_mat_bin(fullfile(outdir, 'brant_fc_value_numbers_bin.bin'), single(data_2d_mat), 'single');
+%         fid = fopen(fullfile(outdir, 'brant_fc_value_numbers_bin.txt'), 'wt');
+%         fwrite(fid, single(data_2d_mat), 'single');
+%         fclose(fid);
+        data_size_str = sprintf('%d,',data_size(:));
+        fprintf('\tSaving matrix finished! You can load the data with\n\tdata_mat = brant_load_mat_bin(''%s'', [%s], ''single'');\n', fullfile(outdir, 'brant_fc_value_numbers_bin.bin'), data_size_str(1:end-1));
+        fprintf('\n\tSubject ids and ROI information were stored in\n\t%s\n\n', fullfile(outdir, 'brant_fc_matrix_info.mat'));
+        info_readme = 'Extracted matrix is arranged as subjs (rows) x FCs (columns). Use ''brant_load_mat_bin'' command to load text matrix. Please refer to loaded parameters ''subj_ids_org'' and ''fc_strs'''; %#ok<NASGU>
+    end
+    save(fullfile(outdir, 'brant_fc_matrix_info.mat'), 'subj_ids_org', 'fc_strs', 'info_readme', 'data_size', 'rois_str');
     
-    % write a full/large csv file
-    tbl = [['Name', fc_strs']; subj_ids_org, num2cell(single(data_2d_mat))];
-    brant_write_csv(fullfile(outdir, 'brant_fc_value.csv'), tbl);
+%     % write a full/large csv file
+%     tbl = [['Name', fc_strs']; subj_ids_org, num2cell(single(data_2d_mat))];
+%     brant_write_csv(fullfile(outdir, 'brant_fc_value.csv'), tbl);
 end
 
 fprintf('\tFinished.\n');

@@ -273,6 +273,8 @@ switch(lower(process_str))
         process_pars.roi_index = {''};
         process_pars.corr_mask = {''};
         process_pars.subj_prefix = '_corr_z;_corr_r';
+        process_pars.ASCII = 0;
+        process_pars.binary = 1;
         process_pars.out_dir = {''};
         process_pars.out_prefix = '';
         
@@ -286,6 +288,7 @@ switch(lower(process_str))
             {'edit', 'str_edge'},       'roi info*',    {'roi_info'},              '';...
             {'sub_gui', 'disp_2d_txt'},      'input_matrix',       '',              '';...
             {'edit', 'str_short_right'}, 'string removal*',   {'subj_prefix'},                 '';...
+            {'radio', 'hor_txt'},   'output as',               {{'ASCII', 'binary'}},                          '';...
             {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
             };
         

@@ -14,8 +14,8 @@ function varargout = brant(Action)
 % BRANT Home page: http://www.brainnetome.org/en/brainnetometool.html
 % Fast Update Version: https://github.com/kbxu/brant
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 3.22;
-% $Release = 20170505;
+% $Version = 3.23;
+% $Release = 20170511;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles

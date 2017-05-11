@@ -133,6 +133,16 @@ end
 %  hdr.dime.glmin = round(double(min(nii.img(:))));
 
 if filetype == 2
+    % nii and nii.gz case
+    [pth, fn, fnext] = brant_fileparts(fileprefix);
+    
+    if strcmpi(fnext(end-2:end), '.gz') == 0
+        fileprefix = fullfile(pth, [fn, '.nii']);
+    else
+        fileprefix = fullfile(pth, [fn, '.nii.gz']);
+    end
+    
+    
 %     fid = fopen(sprintf('%s.nii',fileprefix),'w');
     
 %     if fid < 0,
@@ -235,13 +245,22 @@ else
     precision_mat = precision;
 end
     
-% foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, {uint32(skip_bytes)}, {cast(nii.img, precision_mat)});
-if skip_bytes == 0
-    foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
+[pth, fn, fnext] = brant_fileparts(fileprefix);
+if filetype == 2 % strcmpi(fnext, '.nii') || strcmp(fnext, '.nii.gz')
+    if skip_bytes == 0
+        foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
+    else
+        foptgz(fileprefix, 'ab', {'uint8', precision}, {uint32(4), uint32(numel(nii.img))}, [uint32(0), uint32(0)], {zeros(1, skip_bytes, 'uint8'), cast(nii.img, precision_mat)});
+    end
 else
-    foptgz(fileprefix, 'ab', {'uint8', precision}, {uint32(4), uint32(numel(nii.img))}, [uint32(0), uint32(0)], {zeros(1, skip_bytes, 'uint8'), cast(nii.img, precision_mat)});
+    if strcmp(fnext, '.hdr') || strcmp(fnext, '.hdr.gz')
+        fileprefix = fullfile(pth, [fn, strrep(fnext, '.hdr', '.img')]);
+    elseif strcmp(fnext, '.HDR') || strcmp(fnext, '.HDR.GZ')
+        fileprefix = fullfile(pth, [fn, strrep(fnext, '.HDR', '.IMG')]);
+    end
+    
+    foptgz(fileprefix, 'wb', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
 end
-
 % fwrite(fid, nii.img, precision);
 % %   fwrite(fid, nii.img, precision, skip_bytes);        % error using skip
 % fclose(fid);

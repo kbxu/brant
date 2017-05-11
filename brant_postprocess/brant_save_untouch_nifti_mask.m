@@ -57,7 +57,7 @@ else
     
     for m = 1:num_files
         
-        if ~mask_t(m)
+        if ~mask_t_ind(m)
             % do not save the current mask
             continue;
         end

@@ -8,7 +8,11 @@ function end_prefix = brant_run_denoise(wk_dir, denoise_infos, data_files, subj_
 % files to original data directories.
 
 %% Path of each input data
-subj_paths = cellfun(@fileparts, data_files, 'UniformOutput', false);
+if is4d_ind == 1
+    subj_paths = cellfun(@fileparts, data_files, 'UniformOutput', false);
+else
+    subj_paths = cellfun(@(x) fileparts(x{1}), data_files, 'UniformOutput', false);
+end
 
 %% check space of each data is in common space
 if is4d_ind == 1

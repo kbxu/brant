@@ -16,6 +16,11 @@ data: volume
     input dirs: directories can be input either using a .txt file or spm select window.).
 	
 string removal*: optional. remove partial string from string parsed by id index.
+output as: (only works for data type 'matrix') choose to output data matrix as ASCII(can be edited with text reader) or binary(more hard drive friendly with large matrix). if binary is chosen, you need to handle the matrix by
+    fid = fopen('brant_extract_links.txt', 'rt');
+    outmat = fread(fid, sizeofmat, 'single');
+    fclose(fid);
+    
 out dir: output directory for saving results.
     
 Buttons:

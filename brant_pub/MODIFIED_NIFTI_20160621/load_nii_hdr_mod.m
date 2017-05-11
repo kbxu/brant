@@ -62,9 +62,9 @@ if ~strcmpi(touch_opt, 'untouch0')
 end
 
 if strcmp(hdr.hist.magic, 'n+1')
-    filetype = 2;
+    filetype = 2; % nii and nii.gz
 elseif strcmp(hdr.hist.magic, 'ni1')
-    filetype = 1;
+    filetype = 1; % img/hdr pairs
 else
     filetype = 0;
 end

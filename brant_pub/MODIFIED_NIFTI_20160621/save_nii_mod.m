@@ -121,10 +121,11 @@ write_nii(nii, filetype, fileprefix, old_RGB);
 
 if filetype == 1
     
+    [pth, fn, fnext] = brant_fileparts(fileprefix);
     %  So earlier versions of SPM can also open it with correct originator
     %
     M=[[diag(nii.hdr.dime.pixdim(2:4)) -[nii.hdr.hist.originator(1:3).*nii.hdr.dime.pixdim(2:4)]'];[0 0 0 1]];
-    save([fileprefix '.mat'], 'M');
+    save(fullfile(pth, [fn, '.mat']), 'M');
 end
 
 return					% save_nii
@@ -198,6 +199,14 @@ if filetype == 2
     
     hdr.hist.magic = 'n+1';
     
+%     % change extension to .hdr
+%     [pth, fn, ext] = brant_fileparts(fileprefix);
+%     if strcmp(ext, '.img') || strcmp(ext, '.img.gz')
+%         fileprefix = fullfile(pth, [fn, strrep(ext, '.img', '.hdr')]);
+%     elseif strcmp(ext, '.IMG') || strcmp(ext, '.IMG.GZ')
+%         fileprefix = fullfile(pth, [fn, strrep(ext, '.IMG', '.HDR')]);
+%     end
+
     save_nii_hdr_mod(hdr, fileprefix, 'touch');
     
     if ~isempty(ext)
@@ -210,18 +219,13 @@ else
     
     hdr.dime.vox_offset = 0;
     hdr.hist.magic = 'ni1';
-    save_nii_hdr_mod(hdr, fileprefix);
+    save_nii_hdr_mod(hdr, fileprefix, 'touch');
     
     if ~isempty(ext)
         save_nii_ext_mod(ext, fileprefix);
     end
     
-    [pth, fn, fnext] = brant_fileparts(fileprefix);
-    if strcmp(fnext, '.hdr') || strcmp(fnext, '.hdr.gz')
-        fileprefix = fullfile(pth, [fn, strrep(fnext, '.hdr', '.img')]);
-    elseif strcmp(fnext, '.HDR') || strcmp(fnext, '.HDR.GZ')
-        fileprefix = fullfile(pth, [fn, strrep(fnext, '.HDR', '.IMG')]);
-    end
+    
 %     fid = fopen(sprintf('%s.hdr',fileprefix),'w');
 %     
 %     if fid < 0,
@@ -308,10 +312,22 @@ else
     precision_mat = precision;
 end
     
-if skip_bytes == 0
-    foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
+
+if filetype == 2
+    if skip_bytes == 0
+        foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
+    else
+        foptgz(fileprefix, 'ab', {'uint8', precision}, {uint32(4), uint32(numel(nii.img))}, [uint32(0), uint32(0)], {zeros(1, skip_bytes, 'uint8'), cast(nii.img, precision_mat)});
+    end
 else
-    foptgz(fileprefix, 'ab', {'uint8', precision}, {uint32(4), uint32(numel(nii.img))}, [uint32(0), uint32(0)], {zeros(1, skip_bytes, 'uint8'), cast(nii.img, precision_mat)});
+    [pth, fn, fnext] = brant_fileparts(fileprefix);
+    if strcmp(fnext, '.hdr') || strcmp(fnext, '.hdr.gz')
+        fileprefix = fullfile(pth, [fn, strrep(fnext, '.hdr', '.img')]);
+    elseif strcmp(fnext, '.HDR') || strcmp(fnext, '.HDR.GZ')
+        fileprefix = fullfile(pth, [fn, strrep(fnext, '.HDR', '.IMG')]);
+    end
+    
+    foptgz(fileprefix, 'wb', {precision}, {uint32(numel(nii.img))}, uint32(0), {cast(nii.img, precision_mat)});
 end
 % foptgz(fileprefix, 'ab', {precision}, {uint32(numel(nii.img))}, {uint32(skip_bytes)}, {nii.img});
 %    fwrite(fid, nii.img, precision);

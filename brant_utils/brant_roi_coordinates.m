@@ -21,12 +21,12 @@ else
 end
 
 if is_sep_ind == 1
-    tpl_old = load_untouch_nii(tpl_fn);
+    tpl_old = load_untouch_nii_mod(tpl_fn);
     tpl_numbered = bwlabeln(tpl_old.img > 0.5);
     tpl_old.img = tpl_numbered;
     [pth, fn, ext] = fileparts(tpl_fn); %#ok<ASGLU>
     tpl_new = fullfile(outdir, ['tagged_', fn, ext]);
-    save_untouch_nii(tpl_old, tpl_new);
+    save_untouch_nii_mod(tpl_old, tpl_new);
     
     jobman.template_img{1} = tpl_new;
     jobman.lab_c = 1;

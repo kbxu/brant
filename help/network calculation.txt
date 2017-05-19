@@ -15,11 +15,11 @@ minimum spanning tree: a process to avoid unconnected network. To label the back
     
 matrix type: binarized and weighted network. The binarized networks comes from thresholded input matrics, while the weighted network comes from a dot product operation of binarized network and the original network.
 Network properies: a panel to select network properties.
-	in the option panel, (*) means the calculation of the property is slow.
+                   in the option panel, (*) means the calculation of the property is slow.
 out dir: output directory for saving results.
     
 zero value in clustering coefficient: if the network is connected in a way (e.g. Hamilton path) that neighbour nodes are not connected; or the current node has only one neighbour node.
-Inf in small worldness: the small-worldness is calculated as real-network / random-network, and in real and random case, small-worldness is calculated as clustering coefficient/shortest-path length, in the case, if the mean clustering coefficient of the random-network is zero, the small-worldness of random-network is zero, and it will cause the real-network / random-network to be (any non-zero divided by 0) Inf. The solution is set smaller thresholds that avaliable for all subjects.
+Inf in small worldness: The small-worldness is calculated as real-network / random-network, and in real and random case, small-worldness is calculated as clustering coefficient/shortest-path length. If the mean clustering coefficient of the random-network is zero, then the small-worldness of random-network is zero, and it will cause the real-network / random-network to be Inf(any non-zero divided by 0). The solution is set smaller thresholds that avaliable for all subjects.
     
 Buttons:
     S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.

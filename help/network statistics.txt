@@ -32,6 +32,8 @@ grouping info:
     
 out dir: output directory for saving results.
     
+If the output figure is empty, check whether there is NaN or Inf in the output *.csv files, where the raw global network properties are extracted.
+	
 Buttons:
     S: Save parameters of the current panel to a *.mat file. The *.mat can be further loaded for the panel or be used in a script processing.
     L: Load parameters from *.mat for the current panel.

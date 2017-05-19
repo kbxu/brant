@@ -54,8 +54,9 @@ switch(upper(Types))
             neighbor = (gMatrix(i,:) > 0);
             Num      = sum(neighbor);%number of neighbor nodes
             temp     = gMatrix(neighbor, neighbor);
-            Cp_Nodal(i) = sum(temp(:))/Num/(Num-1);
-            %         if(Num > 1),  Cp_Nodal(i) = sum(temp(:))/Num/(Num-1);   end
+            if(Num > 1)
+                Cp_Nodal(i) = sum(temp(:))/Num/(Num-1);
+            end
         end
         
     case 'WEIGHTED'% Weighted network -- arithmetic mean
@@ -64,7 +65,7 @@ switch(upper(Types))
             n_weight = gMatrix(i,neighbor);
             Si       = sum(n_weight);
             Num      = sum(neighbor);
-            if(Num > 1),
+            if(Num > 1)
                 n_weight  = ones(Num,1)*n_weight;
                 n_weight  = n_weight + n_weight';
                 n_weight  = n_weight.*(gMatrix(neighbor, neighbor) > 0);
@@ -112,5 +113,5 @@ switch(upper(Types))
         error('Type only four: "Binary","Weighted","Directed",and "All"');
 end
 % Cp_Global = sum(Cp_Nodal)/N; % commented by kb to suit nan case
-Cp_Global = nanmean(Cp_Nodal);
+Cp_Global = mean(Cp_Nodal);
 %%%

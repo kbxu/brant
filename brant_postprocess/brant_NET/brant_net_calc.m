@@ -135,11 +135,19 @@ for m = 1:num_subj
     calc_rsts_corr = calc_rsts_all(corr_ind); %#ok<NASGU>
     calc_rsts_spar = calc_rsts_all(spar_ind); %#ok<NASGU>
     
-    save(fullfile(outdir, [subj_id, '_network.mat']), 'net_measure_option', 'thres_spar_ind', 'thres_corr_ind',...
-                                                      'corr_ind', 'spar_ind',...
-                                                      'mst_ind', 'net_type', 'num_node', 'thres_corr_use',...
-                                                      'thres_spar_use', 'thres_nodes_num_spar',... % 'mat_type'
-                                                      'subj_id', 'calc_rsts_corr', 'calc_rsts_spar');
+     save(fullfile(outdir, [subj_id, '_network.mat']), 'net_measure_option', 'subj_id', 'mst_ind', 'net_type', 'num_node');
+                                                  
+    if thres_spar_ind == 1
+         save(fullfile(outdir, [subj_id, '_network.mat']), 'thres_spar_ind', 'spar_ind',...
+                                                           'thres_spar_use', 'thres_nodes_num_spar',...
+                                                           'calc_rsts_spar', '-append');
+    end
+    
+    if thres_corr_ind == 1
+        save(fullfile(outdir, [subj_id, '_network.mat']), 'thres_corr_ind', 'corr_ind',...
+                                                           'thres_corr_use', 'calc_rsts_corr', '-append');
+    end
+   
 end
 
 if (num_workers > 0), brant_parpool('close'); end

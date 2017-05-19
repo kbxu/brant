@@ -47,6 +47,7 @@ lp_real = CCM_AvgShortestPath(G, 1:N);
 cp_real = CCM_ClusteringCoef(G, gType);
 
 % Measure in rand network
+fprintf('\tAdding 30 simulations before. (Only the last %d simulations count)\n', simT);
 simT  = simT + 30;%adding 30 to test
 lp_rand = zeros(simT, 1);   cp_rand = zeros(simT, 1);
 
@@ -60,13 +61,15 @@ end
 newg = G;
 T = min(nnz(G), 100);%times of swap, different from simT
 if(csign > 0)
-    for i = 1:simT        
+    for i = 1:simT
+        fprintf('\tRandom-network simulation of small-worldness %d\n', i);
         newg = randomizeGraph_kc(newg, T, gType);%randomize netowrk
         lp_rand(i) = CCM_AvgShortestPath(newg, 1:N);
         cp_rand(i) = CCM_ClusteringCoef(newg, gType);
     end
 else
     for i = 1:simT
+        fprintf('\tRandom-network simulation of small-worldness %d\n', i);
         newg = randomizeGraph(newg, T, gType);%randomize netowrk
         lp_rand(i) = CCM_AvgShortestPath(newg, 1:N);
         cp_rand(i) = CCM_ClusteringCoef(newg, gType);
@@ -81,6 +84,5 @@ cp_rand = mean(cp_rand);
 % SmallWorldness
 l = lp_real/lp_rand;%lambada
 g = cp_real/cp_rand;%gamma
+
 s = g/l;            %sigma
-
-

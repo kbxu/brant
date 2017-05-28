@@ -13,6 +13,10 @@ tbl_data = tbl(2:end, :);
 
 [tbl_fns, fns_good] = brant_chk_tbl_cols(tbl_data, tbl_title, {'name'}, 'str');
 if numel(unique(tbl_fns)) ~= numel(tbl_fns)
+    tmp = unique(tbl_fns);
+    tmp_num = cellfun(@(x) sum(strcmpi(x, tbl_fns)), tmp);
+    tmp_dup = tmp(tmp_num > 1);
+    fprintf('%s\n', tmp_dup{:});
     error('Duplicated subject names are found!');
 end
 tbl_good = fns_good;

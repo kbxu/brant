@@ -16,15 +16,41 @@ output_dir = jobman.out_dir{1};
 
 if mer_ind == 1
     [nifti_list, subj_ids] = brant_get_subjs(merge_info);
-    spm_vols_input = cellfun(@spm_vol, nifti_list);
-    spm_check_orientations(spm_vols_input);
+%     %
+%     spm_vols_input = cellfun(@spm_vol, nifti_list);
+%     spm_check_orientations(spm_vols_input);
+%     
+%     fprintf('\n\tMerging ROI files...\n');
+%     fprintf('\n\tBRANT uses abs(intensity) > 0.5 to binarize the input rois.\n');
+%     input_sum = single(0); input_num = single(0);
+%     for m = 1:numel(spm_vols_input)
+%         input_img_tmp = spm_read_vols(spm_vols_input(m));
+%         input_bin = abs(input_img_tmp) > 0.5;
+%         input_sum = input_sum + single(input_bin);
+%         input_num = input_num + single(input_bin) * m;
+%     end
+%     clear('input_img_tmp');
+%     
+%     overlap_mask = input_sum > 1;
+%     if any(overlap_mask(:))
+%         warning('on');
+%         warning(sprintf('\n\tOverlap has been detected among the input files!\n\tOverlaping areas will be set to 0!\n')); %#ok<SPWRN>
+%         input_num(overlap_mask) = 0;
+%     end
+%     
+%     out_vol = spm_vols_input(1);
     
+    ref_hdrs = cellfun(@(x) load_nii_hdr_mod(x, 'untouch0'), nifti_list);
+    fprintf('\tChecking data orientations and resolutions, if an error came out, please check/reslice data before preprocess!\n');
+    brant_spm_check_orientations(ref_hdrs);
+    fprintf('\tInput data are well arranged!\n');
+
     fprintf('\n\tMerging ROI files...\n');
-    fprintf('\n\tBrant uses abs(intensity) > 0.5 to binarize the input rois.\n');
+    fprintf('\tBRANT uses abs(intensity) > 0.5 to binarize the input rois.\n');
     input_sum = single(0); input_num = single(0);
-    for m = 1:numel(spm_vols_input)
-        input_img_tmp = spm_read_vols(spm_vols_input(m));
-        input_bin = abs(input_img_tmp) > 0.5;
+    for m = 1:numel(nifti_list)
+        input_img_tmp = load_untouch_nii_mod(nifti_list{m});
+        input_bin = abs(input_img_tmp.img) > 80;%0.5;
         input_sum = input_sum + single(input_bin);
         input_num = input_num + single(input_bin) * m;
     end
@@ -37,7 +63,7 @@ if mer_ind == 1
         input_num(overlap_mask) = 0;
     end
     
-    out_vol = spm_vols_input(1);
+    out_vol = spm_vol(nifti_list{1});
     out_vol.fname = fullfile(output_dir, [merge_info.out_fn, '.nii']);
     out_vol.dt = [spm_type('float32'), spm_platform('bigend')];
     spm_write_vol(out_vol, input_num);

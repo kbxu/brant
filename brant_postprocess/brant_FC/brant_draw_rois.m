@@ -5,7 +5,8 @@ aio_ind = jobman.aio;
 mask_nii = load_nii_mod(jobman.mask{1}, 1);
 [mask_XYZ, s_mat] = brant_get_XYZ(mask_nii.hdr); %#ok<ASGLU>
 clear('mask_XYZ');
-mask_ind_all = mask_nii.img > 0.5;
+% mask_ind_all = mask_nii.img > 0.5;
+mask_ind_all = mask_nii.img ~= 0;
 mask_hdr = mask_nii.hdr;
 size_mask = mask_hdr.dime.dim(2:4);
 dim_mask = mask_hdr.dime.pixdim(2:4);

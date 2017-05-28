@@ -69,7 +69,7 @@ if (colorinfo.discrete == 0)
 %     lin_cmap_neg = linspace(-1*max_abs, 0, floor(color_N / 2) + 1);
 %     lin_cmap_pos = linspace(0, max_abs, floor(color_N / 2) + 1);
 
-    thr = max_abs / color_N * 8;
+    thr = max_abs / color_N * 20;
     
     if (min_vq > 0)
         % only positive
@@ -97,7 +97,7 @@ if (colorinfo.discrete == 0)
         end
             
         cbr.xtick = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, tick_vec, 'Nearest');
-        cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
+        cbr.xlabel = arrayfun(@(x) num2str(x, '%.2g'), tick_vec, 'UniformOutput', false);
     elseif (max_vq < 0)
         % only negative value
         CData = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, vq, 'Nearest');
@@ -125,7 +125,7 @@ if (colorinfo.discrete == 0)
         end
 
         cbr.xtick = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, tick_vec, 'Nearest');
-        cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
+        cbr.xlabel = arrayfun(@(x) num2str(x, '%.2g'), tick_vec, 'UniformOutput', false);
     else
         CData = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, vq, 'Nearest');
         
@@ -176,7 +176,7 @@ if (colorinfo.discrete == 0)
         end
         
         cbr.xtick = interp1(linspace(-1*max_abs, max_abs, color_N), 1:color_N, tick_vec, 'Nearest');
-        cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
+        cbr.xlabel = arrayfun(@(x) num2str(x, '%.2g'), tick_vec, 'UniformOutput', false);
     end   
     cbr.caxis = [1, 129];
 else
@@ -205,7 +205,7 @@ else
     end
     
     cbr.xtick = interp1([0; uniq_color], 1:(color_N+1), tick_vec, 'Nearest');
-    cbr.xlabel = arrayfun(@(x) num2str(x, '%.3g'), tick_vec, 'UniformOutput', false);
+    cbr.xlabel = arrayfun(@(x) num2str(x, '%.2g'), tick_vec, 'UniformOutput', false);
     
     cbr.caxis = [1, color_N+1];
 end

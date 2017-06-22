@@ -22,7 +22,7 @@ if ~isempty(jobman.node_txt{1})
             if isnan(node_info.label{m})
                 node_info.label{m} = '';
             elseif ~isempty(node_info.label{m})
-                node_info.label{m} = regexprep(node_info.label{m}, '[\s\W_]+', '\\_');
+                node_info.label{m} = regexprep(node_info.label{m}, '[\s\W_]+', '\/');
             end
         end
     else

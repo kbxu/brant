@@ -1,10 +1,11 @@
 Help information for ROI Calculation:
     
 roi file: ROIs in one nifti file
-roi info: optional. labels of tagged ROIs in an .csv file. For example:
+roi index(*): optional. labels of tagged ROIs in an .csv file. For example:
     1,SFG
     2,MFG
     3,IFG
+clustersize thr: threshold of cluster size.
     
 mask: could be whole brain mask or gray matter mask.
 id index: identifier to find unique string for each subject
@@ -16,8 +17,7 @@ extract mean: extract mean time series for each ROI
 roi to roi correlation: calculate correlation between pairs of ROI
 roi to whole brain correlation: calculate correlation between each ROI's mean time series and voxels in the mask.
     
-Pearson's correlation: correlation type
-Partial correlation: when calculating correlation, between one roi mean time series and voxels/other time series, the rest of roi mean time serieses will be regressed out from the calculation.
+Partial correlation: (check to use Partial Pearson's correlation, uncheck to use Pearson's correlation) when calculating correlation, between one roi mean time series and voxels/other time series, the rest of roi mean time serieses will be regressed out from the calculation.
     
 out dir: output directory for saving results.
     

@@ -370,6 +370,11 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                     save_results_vox(out_info.outdir, out_info.out_prefix, out_info.size_mask, out_info.mask_ind, stat_val,...
                                      test_fn, out_info.mask_hdr, contr_str, out_info.multi_use, out_info.thr, p_vec_R, df_stu);
                 case 'stat matrix'
+                    stat_out(ooo, m).constrast_str = test_fn;
+                    if ~isempty(filter_est)
+                        stat_out(ooo, m).filter = filter_est{ooo};
+                    end
+                    stat_out(ooo, m).stat_info = stat_info;
                     save_results_mat(out_info.outdir, out_info.out_prefix, out_info.mat_size, out_info.sym_ind, '', stat_val, out_info.corr_ind,...
                                      test_fn, out_info.multi_use, out_info.thr, p_vec_R, group_est, df_stu, subjs);
                 case 'stat matrix - voxel to voxel'
@@ -398,7 +403,10 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             save(out_file, 'cen_strs');
         end
     else
-        if ((numel(ttest2_groups) == 1) && isempty(stat_out))
+        if strcmpi(out_info.data_type, 'stat matrix') == 1
+            save(fullfile(out_info.outdir, [out_info.out_prefix, 'group_stat.mat']), 'stat_out');
+        end
+        if ((numel(ttest2_groups) == 1) && (strcmpi(out_info.data_type, 'stat network') == 0)) 
             for m = 1:num_csts
                 A = [[{'center'}, {'group1'}, {'group2'}]; [cen_strs{m}, num2cell(num_grp_all{m})]];
                 save(fullfile(out_info.outdir, [out_info.out_prefix, 'group_info.mat']), 'A');

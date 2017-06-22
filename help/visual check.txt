@@ -7,7 +7,8 @@ id index: identifier to find unique string for each subject
 filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
-    
+   
+display orthogonal view: check to display orthogonal view of selected slices and save screenshots. uncheck will only save screenshots to out dir.
 mask color: color of the transparent overlaid mask.
 slices: modified image n-th slice of x,y,z to save.
 out dir: output directory for saving specified slices.

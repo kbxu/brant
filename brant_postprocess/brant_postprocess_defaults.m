@@ -709,7 +709,7 @@ switch(lower(process_str))
         process_pars.mask_in = {''};
         process_pars.cs_thr = 5;
         process_pars.template_img = {fullfile(brant_path, 'template', 'BN_Atlas_274_with_cerebellum_without_255.nii.gz')};
-        process_pars.template_info = {fullfile(brant_path, 'template', 'roi_areas_274.txt')};
+        process_pars.template_info = {fullfile(brant_path, 'template', 'BN_Atlas_274_subregion_name.txt')};
         process_pars.out_dir = {''};
         
         ui_structs = {;...

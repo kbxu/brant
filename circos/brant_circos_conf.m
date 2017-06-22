@@ -14,6 +14,8 @@ neg_color = round(jobman.neg_color * 255);
 % chromo_units = jobman.chromo_units;
 out_dir = jobman.out_dir{1};
 
+if exist(out_dir, 'dir') ~= 7, mkdir(out_dir); end
+
 if (jobman.transparent_bkg == 0)
     bkg_str = 'white';
 else

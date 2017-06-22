@@ -25,7 +25,7 @@ if (input_color_ind == 1)
         error('A *.txt file of color indices is expected!');
     else
         color_input = load(color_input_file);
-        assert(size(color_input) >= 4);
+        assert(size(color_input, 2) >= 4);
         roi_ind = color_input(:, 1);
         rgb_color = color_input(:, 2:4);
     end
@@ -174,7 +174,7 @@ if (strcmpi(mode_display, 'halves:left and right') == 0)
     vertices_coord_shift = bsxfun(@minus, vertices_coord, center_shift);
     hold('on');
     h_brain = patch('Faces', faces, 'Vertices', vertices_coord_shift, draw_args{:});
-    set(gca, 'XLim', [-70, 70],...
+    set(gca, 'XLim', [-80, 80],...
              'YLim', [-100, 100],...
              'ZLim', [-75, 75]);
     hold('off');
@@ -193,7 +193,7 @@ else
         vertices_coord_shift = bsxfun(@minus, vertices_coord, center_shift);
         hold('on');
         h_brain = patch('Faces', faces, 'Vertices', vertices_coord_shift, draw_args{:});
-        set(gca, 'XLim', [-70, 70],...
+        set(gca, 'XLim', [-80, 80],...
                  'YLim', [-100, 100],...
                  'ZLim', [-75, 75]);
         hold('off')

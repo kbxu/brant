@@ -35,8 +35,9 @@ if ~isempty(rad_mm) && all(rad_mm >= vox_len)
     rad_N = ceil(rad_mm ./ vox_len);
     [Xmm, Ymm, Zmm] = meshgrid(-1*rad_N(1):rad_N(1), -1*rad_N(2):rad_N(2), -1*rad_N(3):rad_N(3));
     vox_inds_tmp = [Xmm(:) * vox_len(1), Ymm(:) * vox_len(2), Zmm(:) * vox_len(3)];
-    dsit_vox = pdist2([0, 0, 0], vox_inds_tmp) <= rad_mm;
-    vol_int = imdilate(vol_int, reshape(dsit_vox, 2 * rad_N' + 1)); % find maximum in nearnest neighbour
+    dist_vox = arrayfun(@(x) norm(vox_inds_tmp(x, :), 2), 1:size(vox_inds_tmp, 1)) <= rad_mm;
+%     dist_vox = pdist2([0, 0, 0], vox_inds_tmp) <= rad_mm;
+    vol_int = imdilate(vol_int, reshape(dist_vox, 2 * rad_N' + 1)); % find maximum in nearnest neighbour
 end
 
 % if (colorinfo.discrete == 0)
@@ -66,6 +67,9 @@ if (colorinfo.discrete == 0)
     c_map(65:82,1) = 1;
     c_map(65:82,3) = linspace(1, 0, 18);
     
+%     unmask below one line if you want to visualize positive color in blue
+%     c_map=c_map(end:-1:1,:);
+
 %     lin_cmap_neg = linspace(-1*max_abs, 0, floor(color_N / 2) + 1);
 %     lin_cmap_pos = linspace(0, max_abs, floor(color_N / 2) + 1);
 
@@ -205,7 +209,7 @@ else
     end
     
     cbr.xtick = interp1([0; uniq_color], 1:(color_N+1), tick_vec, 'Nearest');
-    cbr.xlabel = arrayfun(@(x) num2str(x, '%.2g'), tick_vec, 'UniformOutput', false);
+    cbr.xlabel = arrayfun(@(x) num2str(x, '%d'), tick_vec, 'UniformOutput', false);
     
     cbr.caxis = [1, color_N+1];
 end

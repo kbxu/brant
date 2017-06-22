@@ -1,4 +1,4 @@
-Help information for DWI:
+Help information for DiffusionKit:
     
 A batch processing GUI-interface for DiffusionKit
     

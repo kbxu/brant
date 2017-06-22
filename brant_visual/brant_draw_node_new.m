@@ -34,12 +34,14 @@ if ((node_info.show_label == 1) && all(cellfun(@isempty, label_part) == 0))
     if ((brain_halves_ind == 1) && any(select_view == [2, 5])) || ((brain_halves_ind == 0) && any(select_view == [2, 4]))
         text_xyz = coords_part + [-2 - r, 2 + r, 2 + r];
     elseif (((brain_halves_ind == 1) && any(select_view == [3, 4]) || (brain_halves_ind == 0 && select_view == 3)))
-        text_xyz = coords_part + [-2 - r, 2 - r, 2 + r];
+        text_xyz = coords_part + [-2 - r, 2 - r, 2 + r]; % [1- r, r-r, r-r+300] in transverse view, change z increment 2 to 300 to see labels
     elseif ((brain_halves_ind == 0) && (select_view == 5))
         text_xyz = coords_part + [2 + r, -2 - r, 2 + r];
     else
         text_xyz = coords_part + [2 + r, -r, 3 + r];
     end
+%     aa=load('size_raw.mat');bb=aa.size_raw(node_ind);node_idx=node_idx(bb>=10);
+%     h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold', 'FontSize', 10), node_idx, 'UniformOutput', false);
     h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold'), node_idx, 'UniformOutput', false);
 else
     h_text = [];

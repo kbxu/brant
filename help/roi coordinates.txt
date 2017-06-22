@@ -4,9 +4,9 @@ The current function extracts coordinates for each cluster and output to a table
     
 input type: seperated binary clusters or labeled clusters
 mask*: optional. mask to do AND operation with.
-cluster size: threshold of cluster size.
+cluster size: masked clusters with smaller cluster size will be discarded.
 roi file: input ROI file
-roi info*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
+roi index*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
     1,SFG
     2,MFG
     3,IFG

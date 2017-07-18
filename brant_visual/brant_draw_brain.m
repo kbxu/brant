@@ -9,6 +9,7 @@ if ~isempty(node_info)
         edge_ind = eval(thres_str);
         
         size_raw = sum(abs(edge_part .* edge_ind), 2);
+%         save('size_raw.mat', 'size_raw'); % oo
         if edge_info.wei_rad == 1
 %             size_raw = size_raw ./ max(size_raw);
             size_raw_scale_tmp = ((size_raw(size_raw ~= 0) - 1) / max(size_raw)) * 7 + 3; %  ((size_raw(size_raw ~= 0) - 1) / max(size_raw)) * 7 + 3;

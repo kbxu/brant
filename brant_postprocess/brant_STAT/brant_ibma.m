@@ -185,16 +185,16 @@ if stouffer_ind == 1
 % 	Stouffer, S.A., Suchman, E.A., DeVinney, L.C., Star, S.A. and Williams Jr, R.M., 1949. The American soldier: Adjustment during army life.(Studies in social psychology in World War II), Vol. 1.
     fprintf('\tCalculating Stouffer''s meta-analysis on %d studies\n', nStudies);
     if dim_t_mats == 4
-        Timgs_sum = 0;
+        Zimgs_sum = 0;
         for m = 1:nStudies
-            Timgs_sum = Timgs_sum + spm_t2z(t_mats(:, :, :, m), df(m));
+            Zimgs_sum = Zimgs_sum + spm_t2z(t_mats(:, :, :, m), df(m));
         end
     elseif dim_t_mats == 3
-        t_sum_tmp = arrayfun(@(x, y) spm_t2z(x{1}, y), t_cell, df, 'UniformOutput', false);
-        Timgs_sum = sum(cat(3, t_sum_tmp{:}), 3);
+        z_sum_tmp = arrayfun(@(x, y) spm_t2z(x{1}, y), t_cell, df, 'UniformOutput', false);
+        Zimgs_sum = sum(cat(3, z_sum_tmp{:}), 3);
     end
     
-    stouffer_ibma.zval = Timgs_sum / sqrt(nStudies);
+    stouffer_ibma.zval = Zimgs_sum / sqrt(nStudies);
     stouffer_ibma.pval = cell(num_tail, 1);
     for m = 1:num_tail
         switch(tail_est{m})
@@ -244,8 +244,8 @@ if any([fem_ind, mem_ind])
     J = 1 - 3 ./ (4 * (N1 + N2 - 2) - 1);
     dev_N = (N1 + N2) ./ N1 ./ N2;
     sum_N = N1 + N2;
-    ES_cell = arrayfun(@(x, y, z) sqrt(x) * y{1} * z, dev_N, t_cell, J, 'UniformOutput', false);
-    Va_cell = arrayfun(@(x, y, z) x + y{1} .^2 / 2 / z, dev_N, ES_cell, sum_N, 'UniformOutput', false);
+    ES_cell = arrayfun(@(x, y, z) sqrt(x) * y{1} * z, dev_N, t_cell, J, 'UniformOutput', false); % unbiased Hedge's g
+    Va_cell = arrayfun(@(x, y, z) x + y{1} .^2 / 2 / z, dev_N, ES_cell, sum_N, 'UniformOutput', false); 
     ES = cat(dim_t_mats, ES_cell{:});
     Va = cat(dim_t_mats, Va_cell{:});
     W = 1 ./ Va;
@@ -285,6 +285,8 @@ end
 if mem_ind == 1
     % Hedges, L.V. (1992). Meta-Analysis. Journal of Educational and Behavioral Statistics 17(4), 279-296. doi: 10.3102/10769986017004279.
     % Konstantopoulos, S., 2006. Fixed and mixed effects models in meta-analysis.
+    % https://en.wikipedia.org/wiki/Effect_size#cite_note-HedgesL1985Statistical-15
+    % Hedges g*
     fprintf('\tCalculating Mixed Effects Model meta-analysis on %d studies\n', nStudies);
 
     % mixed effects model

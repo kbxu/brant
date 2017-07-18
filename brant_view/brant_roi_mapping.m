@@ -152,6 +152,11 @@ function h_brain = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp, mode_d
 V_ero = imerode(mask_tmp, nhood);
 V_edge = mask_tmp - V_ero;
 [faces, vertices_coord] = isosurface(V_edge, .2);
+
+if isempty(vertices_coord)
+    [faces, vertices_coord] = isosurface(V_edge, .1);
+end
+
 vertices_coord = vertices_coord - 1;
 
 scale_param = [1, 1, 1]; % y, x, z scale

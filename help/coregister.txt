@@ -5,8 +5,8 @@ Subject info:
     source: Filetype of image to match the reference image stored in each subject's folder.
     seg&bet: Segment and skull stripe structural T1/T2 image. Using skull striped T1/T2 image for coregistration is recommended.
         options:
-            1:segment using new segment and bet based on tissue probability maps;
-            2:bet only (there should be segmented c1-c3*.nii files in the directory);
+            1: segment using new segment and bet based on tissue probability maps;
+            2: bet only (there should be segmented c1-c3*.nii files in the directory);
             other number:do not segment nor bet; we recommend using co*.nii instead of bet*.nii to normalise.
 Estimate: 
     object fun: Methods to maximise or minimise objective function.

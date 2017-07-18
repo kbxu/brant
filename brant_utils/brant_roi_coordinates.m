@@ -94,7 +94,7 @@ if is_label_ind == 1
     XYZ_mask = XYZ(xyz_ind, :);
     mask_coord = cellfun(@(x) mean(XYZ_mask(x(:), :), 1), rois_inds_new, 'UniformOutput', false);
     mask_coord_cell = num2cell(cat(1, mask_coord{:}));
-    A = cat(1, {'x', 'y', 'z', 'label', 'vox_num', 'index'}, cat(2, mask_coord_cell, rois_str, num2cell([num_vox, rois_tag])));
+    A = cat(1, {'x', 'y', 'z', 'label', 'vox_num', 'index'}, cat(2, mask_coord_cell, rois_str, num2cell([num_vox, double(rois_tag)])));
     brant_write_csv(fullfile(outdir, 'brant_roi_info.csv'), A);
     
     % output roi info

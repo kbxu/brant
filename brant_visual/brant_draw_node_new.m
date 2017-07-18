@@ -40,7 +40,8 @@ if ((node_info.show_label == 1) && all(cellfun(@isempty, label_part) == 0))
     else
         text_xyz = coords_part + [2 + r, -r, 3 + r];
     end
-%     aa=load('size_raw.mat');bb=aa.size_raw(node_ind);node_idx=node_idx(bb>=10);
+    %% oo
+%     aa=load('size_raw.mat');bb=aa.size_raw(node_ind);node_idx=node_idx(bb>=5);
 %     h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold', 'FontSize', 10), node_idx, 'UniformOutput', false);
     h_text = arrayfun(@(x) text(text_xyz(x, 1), text_xyz(x, 2), text_xyz(x, 3), label_part{x}, 'FontWeight', 'Bold'), node_idx, 'UniformOutput', false);
 else

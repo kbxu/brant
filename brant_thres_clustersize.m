@@ -1,6 +1,16 @@
-function vol_new = brant_thres_clustersize(vol_3d, cs_thr)
+function vol_new = brant_thres_clustersize(vol_3d, cs_thr, varargin)
 
-[vol_tmp, num_c] = bwlabeln(vol_3d, 18); % default is 18
+
+if nargin == 2
+    % default is 18
+    nb_type = 18;
+else
+    nb_type = varargin{1};
+end
+
+[vol_tmp, num_c] = bwlabeln(vol_3d, nb_type);
+
+
 
 vol_nums = 1:num_c;
 

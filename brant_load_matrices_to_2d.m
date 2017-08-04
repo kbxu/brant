@@ -38,4 +38,11 @@ function mat_1d = brant_load_single_mat(mat_file, corr_ind, num_ind, num_tot)
 
 fprintf('\tLoading %d/%d: %s\n', num_ind, num_tot, mat_file);
 mat_tmp = load(mat_file);
+
+% % test distribution normalization
+% corr_ind_tmp = triu(true(size(mat_tmp)), 1);
+% mat_tmp = mat_tmp - mean(mat_tmp(corr_ind_tmp));
+% mat_tmp = mat_tmp / std(mat_tmp(corr_ind_tmp));
+% %
+
 mat_1d = reshape(mat_tmp(corr_ind), 1, []);

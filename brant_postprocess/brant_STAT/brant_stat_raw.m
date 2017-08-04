@@ -224,6 +224,10 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                 grp_reg_m = [ones(sum(group_inds), 1), reg_good_subj_nm];
                 glm_beta = grp_reg_m \ corr_2d_tmp;
                 data_mat_2d = corr_2d_tmp - grp_reg_m(:, 2:end) * glm_beta(2:end, :);
+                
+%                 % test distribution normalization
+%                 data_mat_2d = bsxfun(@minus, data_mat_2d, mean(data_mat_2d, 2));
+%                 data_mat_2d = bsxfun(@rdivide, data_mat_2d, std(data_mat_2d, 0, 2));                
             else
                 grp_reg_m = [];
                 data_mat_2d = corr_2d_tmp;

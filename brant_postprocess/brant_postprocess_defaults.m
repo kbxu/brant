@@ -330,16 +330,18 @@ switch(lower(process_str))
         
         process_fun = @brant_roi_script;
         
-    case 'fcd'
+    case 'fcd/fcs'
         process_pars.cpu = 1;
         process_pars.gpu = 0;
         process_pars.threshold_corr = 0.6;
+        process_pars.metrics = 'fcd';
         process_pars.out_dir = {''};
         
         ui_structs = {...
             {'sub_gui', 'disp_dirs_nii_mask'},      'input_nifti',       {{'mask', {fullfile(brant_path, 'template', 'mask_gm_40.nii.gz')}}, {'filetype', 'f*.nii'}},              '';...
             {'radio', 'hor_txt'},   'compute',               {{'cpu', 'gpu'}},                          '';...
             {'edit', 'num_short_right'},      'r threshold',       {'threshold_corr'},              '';...
+            {'popupmenu_right', 'disp_view_opts'},      'metrics',    {{{'metrics'};'fcd';'fcs';'abs fcs'}},              '';...
             {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
             };
         

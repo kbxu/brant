@@ -7,6 +7,11 @@ filetype: files in the filetype will be searched in input directories.
 input dirs: directories can be input either using a .txt file or spm select window.
 compute: use OPENCL supported CPU or GPU to calculate FCD
 r threshold: threshold of correlation (to binarize functional connectivity and sum up)
+metrics:
+    fcd-functional connectivity density, calculate global and region grow defined degree
+    fcs-functional connectivity strength, calculate global-wise sum/mean of above threshold intensity
+    fcs abs-absolute functional connectivity strength, firstly convert FC map to absolute value and calculate global-wise sum/mean of above threshold intensity
+
 out dir: output directory for saving results.
     
 Buttons:
@@ -19,13 +24,15 @@ Raw:
     gfcd(global fcd): count the number of voxels of voxel to whole brain correlation (rho > threshold)
     lfcd(local fcd): count the number of voxels of voxel to neighbour voxels' correlation (rho > threshold, with region grow method)
     lrfcd(long-range fcd): gfcd - lfcd
+    fcs: sum of above threshold voxels' intensity (fisher z) divided by masksize - 1 (the sum of fcs is calculated global-wise, not restricted to a certain boundary in the current version)
 Normalized:
     gfcd: gfcd(Raw) divided by mean value of gfcd(Raw)
     lfcd: lfcd(Raw) divided by mean value of lfcd(Raw)
     lrfcd: lrfcd(Raw) divided by mean value of lrfcd(Raw)
+    fcs_nor: fcs(Raw) divided by mean value of fcs(Raw)
     
 Reference:
     Functional connectivity density mapping. Tomasi, D. 2010. PNAS
-    
+    Identifying and Mapping Connectivity Patterns of Brain Network Hubs in Alzheimer’s Disease. 	Zhengjia, DAI. 2015. Cerebral Cortex
 end
      

@@ -18,10 +18,10 @@ end
 brant_ver = brant('version');
 gui_version = brant_ver;
 if nargin(gui_func) == 1
-    gui_paramters = {get(h_parent, 'Userdata')}; %#ok<*NASGU>
+    gui_parameters = {get(h_parent, 'Userdata')}; %#ok<*NASGU>
 else
-    gui_paramters = [{get(h_parent, 'Userdata')}, varargin]; %#ok<*NASGU>
+    gui_parameters = [{get(h_parent, 'Userdata')}, varargin]; %#ok<*NASGU>
 end
-read_me = sprintf('Usage in script:\n\tload(''%s'');\n\tgui_func(gui_paramters{:});\nOr simply run:\n\tbrant_run_script(''%s'')', fullfile(pth, fn), fullfile(pth, fn));
+read_me = sprintf('Usage in script:\n\tload(''%s'');\n\tgui_func(gui_parameters{:});\nOr simply run:\n\tbrant_run_script(''%s'')', fullfile(pth, fn), fullfile(pth, fn));
 disp(read_me); %#ok<DSPS>
-save(fullfile(pth, fn), 'gui_paramters', 'gui_fn', 'gui_func', 'gui_version', 'read_me');
+save(fullfile(pth, fn), 'gui_parameters', 'gui_fn', 'gui_func', 'gui_version', 'read_me');

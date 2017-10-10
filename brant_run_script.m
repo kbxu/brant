@@ -10,4 +10,4 @@ if (strcmpi(gui_info.gui_version, brant_ver) == 0)
              sprintf('\nVersion of loaded file:%s\nVersion of current BRANT:%s\n', gui_info.gui_version, brant_ver)]);
 end
 
-gui_info.gui_func(gui_info.gui_paramters{:});
+gui_info.gui_func(gui_info.gui_parameters{:});

@@ -79,7 +79,7 @@ else
     
     inter_mod_ind = node_mod_ind == 0;
     if any(inter_mod_ind)
-        cellfun(@(x) set(x, 'FaceColor', [0.8, 0, 0]), cyl_stick(inter_mod_ind));
+        cellfun(@(x) set(x, 'FaceColor', [0.7, 0.7, 0.7]), cyl_stick(inter_mod_ind));
     end
     
     intra_mod_ind = node_mod_ind == 1;

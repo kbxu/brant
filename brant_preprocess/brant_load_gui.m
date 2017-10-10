@@ -32,8 +32,8 @@ end
 % generate new GUI
 switch(gui_info.gui_fn)
     case 'brant_Preprocessing'
-        brant_preprocess('reload', gui_info.gui_paramters{1})
+        brant_preprocess('reload', gui_info.gui_parameters{1})
     otherwise
         [jobman, ui_strucs, process_fun] = brant_postprocess_defaults(gui_info.gui_fn); %#ok<ASGLU>
-        brant_postprocesses_sub(gui_info.gui_fn, gui_info.gui_paramters{1}, ui_strucs, process_fun);
+        brant_postprocesses_sub(gui_info.gui_fn, gui_info.gui_parameters{1}, ui_strucs, process_fun);
 end

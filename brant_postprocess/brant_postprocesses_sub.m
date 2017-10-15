@@ -94,7 +94,7 @@ h_btn = uicontrol(...
         'Callback',     @brant_fun_web);
 
 function brant_fun_web(obj, evd)
-web('http://www.brainnetome.org/en/brainnetometool.html', '-browser');
+web('http://brant.brainnetome.org/', '-browser');
 
 function brant_except_ui(hfig_inputdlg)
 % set ui control events for specific uis

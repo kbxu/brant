@@ -8,7 +8,10 @@ data: matrix
 	corr mask: e.g. a matrix mask used to find significant links instead of all links
 data: volume
     roi file: ROI file used for extracting mean intensity in each roi tagged by number.
-    roi info: labels of tagged ROIs. (optional)
+    roi index: table of labels of tagged ROIs. (optional)
+        1,SFG
+        2,MFG
+        3,IFG
     mask: could be whole brain mask or gray matter mask.
     id index: identifier to find unique string for each subject
     filetype: files in the filetype will be searched in input directories.

@@ -7,12 +7,12 @@ surface: surface file.
 display legend: display legend.
     
 roi file: extract mean intensity in the roi tagged by numbers.
-roi info*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
+roi index*: optional. two columns of information for each labeled cluster in a *.csv file. For example:
     1,SFG
     2,MFG
     3,IFG
     
-roi vals: select which roi to display.
+roi vector: select which roi to display.
 color: optional. use random color or input color file.
 color file: the input color could be (ROI tag, R, G, B):
     1,255,155,100

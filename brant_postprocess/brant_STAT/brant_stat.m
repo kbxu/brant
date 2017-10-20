@@ -314,9 +314,25 @@ switch(out_info.data_type)
                 end
             end
         end
-        fid = fopen(fullfile(out_info.outdir, 'readme.txt'), 'wt');
+        fid = fopen(fullfile(out_info.outdir, 'readme_stat.txt'), 'wt');
         fprintf(fid, 'Curve: mean value of each threshold.\nbar:standard error.\nRed:the first group.\nBlue: the second group.\nstar(*): p<=0.05 & p>0.001.\ncaret(^): p<=0.001\n');
         fclose(fid);
+        
+        
+        % get nodal results 20171020
+        for m = 1:n_field
+            net_fn_out_nodal = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_nodal.mat']);
+            fprintf('Saving nodal results to %s\n', net_fn_out_nodal);
+            
+            nodal_val = cell(size(calc_rsts_all));
+            glob_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).nodal, calc_rsts_all(good_ind), 'UniformOutput', false);
+            nodal_val(good_ind) = glob_vecs_corr; %#ok<NASGU>
+            save(net_fn_out_nodal, 'nodal_val', 'thres_title_all', 'thres_vec', 'data_infos');
+        end
+        fid = fopen(fullfile(out_info.outdir, 'readme_nodal.txt'), 'wt');
+        fprintf(fid, 'nodal_val: cell of network properties for subject x threshold.\nthres_title_all:threshold description (string).\nthres_vec: numeric thresholds.\ndata_infos: subject and group information\n');
+        fclose(fid);
+        %
         
     otherwise
         error('Unknown datatype!');

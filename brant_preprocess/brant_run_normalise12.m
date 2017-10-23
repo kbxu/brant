@@ -21,7 +21,7 @@ else
     end
 end
 
-nor_prefix = 'w';
+nor_prefix = nor_infos.woptions.prefix;
 fprintf('\n*\tNormalise finished!*\n');
 
 function loop_normalise(data_tmp, file_est, nor_infos, file_dirs)

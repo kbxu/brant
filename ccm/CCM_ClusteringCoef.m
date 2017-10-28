@@ -112,6 +112,6 @@ switch(upper(Types))
     otherwise,%Eorr Msg
         error('Type only four: "Binary","Weighted","Directed",and "All"');
 end
-% Cp_Global = sum(Cp_Nodal)/N; % commented by kb to suit nan case
+% Cp_Global = sum(Cp_Nodal)/N; % commented by kb
 Cp_Global = mean(Cp_Nodal);
 %%%

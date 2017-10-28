@@ -1,6 +1,15 @@
-function brant_run_segment(vol_co, mod_inds)
+function brant_run_segment(vol_co, mod_inds, varargin)
 % do only segment in order to bet, no warping
 % mod_inds: [unmodulated_ind, modulated_ind];
+
+
+% to write inverse and forward deformation
+if nargin == 3
+    write_opt = varargin{1};
+else
+    write_opt = [0, 0];
+end
+
 
 spm_path = fileparts(which('spm'));
 
@@ -37,7 +46,7 @@ if isequal(spm('ver'), 'SPM8')
     matlabbatch{1}.spm.tools.preproc8.warp.reg = 4;
     matlabbatch{1}.spm.tools.preproc8.warp.affreg = 'mni';
     matlabbatch{1}.spm.tools.preproc8.warp.samp = 3;
-    matlabbatch{1}.spm.tools.preproc8.warp.write = [0 0];
+    matlabbatch{1}.spm.tools.preproc8.warp.write = write_opt;
 elseif isequal(spm('ver'), 'SPM12')
     matlabbatch{1}.spm.spatial.preproc.channel.vols = {[vol_co, ',1']};
     matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
@@ -73,7 +82,7 @@ elseif isequal(spm('ver'), 'SPM12')
     matlabbatch{1}.spm.spatial.preproc.warp.affreg = 'mni';
     matlabbatch{1}.spm.spatial.preproc.warp.fwhm = 0;
     matlabbatch{1}.spm.spatial.preproc.warp.samp = 3;
-    matlabbatch{1}.spm.spatial.preproc.warp.write = [0 0];
+    matlabbatch{1}.spm.spatial.preproc.warp.write = write_opt;
 end
 
 spm_jobman('run', matlabbatch);

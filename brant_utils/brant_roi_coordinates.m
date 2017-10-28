@@ -29,6 +29,7 @@ if is_sep_ind == 1
     save_untouch_nii_mod(tpl_old, tpl_new);
     
     jobman.template_img{1} = tpl_new;
+    jobman.template_info{1} = '';
     jobman.lab_c = 1;
     jobman.sep_c = 0;
     brant_roi_coordinates(jobman);

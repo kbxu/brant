@@ -1,9 +1,10 @@
-function end_prefix = brant_run_denoise(wk_dir, denoise_infos, data_files, subj_fns, is4d_ind, outdirs)
+function end_prefix = brant_run_denoise(wk_dir, denoise_infos, data_files, subj_fns, is4d_ind, outdirs, nm_pos)
 % wk_dir: working directory (to save temporary and log files)
 % denoise_infos: items of denoise, exported from GUI
 % data_files: N*1 cell array of full path filenames
 % subj_fns: N*1 cell array of subject ids
 % is4d_ind: 0 or 1, whether input file is arranged in 4D
+% name position of input directories
 % outdirs: N*1 cell array of output directories, leave empty to export
 % files to original data directories.
 
@@ -48,7 +49,7 @@ R_ind = (denoise_infos.reg_mdl.regressors.R == 1) | (denoise_infos.reg_mdl.regre
 
 % find motion files
 if R_ind
-    motion_files = batch_search_files(subj_paths, denoise_infos.space_mask.ft_motion, 1, 1);
+    motion_files = batch_search_files(subj_paths, denoise_infos.space_mask.ft_motion, nm_pos, 1);
 else
     motion_files = [];
 end
@@ -402,7 +403,7 @@ else
     
     if any(mask_inds)
         mask_strs = cellfun(@(x) mask_opt.(x).string, mask_fields, 'UniformOutput', false);
-        mask_files_tmp = cellfun(@(x) batch_search_files(subj_paths, x, 1, 1), mask_strs(mask_inds), 'UniformOutput', false);
+        mask_files_tmp = cellfun(@(x) batch_search_files(subj_paths, x, nm_pos, 1), mask_strs(mask_inds), 'UniformOutput', false);
         mask_files = arrayfun(@(x) [mask_files_tmp{1}(x); mask_files_tmp{2}(x); mask_files_tmp{3}(x); mask_files_tmp{4}(x)],...
                                     1:numel(subj_paths), 'UniformOutput', false);
         mask_thrs = cellfun(@(x) mask_opt.(x).thr, mask_fields(mask_inds));

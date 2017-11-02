@@ -428,7 +428,8 @@ if (brant_pps.subj.out.selected ~= 0)
 end
 
 %
-sys_btnOpt = {  'Run',      [40, 25, 60, 20],       'run_btn',      @run_cb;...
+sys_btnOpt = {...
+    'Run',  [40, 25, 60, 20],       'run_btn',      @run_cb;...
     'R',    [120, 25, 20, 20],      'rst_btn',      @rst_cb_fake;...
     'S',    [145, 25, 20, 20],      'save_btn',      {@brant_save_gui, @brant_preprocess_jobman, []};... % [] for unused figure handle in script
     'L',    [170, 25, 20, 20],      'load_btn',      {@brant_load_gui};...
@@ -670,7 +671,9 @@ set(h_sim, 'Units', 'pixels');
 if val_out_sel == 0
     panel_diff = -25;
     h_nm_pos = findobj(h_sim, 'Tag', 'name_pos_out');
-    delete(h_nm_pos);
+    h_nm_pos_text = findobj(h_sim, 'Tag', 'name_pos_out_text_edit');
+    brant_pps.subj.out.nmpos = str2double(get(h_nm_pos_text, 'String'));
+    delete([h_nm_pos, h_nm_pos_text]);
 else
     panel_diff = 25;
 end
@@ -693,10 +696,14 @@ if val_out_sel == 1
     labelOpt_pre = {'id index',     [10, 10, 50, 15],      'name_pos_out'};
     create_ui(labelOpt_pre, 'text', h_sim, [0.925 0.914 0.847]);
     
-    textOpt = {num2str(brant_pps.subj.out.nmpos),           [75, 10, 40, 15],     'name_pos_out_text_edit',	''};
-    
+    textOpt = {num2str(brant_pps.subj.out.nmpos),           [75, 10, 40, 15],     'name_pos_out_text_edit',	{@nm_pos_cb, h_fig}};
     create_ui(textOpt, 'edit', h_sim, [1 1 1]);
 end
 
 brant_pps.subj.out.selected = val_out_sel;
 set(h_fig, 'Userdata', brant_pps);
+
+function nm_pos_cb(obj, ev, h_fig)
+h_main_data = get(h_fig, 'Userdata');
+h_main_data.subj.out.nmpos = str2double(get(obj, 'String'));
+set(h_fig, 'Userdata', h_main_data);

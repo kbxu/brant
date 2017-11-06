@@ -68,7 +68,7 @@ if ~T_ind % is false, no tissue used, set other tissue ind to false (will not ch
 end
 
 %% check masks validity and copy to working directory (only for common space case)
-[mask_files, mask_info, mask_thrs] = check_masks(wk_dir, subj_paths, denoise_infos.space_mask);
+[mask_files, mask_info, mask_thrs] = check_masks(wk_dir, subj_paths, denoise_infos.space_mask, nm_pos);
 
 wb_img_ind = [];
 gs_img_ind = [];
@@ -363,7 +363,7 @@ for m = 1:numel(mask_files)
     end
 end
 
-function [mask_files, mask_info, mask_thrs] = check_masks(wk_dir, subj_paths, mask_opt)
+function [mask_files, mask_info, mask_thrs] = check_masks(wk_dir, subj_paths, mask_opt, nm_pos)
 % check masks validity
 
 mask_files = {};

@@ -17,7 +17,7 @@ cp_rand = zeros(simT, 1);
 if (par_ind == 1)
     parfor i = 1:simT       
         newg = brant_randomizeGraph(G, kc);
-        lp_rand(i) = brant_ShortestPathLength(newg);
+        lp_rand(i) = brant_AveShortestPathLength(newg);
         cp_rand(i) = brant_ClusteringCoef(newg);
     end
 else

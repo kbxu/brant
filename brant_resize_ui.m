@@ -18,3 +18,6 @@ pos_ui = get(h, 'Pos');
 str_size = get(h, 'extent');
 set(h, 'Position', [pos_ui(1:2), ceil(por_str * str_size(3) + 4), pos_ui(4)]);
 set(h, 'Units', 'Pixels');
+
+
+% set(h, 'FontUnits', 'pixels', 'FontSize', 12);

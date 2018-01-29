@@ -1,4 +1,5 @@
 function [process_pars, ui_structs, process_fun] = brant_postprocess_defaults(process_str)
+% see case 'circos' as example of adding new functions
 
 brant_path = fileparts(which('brant'));
 
@@ -14,6 +15,7 @@ end
 switch(lower(process_str))
     case 'circos'
         
+        % at first search where is circos binary if possible
         circos_dir = '';
         if (ispc == 1)
             [ret, str] = system('where circos.exe');
@@ -25,6 +27,7 @@ switch(lower(process_str))
             circos_dir = fileparts(str);
         end
         
+        % required default parameters, fields are the third column in ui_structs
         process_pars.circos_dir = {circos_dir};
         process_pars.conf_dir = {fullfile(brant_path, 'circos')};
         process_pars.roi_info = {''};
@@ -35,6 +38,8 @@ switch(lower(process_str))
         process_pars.transparent_bkg = 0;
         process_pars.out_dir = {''};
         
+        % each row in ui_structs represents a set of GUI elements that combined for one input
+        % {ui style}, {ui string displayed}, {ui as one field in the struct passed to porcess_fun's first parameter}, {other ui parameters}
         ui_structs = {...
             {'edit', 'str_dir'},     'circos dir',     {'circos_dir'},      '';...
             {'edit', 'str_dir'},     'conf dir',    {'conf_dir'},              '';...
@@ -46,6 +51,7 @@ switch(lower(process_str))
             {'edit', 'str_dir'},     'out dir',     {'out_dir'},      '';...
             };
         
+        % process_fun ties to the actual script that receives process_pars as its first parameter
         process_fun = @brant_circos_conf;
     
     case 'normalise'

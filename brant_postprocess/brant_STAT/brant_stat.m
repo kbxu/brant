@@ -320,14 +320,17 @@ switch(out_info.data_type)
         
         
         % get nodal results 20171020
+        sample_idx = find(good_ind, 1, 'first');
         for m = 1:n_field
-            net_fn_out_nodal = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_nodal.mat']);
-            fprintf('Saving nodal results to %s\n', net_fn_out_nodal);
-            
-            nodal_val = cell(size(calc_rsts_all));
-            glob_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).nodal, calc_rsts_all(good_ind), 'UniformOutput', false);
-            nodal_val(good_ind) = glob_vecs_corr; %#ok<NASGU>
-            save(net_fn_out_nodal, 'nodal_val', 'thres_title_all', 'thres_vec', 'data_infos');
+            if isfield(calc_rsts_all{sample_idx}.(field_strs_good{m}), 'nodal')
+                net_fn_out_nodal = fullfile(out_info.outdir, ['network_', field_strs_good{m}, '_nodal.mat']);
+                fprintf('Saving nodal results to %s\n', net_fn_out_nodal);
+
+                nodal_val = cell(size(calc_rsts_all));
+                nodal_vecs_corr = cellfun(@(x) x.(field_strs_good{m}).nodal, calc_rsts_all(good_ind), 'UniformOutput', false);
+                nodal_val(good_ind) = nodal_vecs_corr; %#ok<NASGU>
+                save(net_fn_out_nodal, 'nodal_val', 'thres_title_all', 'thres_vec', 'data_infos');
+            end
         end
         fid = fopen(fullfile(out_info.outdir, 'readme_nodal.txt'), 'wt');
         fprintf(fid, 'nodal_val: cell of network properties for subject x threshold.\nthres_title_all:threshold description (string).\nthres_vec: numeric thresholds.\ndata_infos: subject and group information\n');

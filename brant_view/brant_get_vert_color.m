@@ -45,12 +45,16 @@ end
 % else
 %     vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3), 'Nearest');
 % end
+
+thres_str = strrep(colorinfo.vol_exp, 'vol', 'vol_int');
+vol_int = vol_int .* eval(thres_str);
+
 vq = interp3(X, Y, Z, vol_int, vertices_coord(:, 1), vertices_coord(:, 2), vertices_coord(:, 3), 'Nearest');
 
-% max_abs = max(abs(vq(:)));
-thres_str = strrep(colorinfo.vol_exp, 'vol', 'vq');
-vol_3d_mask = eval(thres_str);
-vq(~vol_3d_mask) = 0;
+% % max_abs = max(abs(vq(:)));
+% thres_str = strrep(colorinfo.vol_exp, 'vol', 'vq');
+% vol_3d_mask = eval(thres_str);
+% vq(~vol_3d_mask) = 0;
     
 % min_vq = min(setdiff(vq, 0));
 % max_vq = max(setdiff(vq, 0));

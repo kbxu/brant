@@ -3,6 +3,7 @@ Help information for Circos:
 circos dir: Path of unzipped circos folder. /circos_path/bin
 conf dir: Path of circos configure file.
 roi info: CSV table which defines sub-areas and lobes, there is an example in brant/brant_view/circos/brant_circos_3mm_273.csv
+edge:a NxN symmetric matrix in *.txt with 1 as positive link, -1 as negative link, and 0 as no link. (try dlmwrite)
 In the table should have at least four columns:
 label: label of each sub-areas.
 module: to which lobe/module does the sub-area belong.

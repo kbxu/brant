@@ -50,7 +50,7 @@ if mer_ind == 1
     input_sum = single(0); input_num = single(0);
     for m = 1:numel(nifti_list)
         input_img_tmp = load_untouch_nii_mod(nifti_list{m});
-        input_bin = abs(input_img_tmp.img) > 80;%0.5;
+        input_bin = abs(input_img_tmp.img) > 0.5;
         input_sum = input_sum + single(input_bin);
         input_num = input_num + single(input_bin) * m;
     end

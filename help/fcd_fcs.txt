@@ -36,6 +36,6 @@ Note:
 	
 Reference:
     Functional connectivity density mapping. Tomasi, D. 2010. PNAS
-    Identifying and Mapping Connectivity Patterns of Brain Network Hubs in Alzheimer’s Disease. 	Zhengjia, DAI. 2015. Cerebral Cortex
+    Identifying and Mapping Connectivity Patterns of Brain Network Hubs in Alzheimer's Disease. 	Zhengjia, DAI. 2015. Cerebral Cortex
 end
      

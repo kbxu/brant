@@ -32,7 +32,8 @@ Normalized:
     fcs_nor: fcs(Raw) divided by mean value of fcs(Raw)
     
 Note:
-	If driver related errors occured (for CPU or GPU), try to install the latest intel-opencl driver https://software.intel.com/en-us/articles/opencl-drivers
+    If driver related errors occured (for CPU or GPU), try to install the latest intel-opencl driver https://software.intel.com/en-us/articles/opencl-drivers
+	
 Reference:
     Functional connectivity density mapping. Tomasi, D. 2010. PNAS
     Identifying and Mapping Connectivity Patterns of Brain Network Hubs in Alzheimer’s Disease. 	Zhengjia, DAI. 2015. Cerebral Cortex

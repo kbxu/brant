@@ -1,10 +1,10 @@
 Help information for Merge/Extract ROIs:
     
-Operation:select to merge 3D rois into one, or extract ROIs from an atlas.
+Operation:select to merge 3D ROIs into one, or extract ROIs from an atlas.
     
 Merge:
 filetype: files in the filetype will be searched in input directories.
-data dir: directory in which stores 3D rois.
+data dir: directory in which stores 3D ROIs.
 out fn: output filename
 out dir: output directory
     
@@ -14,7 +14,7 @@ roi index*: optional. labels of tagged ROIs in an .csv file. For example:
     1,SFG
     2,MFG
     3,IFG
-roi vector: a vector of integers. used for selecting wanted ROIs.
+roi vector: a vector of comma-seperated or space-seperated integers. e.g. 1,2,3,4 to extract ROIs labeled with 1,2,3,4 in the "roi file"
 output to single file:choose to output to only one file.
 out dir: output directory
     

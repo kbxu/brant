@@ -491,13 +491,17 @@ enable_ind = 0;
 
 if ~isempty(str)
     switch(datatype)
-        case {'file','file_txt','file_img', 'file_img_tmp', 'file_img_*', 'box_file_txt', 'box_file_img', 'box_file_img_*', 'box_file_img_struct'}
-            if exist(str, 'file') ~= 2
-                set(obj, 'String', val_ui);
-            	warndlg(sprintf('Input file not found:\n%s\nSet to last input:\n%s', str, val_ui));
-            else
-                enable_ind = 1;
-            end
+        case {'file','file_txt','file_img', 'file_img_tmp', 'file_img_*', 'box_file_txt', 'box_file_img', 'box_file_img_*'}
+            val_ui_str = val_ui;
+        case 'box_file_img_struct'
+            val_ui_str = val_ui.string;
+    end
+    
+    if exist(str, 'file') ~= 2
+        set(obj, 'String', val_ui_str);
+        warndlg(sprintf('Input file not found:\n%s\nSet to last input:\n%s', str, val_ui_str));
+    else
+        enable_ind = 1;
     end
 end
 

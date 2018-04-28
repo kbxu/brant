@@ -1,4 +1,5 @@
-function den_fil_prefix = brant_run_denoise_filter(den_fil_infos, data_files, subj_fns, is4d_ind, outdirs)
+function den_fil_prefix = brant_run_denoise_filter_old(den_fil_infos, data_files, subj_fns, is4d_ind, outdirs)
+% deprecated function
 % den_fil_infos
 % data_files: N*1 cell array of full path filenames
 % subj_fns: N*1 cell array of subject ids

@@ -491,7 +491,7 @@ enable_ind = 0;
 
 if ~isempty(str)
     switch(datatype)
-        case {'file','file_txt','file_img', 'file_img_tmp', 'file_img_*', 'box_file_txt', 'box_file_img', 'box_file_img_*'}
+        case {'file','file_txt','file_img', 'file_img_tmp', 'file_img_*', 'box_file_txt', 'box_file_img', 'box_file_img_*', 'box_file_img_struct'}
             if exist(str, 'file') ~= 2
                 set(obj, 'String', val_ui);
             	warndlg(sprintf('Input file not found:\n%s\nSet to last input:\n%s', str, val_ui));
@@ -647,7 +647,7 @@ switch(datatype)
         else
             val_out = [];
         end       
-    case {'box_file_txt', 'box_file_img', 'box_file_img_*'}
+    case {'box_file_txt', 'box_file_img', 'box_file_img_*', 'box_file_img_struct'} % 
         h_chb = findobj(h_panel, 'Tag', field_nm, 'Style', 'checkbox');
         if get(h_chb,'Value') == 1
             h_edit = findobj(h_panel, 'Tag', field_nm, 'Style', 'edit');
@@ -666,7 +666,7 @@ nifti_support = '^.*\.(nii|img|nii.gz)$';
 
 val = get(h_edit, 'String');
 switch(val_type)
-    case {'file', 'file_img', 'file_img_tmp', 'file_img_*', 'box_file_img', 'box_file_img_*'}
+    case {'file', 'file_img', 'file_img_tmp', 'file_img_*', 'box_file_img', 'box_file_img_*', 'box_file_img_struct'}
         [file_input, sts] = cfg_getfile(1, nifti_support, '', {val}, '');
         if sts == 1
             set(h_edit, 'String', file_input{1});

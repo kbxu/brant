@@ -217,7 +217,7 @@ switch(lower(process_str))
         
         process_fun = @brant_tsnr;
         
-    case {'draw roi'}
+    case {'draw rois'}
         process_pars.sphere = 1;
         process_pars.cube = 0;
         process_pars.mm = 1;
@@ -596,7 +596,7 @@ switch(lower(process_str))
         
         process_pars.alpha = 1.0;
         process_pars.rad_mm = [];
-        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
+        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard.txt')};
         process_pars.vol_map = {bn_atlas};
         
         process_pars.material_type = 'shiny';
@@ -605,11 +605,13 @@ switch(lower(process_str))
         process_pars.mode_display = 'halves:left and right';
         process_pars.vol_thr = 'vol ~= 0';
         process_pars.colorbar = 1;
+        process_pars.clip_colorbar = 0;
         process_pars.discrete = 1;
         
         ui_structs = {...
             {'chb', 'num_bin'},       'show colorbar',         {'colorbar'},             '';...
-            {'chb', 'num_bin'},       'discrete value',         {'discrete'},             '';...
+            {'chb', 'num_bin'},       'clip colorbar',         {'clip_colorbar'},             '';...
+            {'chb', 'num_bin'},       'discrete value (for templates)',         {'discrete'},             '';...
             {'edit', 'num_short_left'},      'alpha',    {'alpha'},              '';...
             {'edit', 'num_short_right'},      'max val radius(mm)',    {'rad_mm'},              '';...
             {'popupmenu', 'disp_view_opts'},      'display',    {{{'mode_display'};'halves:left lateral';'halves:left medial';'halves:right lateral';'halves:right medial';'halves:left and right';'whole brain:sagital left';'whole brain:sagital right';'whole brain:axial superior';'whole brain:axial inferior';'whole brain:coronal anterior'; 'whole brain:coronal posterior'}},              '';... 
@@ -628,7 +630,7 @@ switch(lower(process_str))
         process_pars.alpha = 0.3;
         process_pars.disp_surface = 1;
         process_pars.disp_legend = 0;
-        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
+        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard.txt')};
         process_pars.rois = {bn_atlas};
         process_pars.roi_vec = [31,32];
         process_pars.roi_info = {bn_atlas_info};
@@ -665,7 +667,7 @@ switch(lower(process_str))
         process_fun = @brant_roi_mapping;
         
     case 'network visualization'
-        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard_withCC.txt')};
+        process_pars.surface = {fullfile(brant_path, 'brant_surface', 'standard.txt')};
         process_pars.alpha = 0.2;
         process_pars.mode_display = 'whole brain:axial superior';
         process_pars.node_txt = {''};

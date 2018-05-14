@@ -17,6 +17,7 @@ draw_param.discrete = jobman.discrete;
 % draw_param.zero_color = jobman.zero_color;
 draw_param.vol_exp = jobman.vol_thr;
 draw_param.colorbar_ind = jobman.colorbar;
+draw_param.clip_colorbar = jobman.clip_colorbar;
 
 draw_param.rad_mm = jobman.rad_mm;
 

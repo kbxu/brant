@@ -166,7 +166,7 @@ switch(lw_uiname)
             obj_strs{1} = {'sym_ind', 'mat_vox2vox', 'input_matrix'}; % dual
             obj_strs{2} = {'input_nifti'}; % self
         end
-    case 'draw roi'
+    case 'draw rois'
         h_maual = findobj(hfig_inputdlg, 'string', 'manual');
         val_maual = get(h_maual, 'Value');
         if (val_maual == 1)

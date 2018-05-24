@@ -14,7 +14,7 @@ function varargout = brant(Action)
 % BRANT Home page: http://brant.brainnetome.org/
 % Fast Update Version: https://github.com/kbxu/brant
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 3.33;
+% $Version = 3.34;
 % $Release = 20180428;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 

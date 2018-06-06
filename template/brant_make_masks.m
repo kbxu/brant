@@ -47,7 +47,7 @@ if (make_wm == 1)
 
     wm_vol.n(1) = 1;
     wm_vol.fname = 'mask_WM.nii';
-    spm_write_vol(wm_vol, wm_tmp_3);
+    spm_write_vol(wm_vol, single(wm_tmp_3 > 0.5));
 end
 
 

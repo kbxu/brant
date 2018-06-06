@@ -10,7 +10,7 @@ if ~isempty(h_fig)
     set(0, 'CurrentFigure', h_fig);
     figure(h_fig);
 else
-    h_fig = figure('Name', title, 'Position', [50, 50, 800, 600]);
+    h_fig = figure('Name', title, 'Position', [50, 50, 950, 750]);
 end
 
 if ~isempty(h_con)

@@ -38,8 +38,7 @@ FS = 1 / jobman.tr;
 BP = [jobman.lower_thr, jobman.upper_thr];
 
 % tc_pts = 1; %jobman.timepoint;
-nor_z_ind = jobman.nor;
-nor_m_ind = 0;
+nor_ind = jobman.nor;
 outdir = jobman.out_dir{1};
 mask_fn = jobman.input_nifti.mask{1};
 
@@ -53,8 +52,8 @@ for mm = 1:numel(split_prefix)
     fprintf('\n\tCurrent indexing filetype: %s\n', split_prefix{mm});
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
     
-    if (nor_z_ind == 1)
-        outdir_mk = brant_make_outdir(out_dir_tmp, {'ALFF_raw', 'fALFF_raw', 'ALFF_Normalised_z', 'fALFF_Normalised_z'});
+    if (nor_ind == 1)
+        outdir_mk = brant_make_outdir(out_dir_tmp, {'ALFF_raw', 'fALFF_raw', 'ALFF_Normalised_m', 'fALFF_Normalised_m', 'ALFF_Normalised_z', 'fALFF_Normalised_z'});
     else
         outdir_mk = brant_make_outdir(out_dir_tmp, {'ALFF_raw', 'fALFF_raw', '', ''});
     end
@@ -95,8 +94,8 @@ for mm = 1:numel(split_prefix)
         fALFF = ALFF_BP_sum ./ ALFF_AP_sum;
         fALFF(isinf(fALFF)) = NaN;
 
-        brant_write_nii(ALFF_BP_sum / length(find(f_mask_bp)), mask_ind, mask_hdr, subj_ids{m}, 'ALFF', outdir_mk{1}, nor_m_ind, nor_z_ind, {'', outdir_mk{3}});
-        brant_write_nii(fALFF, mask_ind, mask_hdr, subj_ids{m}, 'fALFF', outdir_mk{2}, nor_m_ind, nor_z_ind, {'', outdir_mk{4}});
+        brant_write_nii(ALFF_BP_sum / length(find(f_mask_bp)), mask_ind, mask_hdr, subj_ids{m}, 'ALFF', outdir_mk{1}, nor_ind, nor_ind, outdir_mk([3, 5]));
+        brant_write_nii(fALFF, mask_ind, mask_hdr, subj_ids{m}, 'fALFF', outdir_mk{2}, nor_ind, nor_ind, outdir_mk([4, 6]));
 
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
         clear('fALFF', 'ALFF_BP_sum', 'ALFF_AP_sum');
@@ -104,11 +103,6 @@ for mm = 1:numel(split_prefix)
     
     if (sm_ind == 1)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
-%         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end      
 end
-% if any(tc_pts ~= subj_tps)
-%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-%              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-% end
 fprintf('\tFinished!\n');

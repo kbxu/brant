@@ -5,9 +5,6 @@ brant_check_empty(jobman.out_dir{1}, '\tPlease specify an output directories!\n'
 brant_check_empty(jobman.input_nifti.dirs{1}, '\tPlease input data directories!\n');
 
 outdir = jobman.out_dir{1};
-save(fullfile(outdir, 'jobman_reho.mat'), 'jobman');
-
-% tc_pts = 1; %jobman.timepoint;
 mask_fn = jobman.input_nifti.mask{1};
 totalvoxel = jobman.neighbour_num + 1;
 
@@ -24,9 +21,9 @@ for mm = 1:numel(split_prefix)
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
 
     if (nor_ind == 1)
-        outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', 'ReHo_Normalised_m'});
+        outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', 'ReHo_Normalised_m', 'ReHo_Normalised_z'});
     else
-        outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', ''});
+        outdir_mk = brant_make_outdir(out_dir_tmp, {'ReHo_raw', '', ''});
     end
 
     jobman.input_nifti.filetype = split_prefix{mm};
@@ -98,7 +95,7 @@ for mm = 1:numel(split_prefix)
         end
         clear('TC_total_ranked');
 
-        brant_write_nii(Reho_temp, mask_ind, mask_hdr, subj_ids{m}, 'ReHo', outdir_mk{1}, nor_ind, 0, {outdir_mk{2}, ''});
+        brant_write_nii(Reho_temp, mask_ind, mask_hdr, subj_ids{m}, 'ReHo', outdir_mk{1}, nor_ind, nor_ind, outdir_mk(2:3));
 
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
     end
@@ -109,11 +106,6 @@ for mm = 1:numel(split_prefix)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
     end
 end
-
-% if any(tc_pts ~= subj_tps)
-%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-%              sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-% end
 fprintf('\tFinished!\n');
 
 function ReHo = calc_reho(nbr_array)

@@ -1555,6 +1555,8 @@ end
 func_need_hcon = {'network visualization', 'roi mapping', 'surface mapping'};
 
 try
+%     save parameters directly to the output dir or wkdir
+%     brant_save_gui(obj, evd, process_fun, [])
     if any(strcmpi(dlg_title, func_need_hcon))
         process_fun(jobman, h_parent);
     else

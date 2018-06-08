@@ -5,6 +5,7 @@ id index: identifier to find unique string for each subject
 filetype: files in the filetype will be searched in input directories.
 4D nifti files: if the input data is 4D, check this item. Otherwise uncheck.
 input dirs: directories can be input either using a .txt file or spm select window.
+threshold: intensity threshold for mean TSNR (to generate a binary mask)
 out dir: output directory for saving results.
     
 Buttons:

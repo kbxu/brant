@@ -172,7 +172,7 @@ brant_pps.denoise.reg_mdl.lin_trend = 1;
 brant_pps.denoise.reg_mdl.quad_trend = 1;
 brant_pps.denoise.reg_mdl.char_info = sprintf('T(selected tissue): GS,WM,CSF\nR(motion): x,y,z,pitch,roll,yaw');
 brant_pps.denoise.reg_mdl.regressors = struct('T', 1, 'T_square', 1, 'T_prime', 1, 'T_prime_square', 1, 'T_prep', 0, 'T_prep_square', 0,...
-                                              'R', 1, 'R_square', 1, 'R_prime', 1, 'R_prime_square', 1, 'R_prep', 0, 'R_prep_square', 0);
+                                              'R', 1, 'R_square', 1, 'R_prime', 0, 'R_prime_square', 0, 'R_prep', 1, 'R_prep_square', 1);
 brant_pps.denoise.reg_mdl.spike_info = '\nSpike Handling';
 brant_pps.denoise.reg_mdl.scrubbing = 0;
 brant_pps.denoise.reg_mdl.fd_thr = 0.5;

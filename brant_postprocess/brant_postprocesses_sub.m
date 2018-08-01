@@ -105,7 +105,7 @@ ui_name = get(hfig_inputdlg, 'Name');
 lw_uiname = lower(ui_name);
 exp_col_ind = 1;
 switch(lw_uiname)
-    case 'roi calculation'
+    case 'roi signal calculation'
         h_roi = findobj(hfig_inputdlg, 'String', 'check: roi-wise | uncheck: voxel-wise'); % add {} to checkbox ui elements!
         if (get(h_roi, 'Value') == 1)
             obj_strs{1} = {''}; % dual
@@ -239,7 +239,7 @@ if (exp_col_ind == 1)
 
     obj_ind_all = obj_ind{1} | obj_ind{2};
 
-    enb_uis = {'roi calculation', 'roi mapping', 'del timepoints', 'reslice'};
+    enb_uis = {'roi signal calculation', 'roi mapping', 'del timepoints', 'reslice'};
 
     if any(strcmpi(lw_uiname, enb_uis))
         % disable ui elements
@@ -306,7 +306,7 @@ switch(lw_uiname)
         else
             arrayfun(@(x) set(x, 'Enable', 'on'), h_objs(obj_ind));
         end
-    case {'am', 'reho', 'alff/falff', 'roi calculation'}
+    case {'am', 'reho', 'alff/falff', 'roi signal calculation'}
         h_sm_ind = findobj(hfig_inputdlg, 'tag', 'sm_ind:checkbox');
         obj_strs = {'fwhm:edit'};
         obj_ind = false;
@@ -314,7 +314,7 @@ switch(lw_uiname)
            obj_ind = obj_ind | cellfun(@(x) ~isempty(strfind(x, obj_strs{n})), tag_objs);
         end
         val_sm_ind = get(h_sm_ind, 'Value');
-        if strcmpi(lw_uiname, 'roi calculation')
+        if strcmpi(lw_uiname, 'roi signal calculation')
             val_sm_ind = val_sm_ind && get(h_roi, 'Value');
         end
         if (val_sm_ind == 1)

@@ -302,7 +302,7 @@ switch(lower(process_str))
         
         process_fun = @brant_extract_mean;
         
-    case {'roi calculation'}
+    case {'roi signal calculation'}
         process_pars.roi_wise = 1;
         ...process_pars.vox_wise = 0;
         process_pars.ext_mean = 1;

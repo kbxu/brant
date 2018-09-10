@@ -237,17 +237,19 @@ switch(out_info.data_type)
         data_load_all = cell(2, 1);
         size_two_thres = zeros(2, 1);
         for n = 1:numel(ind_strs)
-            size_two_thres(n) = sample_mat.(ind_strs{n});
-            if (sample_mat.(ind_strs{n}) == 1)
-                data_load = cellfun(@(x) load(x, data_strs{n}), net_files(subj_ind));
-                data_load_all{n} = cat(2, data_load.(data_strs{n}));
-                thres_use{n} = sample_mat.(thres_strs{n});
-                thres_title{n} = arrayfun(@(x) num2str(x, [thres_type_strs{n}, '_%.3f']), thres_use{n}, 'UniformOutput', false);
+            if isfield(sample_mat, ind_strs{n})
+                size_two_thres(n) = sample_mat.(ind_strs{n});
+                if (sample_mat.(ind_strs{n}) == 1)
+                    data_load = cellfun(@(x) load(x, data_strs{n}), net_files(subj_ind));
+                    data_load_all{n} = cat(2, data_load.(data_strs{n}));
+                    thres_use{n} = sample_mat.(thres_strs{n});
+                    thres_title{n} = arrayfun(@(x) num2str(x, [thres_type_strs{n}, '_%.3f']), thres_use{n}, 'UniformOutput', false);
+                end
             end
         end
         clear('data_load');
         
-        thres_vec = {sample_mat.corr_ind, sample_mat.spar_ind};
+        thres_vec_str = {'corr_ind', 'spar_ind'};
         thres_strs = {'threshold of correlation', 'threshold of sparsity'};
         out_suffix = {'corr', 'spar'};
         
@@ -291,16 +293,17 @@ switch(out_info.data_type)
                 for p = 1:2
                     if size_two_thres(p) == 0, continue; end
                     
+                    thres_vec = sample_mat.(thres_vec_str{p}); % {sample_mat.corr_ind, sample_mat.spar_ind};
                     title_tmp = stat_out(nn).constrast_str;
                     stat_info_tmp = stat_out(nn).stat_info;
                     
-                    pval_r = stat_out(nn).p_vec_R(thres_vec{p});
+                    pval_r = stat_out(nn).p_vec_R(thres_vec);
                     pval_l = 1 - pval_r;
                     
-                    mean_grp1 = stat_info_tmp.mean_grp_1_vec(thres_vec{p});
-                    mean_grp2 = stat_info_tmp.mean_grp_2_vec(thres_vec{p});
-                    ste_grp1 = stat_info_tmp.std_grp_1_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_1);
-                    ste_grp2 = stat_info_tmp.std_grp_2_vec(thres_vec{p}) / sqrt(stat_info_tmp.num_grp_2);
+                    mean_grp1 = stat_info_tmp.mean_grp_1_vec(thres_vec);
+                    mean_grp2 = stat_info_tmp.mean_grp_2_vec(thres_vec);
+                    ste_grp1 = stat_info_tmp.std_grp_1_vec(thres_vec) / sqrt(stat_info_tmp.num_grp_1);
+                    ste_grp2 = stat_info_tmp.std_grp_2_vec(thres_vec) / sqrt(stat_info_tmp.num_grp_2);
                     
                     group_est = stat_out(nn).group_est;
                     

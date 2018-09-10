@@ -319,24 +319,30 @@ mask_info_raw = {'whole brain mask'; 'global signal mask'; 'white matter mask'; 
 mask_inds = cellfun(@(x) find(strcmpi(x, mask_info)), mask_info_raw, 'UniformOutput', false);
 
 % load masks
-wb_img_ind = load_mask_to_ind(mask_files{1}, mask_inds(1), mask_thrs(1));
-gs_img_ind = load_mask_to_ind(mask_files{2}, mask_inds(2), mask_thrs(2));
-wm_img_ind = load_mask_to_ind(mask_files{3}, mask_inds(3), mask_thrs(3));
-csf_img_ind = load_mask_to_ind(mask_files{4}, mask_inds(4), mask_thrs(4));  
+wb_img_ind = load_mask_to_ind(mask_inds{1}, mask_files, mask_thrs);
+gs_img_ind = load_mask_to_ind(mask_inds{2}, mask_files, mask_thrs);
+wm_img_ind = load_mask_to_ind(mask_inds{3}, mask_files, mask_thrs);
+csf_img_ind = load_mask_to_ind(mask_inds{4}, mask_files, mask_thrs);
 
 if ~isempty(wb_img_ind)
-    gs_img_ind = gs_img_ind & wb_img_ind;
-    wm_img_ind = wm_img_ind & wb_img_ind;
-    csf_img_ind = csf_img_ind & wb_img_ind;
+    if ~isempty(gs_img_ind)
+        gs_img_ind = gs_img_ind & wb_img_ind;
+    end
+    if ~isempty(wm_img_ind)
+        wm_img_ind = wm_img_ind & wb_img_ind;
+    end
+    if ~isempty(csf_img_ind)
+        csf_img_ind = csf_img_ind & wb_img_ind;
+    end
 end
 
-function mask_img_ind = load_mask_to_ind(mask_file, mask_ind, thr)
+function mask_img_ind = load_mask_to_ind(mask_ind, mask_file, thr)
 
 if isempty(mask_ind)
     mask_img_ind = [];
 else
-    mask_nii = load_untouch_nii_mod(mask_file);
-    mask_img_ind = mask_nii.img > thr;
+    mask_nii = load_untouch_nii_mod(mask_file{mask_ind});
+    mask_img_ind = mask_nii.img > thr(mask_ind);
 end
 
 function mask_files_res = reslice_masks(data_files, ref_hdrs, mask_files, mask_res_type)

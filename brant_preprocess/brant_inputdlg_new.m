@@ -609,7 +609,7 @@ switch(dlg_title)
         outAns.fil_opt.save_last = get(findobj(h_input, 'Style', 'checkbox', 'Tag', 'save_last'), 'Value');
         outAns.fil_opt.gsr_nogsr = get(findobj(h_input, 'Style', 'checkbox', 'Tag', 'gsr_nogsr'), 'Value');
         outAns.fil_opt.gzip_output = get(findobj(h_input, 'Style', 'checkbox', 'Tag', 'gzip_output'), 'Value');
-        outAns.fil_opt.prefix_denoise = get(findobj(h_input, 'Style', 'edit', 'Tag', 'prefix_denoise'), 'String');
+        outAns.fil_opt.prefix_reg = get(findobj(h_input, 'Style', 'edit', 'Tag', 'prefix_reg'), 'String');
         outAns.fil_opt.prefix_filter = get(findobj(h_input, 'Style', 'edit', 'Tag', 'prefix_filter'), 'String');
 end
 

@@ -28,7 +28,9 @@ for mm = 1:numel(split_prefix)
     if ~isempty(split_strs), out_dir_tmp = fullfile(outdir, split_strs{mm}); else out_dir_tmp = outdir; end
     
     if (nor_ind == 1)
-        outdir_mk = brant_make_outdir(out_dir_tmp, {'AM_raw', 'STD_raw', 'VAR_raw', 'AM_Normalised_z', 'STD_Normalised_z', 'VAR_Normalised_z'});
+        outdir_mk = brant_make_outdir(out_dir_tmp, {'AM_raw', 'STD_raw', 'VAR_raw',...
+                                                    'AM_Normalised_m', 'STD_Normalised_m', 'VAR_Normalised_m',...
+                                                    'AM_Normalised_z', 'STD_Normalised_z', 'VAR_Normalised_z'});
     else
         outdir_mk = brant_make_outdir(out_dir_tmp, {'AM_raw', 'STD_raw', 'VAR_raw', '', '', ''});
     end
@@ -52,21 +54,21 @@ for mm = 1:numel(split_prefix)
             fprintf('\tCalculating mean temporal amplitude for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             AM_temp = nan(size_mask, 'single');
             AM_temp(mask_ind) = nanmean(abs(detrend(data_2d_mat, 'constant')));
-            brant_write_nii(AM_temp, mask_ind, mask_hdr, subj_ids{m}, 'AM', outdir_mk{1}, 0, nor_ind, {'', outdir_mk{4}});
+            brant_write_nii(AM_temp, mask_ind, mask_hdr, subj_ids{m}, 'AM', outdir_mk{1}, nor_ind, nor_ind, outdir_mk(4, 7));
         end
         
         if (std_ind == 1)
             fprintf('\tCalculating standard deviation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             STD_temp = nan(size_mask, 'single');
             STD_temp(mask_ind) = nanstd(data_2d_mat);
-            brant_write_nii(STD_temp, mask_ind, mask_hdr, subj_ids{m}, 'STD', outdir_mk{2}, 0, nor_ind, {'', outdir_mk{5}});
+            brant_write_nii(STD_temp, mask_ind, mask_hdr, subj_ids{m}, 'STD', outdir_mk{2}, nor_ind, nor_ind, outdir_mk(5, 8));
         end
         
         if (var_ind == 1)
             fprintf('\tCalculating variance for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             VAR_temp = nan(size_mask, 'single');
             VAR_temp(mask_ind) = nanvar(data_2d_mat);
-            brant_write_nii(VAR_temp, mask_ind, mask_hdr, subj_ids{m}, 'VAR', outdir_mk{3}, 0, nor_ind, {'', outdir_mk{6}});
+            brant_write_nii(VAR_temp, mask_ind, mask_hdr, subj_ids{m}, 'VAR', outdir_mk{3}, nor_ind, nor_ind, outdir_mk(6, 9));
         end
         
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);
@@ -74,13 +76,6 @@ for mm = 1:numel(split_prefix)
     
     if (sm_ind == 1)
         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, num2str(sm_fwhm,'s%d%d%d'), 1);
-%         brant_smooth_rst(outdir_mk, '*.nii', sm_fwhm, 's', 1)
     end
 end
-
-% if any(tc_pts ~= subj_tps)
-%     warning([sprintf('Timepoints that don''t match with the input timepoint!\n'),...
-%         sprintf('%s\n', subj_ids{tc_pts ~= subj_tps})]);
-% end
-
-fprintf('\n\t All finished. \n');
+fprintf('\tFinished!\n');

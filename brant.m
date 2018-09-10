@@ -14,8 +14,8 @@ function varargout = brant(Action)
 % BRANT Home page: http://brant.brainnetome.org/
 % Fast Update Version: https://github.com/kbxu/brant
 % $Mail    = yliu@nlpr.ia.ac.cn;
-% $Version = 3.33;
-% $Release = 20180428;
+% $Version = 3.35;
+% $Release = 20180608;
 % *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
 Hbrant = findobj(0,'Type','figure','Tag','figBRANT');     % get figure handles
@@ -42,7 +42,7 @@ switch upper(Action)
     case {'PREPROCESS','PREP'}
         brant_preprocess;
 
-    case {'FC', 'SPON', 'UTILITY', 'STAT', 'NET', 'VIEW', 'EMBEDDED'}
+    case {'FC', 'SPON', 'UTILITY', 'STAT', 'NET', 'VIEW', 'THIRD PARTY'}
         brant_postprocess(upper(Action));
         
     case 'QUIT'
@@ -153,7 +153,7 @@ btnOpt = {...
     'NET',              [120 46 60 25];...
     'STAT',             [195 46 60 25];...
     'View',             [120 8  60 25];...
-    'Embedded',            [15  8  90 25];...
+    'Third Party',            [15  8  90 25];...
     'Quit',             [195 8  60 25]};
 
 h_btn = zeros(size(btnOpt, 1), 1);

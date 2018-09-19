@@ -356,7 +356,11 @@ ylabel(strrep(title_str, '_', ' '), 'FontSize', 12, 'FontWeight', 'bold');
 errorbar(thres_x, mean_grp1, ste_grp1, 'r-', 'LineWidth', 2);
 errorbar(thres_x, mean_grp2, ste_grp2, 'b-', 'LineWidth', 2);
 
-legend(group_est{1}, group_est{2}, 'location', 'NorthEast');
+if verLessThan('matlab', '9.1')
+    legend(group_est{1}, group_est{2}, 'location', 'NorthEast');
+else
+    legend(group_est{1}, group_est{2}, 'location', 'NorthEast', 'AutoUpdate', 'off');
+end
 
 x_gca = xlim;
 y_gca = ylim;

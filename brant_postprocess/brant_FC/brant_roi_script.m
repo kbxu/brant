@@ -31,19 +31,13 @@ cs_thr = jobman.roi_thres; % threshold of voxel size
 sm_ind = jobman.sm_ind;
 sm_fwhm = jobman.fwhm;
 
-% if roi_wise_ind == 0
-if any([roi2roi_ind, roi2wb_ind])
-    if (partial_ind == 1)
-        corr_type = 'partial_correlation';
-        corrfun = @partialcorr;
-    else % if pearson_ind == 1
-        corr_type = 'pearson_correlation';
-        corrfun = @corr;
-%     else
-%         error('Error: wrong type of correlation!');
-    end
-% else
-%     error('Error input!');
+% if any([roi2roi_ind, roi2wb_ind])
+if (partial_ind == 1)
+    corr_type = 'partial_correlation';
+    corrfun = @partialcorr;
+else % if pearson_ind == 1
+    corr_type = 'pearson_correlation';
+    corrfun = @corr;
 end
 % end
 
@@ -100,14 +94,13 @@ if (roi_wise_ind == 1)
     brant_write_csv([filename, '.txt'], roi_info_new)
     %
     
-    
     corr_ind = triu(true(num_roi, num_roi), 1);
     if (num_roi == 0)
         error('No matched roi can be found for the following calculation!');
     end
 else
     rois_str = '';
-    rois_tag = []; %#ok<NASGU>
+    rois_tag = [];
     num_roi = numel(mask_ind);
     corr_ind = triu(true(num_roi, num_roi), 1);
     num_corr = num_roi * (num_roi - 1) / 2;
@@ -144,7 +137,7 @@ for mm = 1:numel(split_prefix)
         end
     else
         % voxel wise correlation
-        out_mat = brant_make_outdir(out_dir_tmp, ['vox2vox_', corr_type]);
+        out_mat = brant_make_outdir(out_dir_tmp, {['vox2vox_', corr_type]});
     end
     
     for m = 1:num_subj
@@ -172,7 +165,7 @@ for mm = 1:numel(split_prefix)
             for n = 1:num_pieces
                 save_pos.n = n;
                 fprintf('\t%s: saving results %d/%d...\n', subj_ids{m}, n, save_pos.num_pieces);
-                corr_z = corr_z_vec(int_array(n, 1):int_array(n, 2)); %#ok<NASGU>
+                corr_z = corr_z_vec(int_array(n, 1):int_array(n, 2));
                 save(fullfile(out_mat_tmp, num2str(n, 'corr_%04d.mat')), 'corr_z', 'num_roi', 'rois_str', 'rois_tag', 'corr_type', 'save_pos');
             end
             clear('corr_z', 'corr_z_vec');

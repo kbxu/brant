@@ -170,7 +170,11 @@ elseif strcmp(input_type, 'voxel')
         p_mats.(tail_est{m}) = p_mats_tmp;
     end
     
-    save(outfn, 'N1', 'N2', 'df');
+    if any([fem_ind, mem_ind])
+        save(outfn, 'N1', 'N2', 'df');
+    else
+        save(outfn, 'df');
+    end
 end
 
 fprintf('\n');

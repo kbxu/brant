@@ -80,7 +80,14 @@ if ~isempty(roi_vec)
     roi_vec_ind = arrayfun(@(x) find(x == roi_tags), roi_vec);
     for m = 1:num_roi_show
         mask_tmp = smooth3(rois_inds{roi_vec_ind(m)});
-        h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :), mode_display);
+        try
+            h_roi(m) = draw_vol(mask_tmp, nhood, pixdim, temp_org, color_tmp(m, :), mode_display);
+        catch
+            error_str = sprintf(['----------------------------------------------------------------------\n',...
+                                'ROI labeled with number %d is too small, surface cannot be created!\n',...
+                                '----------------------------------------------------------------------\n'], m);
+            error(error_str)
+        end
     end
 
     if (disp_legend == 1)
@@ -158,7 +165,6 @@ if isempty(vertices_coord)
 end
 
 vertices_coord = vertices_coord - 1;
-
 scale_param = [1, 1, 1]; % y, x, z scale
 vertices_coord = vertices_coord(:, [2, 1, 3]);
 vertices_coord(:,1) = (vertices_coord(:,1) * pixdim(1) + temp_org(1)) * scale_param(1);

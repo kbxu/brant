@@ -54,21 +54,21 @@ for mm = 1:numel(split_prefix)
             fprintf('\tCalculating mean temporal amplitude for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             AM_temp = nan(size_mask, 'single');
             AM_temp(mask_ind) = nanmean(abs(detrend(data_2d_mat, 'constant')));
-            brant_write_nii(AM_temp, mask_ind, mask_hdr, subj_ids{m}, 'AM', outdir_mk{1}, nor_ind, nor_ind, outdir_mk(4, 7));
+            brant_write_nii(AM_temp, mask_ind, mask_hdr, subj_ids{m}, 'AM', outdir_mk{1}, nor_ind, nor_ind, outdir_mk([4, 7]));
         end
         
         if (std_ind == 1)
             fprintf('\tCalculating standard deviation for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             STD_temp = nan(size_mask, 'single');
             STD_temp(mask_ind) = nanstd(data_2d_mat);
-            brant_write_nii(STD_temp, mask_ind, mask_hdr, subj_ids{m}, 'STD', outdir_mk{2}, nor_ind, nor_ind, outdir_mk(5, 8));
+            brant_write_nii(STD_temp, mask_ind, mask_hdr, subj_ids{m}, 'STD', outdir_mk{2}, nor_ind, nor_ind, outdir_mk([5, 8]));
         end
         
         if (var_ind == 1)
             fprintf('\tCalculating variance for subject %d/%d %s\n', m, num_subj, subj_ids{m});
             VAR_temp = nan(size_mask, 'single');
             VAR_temp(mask_ind) = nanvar(data_2d_mat);
-            brant_write_nii(VAR_temp, mask_ind, mask_hdr, subj_ids{m}, 'VAR', outdir_mk{3}, nor_ind, nor_ind, outdir_mk(6, 9));
+            brant_write_nii(VAR_temp, mask_ind, mask_hdr, subj_ids{m}, 'VAR', outdir_mk{3}, nor_ind, nor_ind, outdir_mk([6, 9]));
         end
         
         fprintf('\tSubject %s finished in %f s.\n\n', subj_ids{m}, toc);

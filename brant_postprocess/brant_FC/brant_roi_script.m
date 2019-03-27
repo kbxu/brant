@@ -54,6 +54,7 @@ if (exist(outdir, 'dir') ~= 7)
     mkdir(outdir);
 end
 
+% assuming different input filetypes use same nifti header
 [split_prefix, split_strs] = brant_parse_filetype(jobman.input_nifti.filetype);
 % take a sample of data
 jobman.input_nifti.filetype = split_prefix{1};

@@ -67,3 +67,7 @@ if any(any(abs(diff(matx,1,2))>1e-4))
     fprintf('\n');
     if ~nargout, error('The orientations etc must be identical for this procedure.'); end
 end
+
+if any(any(diff(dims,1,1),1)) || any(any(diff(pixdims,1,1),1)) || any(any(abs(diff(matx,1,2))>1e-4))
+    fprintf('** It''s completely OK to see above warnings,\n   we will now reslice the mismatched headers (of ROI or mask) using input data as reference. **\n');
+end

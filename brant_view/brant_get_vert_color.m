@@ -171,7 +171,11 @@ if (colorinfo.discrete == 0)
         end
             
         % set max_neg_vq to min_pos_vq to white
-        if min_vq == max_neg_vq
+        if isempty(max_neg_vq)
+            if (tick_cbr(1)+1) <= tick_cbr(3)-1
+                c_map(tick_cbr(1)+1:tick_cbr(3)-1, :) = 1;
+            end
+        elseif (min_vq == max_neg_vq)
             if (tick_cbr(1)+1) <= tick_cbr(3)-1
                 c_map(tick_cbr(1)+1:tick_cbr(3)-1, :) = 1;
             end

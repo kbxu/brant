@@ -5,7 +5,7 @@ if ~isempty(node_info)
     node_ind = true(size(node_info.x, 1), 1);
     if ~isempty(edge_info.edge)
         edge_part = edge_info.edge;
-        edge_part(eye(size(edge_part, 1), 'logical')) = 0;
+        edge_part(logical(eye(size(edge_part, 1)))) = 0;
         thres_str = strrep(edge_info.thres, 'edge', 'edge_part');
         edge_ind = eval(thres_str);
         

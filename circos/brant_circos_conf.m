@@ -70,7 +70,7 @@ if (num_node ~= size(fc_mat, 1))
     error('The number of roi must equal the size of edge matrix!');
 end
 
-diag_ind = eye(num_node) == 1;
+diag_ind = logical(eye(num_node));
 fc_mat(diag_ind) = 0;
 
 if (isequal(fc_mat, fc_mat') == 0)

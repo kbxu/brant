@@ -1,50 +1,17 @@
-function [corrected_p_val, sts] = brant_MulCC(p_vector,alpha,Type)
+function [p_thres, sts] = brant_MulCC(p_vector, alpha, mulcc_type)
 % correction of Multiple comparison test
-% FORMAT [corrected_p_val] = brant_MulCC(P_Values,Type,alpha)
-%   performs a
-%   set of corrected  to determine the Minimum P values which is
-%   significant in the multiple compration
-
-% input P_Values --- the P_values of the hypothesis test
-%       alpha ---- the threshold of significance, Default value = 0.05
-%       Type --- the method for Multiple comparison test correction
-%                there are three multiple method can be selected {'False
-%                Discovery ratio','Bonferroni correction','family-wise error '}
-%                the default one is 'FDR'
-% Output corrected_p_val ---- the corrected P_values
-%
-% Refers:
-
-% +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% Written by Yong Liu, Oct,2007
-% Center for Computational Medicine (CMC),
-% National Laboratory of Pattern Recognition (NLPR),
-% Institute of Automation,Chinese Academy of Sciences (IACAS), China.
-
-% E-mail: yliu@nlpr.ia.ac.cn
-%         liuyong.81@gmail.com
-% based on Matlab 2006a
-% Version (1.0)
-% Copywrite (c) 2007,
-%++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-% see also
+% input:
+% p_vector: a vector or matrix of p value
+% alpha: level of FWER or FDR
+% mulcc_type: can be fdrN, bonf and fdrID
+% output:
+% p_thres: threshold of p for the controled level, p values <= p_thres are
+% considered survive the multiple comparison correction.
+% sts: -1 for no survival, 1 for there exist lucky ones
 
 
-if nargin < 1,
-    error('Requires at least one input arguments');
-end
-
-[I, J] = size(p_vector);
-if ((I == 1) && (J == 1))
-    error('Requires matrix first  inputs.');
-end
-
-if nargin < 2
-    alpha = 0.05;
-end
-
-if nargin < 3
-    Type = 'fdrID';
+if nargin ~= 3
+    error('Requires 3 input arguments');
 end
 
 if (numel(alpha) > 1)
@@ -55,64 +22,51 @@ if ((alpha <= 0) || (alpha >= 1))
     error('ALPHA must be between 0 and 1.');
 end
 
-% Determine if the actual significance exceeds the desired significance
-Num_comparison = length(p_vector);
-switch Type
-    case 'fdrN' %% false discovery rate not independent
-        denominator = sum(1 ./ (1:Num_comparison));
-
-        % sort the original p values
-        p_vector = sort(p_vector);
-        if size(p_vector,1)~=1
-            p_vector = p_vector';
-        end
-        P_reference = [1:Num_comparison] * alpha / Num_comparison / denominator;
-        i = find(p_vector <= P_reference, 1, 'last');
-
-        if ~isempty(i)
-            corrected_p_val = p_vector(i);
-            sts = 1;
+% number of input elements
+num_comp = numel(p_vector);
+p_vector = reshape(p_vector, [num_comp, 1]);
+switch mulcc_type
+    case {'fdrN', 'fdrID'} 
+        % fdrN -- false discovery rate for not independent input
+        % fdrID -- false discovery rate for independent input
+        if strcmp(mulcc_type, 'fdrN')
+            denominator = sum(1 ./ (1:num_comp));
         else
-            corrected_p_val = -1;
-            sts = -1;
+            denominator = 1;
         end
 
-    case 'bonf'
-        P_reference = alpha / Num_comparison;
-        i = p_vector <= P_reference;
-
-        if any(i)
-            corrected_p_val = P_reference;
-            sts = 1;
-        else
-            corrected_p_val = -1;
-            sts = -1;
-%             fprintf('\n\tCorrected P value does not exist. \n');
-        end
-    case 'fdrID'    % independent    
-        denominator = 1;
-
-        % sort the original p values
-        p_vector = sort(p_vector);
-        if size(p_vector,1)~=1
-            p_vector = p_vector';
-        end
-        P_reference = [1:Num_comparison] * alpha / Num_comparison / denominator; %#ok<*NBRAK>
-        i = find(p_vector <= P_reference, 1, 'last');
+        % sort the original p values with ascending order
+        p_vector = sort(p_vector, 'ascend');
+        p_ref = (1:num_comp) * alpha / num_comp / denominator;
         
-        if ~isempty(i)
-            sts = 1;
-            corrected_p_val = p_vector(i);
-        else
+        idx = p_vector > p_ref;
+        if all(idx)
+            % all p values are greater than the threshold
+            p_thres = -1;
             sts = -1;
-            corrected_p_val = -1;
+        else
+            p_thres_idx = find(idx, 1, 'first');
+            if p_thres_idx == 1
+                % the minimum p is greater than the threshold
+                % while some p larger passed the threshold
+                p_thres = -1;
+                sts = -1;
+            else
+                p_thres = p_ref(p_thres_idx - 1);
+                sts = 1;
+            end
         end
-%     case 'FWE'
-%         fprintf('still under prepare');
+    case 'bonf'
+        p_ref = alpha / num_comp;
+        idx = p_vector <= p_ref;
+
+        if any(idx)
+            p_thres = p_ref;
+            sts = 1;
+        else
+            p_thres = -1;
+            sts = -1;
+        end
     otherwise
         error('there is no such correction type');
-end
-
-if (nargout > 2),
-    error('The max nargout is one P value after Multiple comparison test correction')
 end

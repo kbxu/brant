@@ -67,14 +67,14 @@ if any(process_ind)
             data_input_tmp.filetype = jobman.denoise.motion.filetype; % rp*.txt bt default
             [nifti_list_rp, subj_ids_tmp] = brant_get_subjs(data_input_tmp);
         catch
-            nifti_list_rp = '';
+            nifti_list_rp = {''};
         end
         
         try
             data_input_tmp.filetype = jobman.normalise.subj.filetype_src; % 'mean*.nii';
             [nifti_list_mean, subj_ids_tmp] = brant_get_subjs(data_input_tmp);
         catch
-            nifti_list_mean = '';
+            nifti_list_mean = {''};
         end
         
         output_dirs = cellfun(@(x) fullfile(jobman.subj.out.dir, x), subj_ids, 'UniformOutput', false);

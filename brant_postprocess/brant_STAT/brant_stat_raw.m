@@ -119,6 +119,8 @@ if (one_samp_ind == 1)
     end
 end
 
+
+var_type = 'unequal';
 % check group information for two same t test
 if (two_samp_ind == 1) || (paired_t_ind == 1)
     
@@ -235,6 +237,7 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
             
             clear('corr_2d_tmp');
            
+            
             if ~isempty(reg_tmp) && (paired_t_ind == 0)
                 grp_info_all{ooo} = subjs;
                 regs_info_all{ooo} = reg_tmp;
@@ -246,9 +249,11 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                     if numel(unique(tmp)) > 2
                         test_strs{n} = 'ttest2';
                         try
-                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 'tail', 'both');
+%                             [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 'tail', 'both');
+                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 'tail', 'both', 'Vartype', var_type);
                         catch
-                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 0.05, 'both');
+%                             [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 0.05, 'both');
+                            [h_tmp, p_reg(n)] = ttest2(tmp(group_inds_1), tmp(group_inds_2), 0.05, 'both', 'Vartype', var_type);
                         end
                     else
                         test_strs{n} = 'crosstab';
@@ -336,9 +341,9 @@ if (two_samp_ind == 1) || (paired_t_ind == 1)
                     end
                 
                     try
-                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), 'Tail', 'right', 'Alpha', out_info.thr); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), 'Tail', 'right', 'Alpha', out_info.thr, 'Vartype', var_type); %#ok<*ASGLU>
                     catch
-                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), out_info.thr, 'right'); %#ok<*ASGLU>
+                        [h_vec_R, p_vec_R, oo, ttest2_rst_stat] = ttest2(data_mat_2d(group_inds_1, :), data_mat_2d(group_inds_2, :), out_info.thr, 'right', 'Vartype', var_type); %#ok<*ASGLU>
                     end
                     stat_val = ttest2_rst_stat.tstat;
                     df_stu = num_grp1 + num_grp2 - 2;

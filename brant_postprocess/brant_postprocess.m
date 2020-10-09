@@ -3,7 +3,7 @@ function brant_postprocess(dlg_title)
 userdata = ['fig_', dlg_title];
 h_board = findobj(0, 'Tag', userdata);
 if isempty(h_board)
-    prompt = brant_postprocess_funcions(dlg_title);
+    prompt = brant_postprocess_functions(dlg_title);
     brant_postprocess_ui(dlg_title, prompt);
 else
     h_brant = findobj(0, 'Tag', 'figBRANT');
